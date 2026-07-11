@@ -1,0 +1,38 @@
+# DigitalOcean App Platform — WebsConnect
+# Deploy: DO Dashboard → Apps → Create App → GitHub repo OR upload this spec
+# Docs: https://docs.digitalocean.com/products/app-platform/reference/app-spec/
+
+name: websconnect
+region: blr
+
+services:
+  - name: web
+    dockerfile_path: Dockerfile
+    source_dir: /
+    github:
+      repo: YOUR_GITHUB_USER/websConnect
+      branch: main
+      deploy_on_push: true
+    instance_count: 1
+    instance_size_slug: basic-xxs
+    http_port: 3000
+    health_check:
+      http_path: /api/health
+    routes:
+      - path: /
+    envs:
+      - key: ROOT_DOMAIN
+        value: websconnect.in
+      - key: DATABASE_URL
+        scope: RUN_TIME
+        type: SECRET
+        value: ${websconnect-db.DATABASE_URL}
+
+databases:
+  - name: websconnect-db
+    engine: PG
+    version: "16"
+    production: true
+
+# Add domains AFTER first deploy succeeds:
+# Settings → Domains → websconnect.in, www.websconnect.in, api.websconnect.in, *.websconnect.in

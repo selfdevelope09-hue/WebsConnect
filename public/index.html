@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="description" content="WebsConnect — India's first 100% mobile-first AI website builder. No laptop. No code. Chat & go live in 60 seconds." />
+  <title>WebsConnect — AI Website Builder</title>
+
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            base: '#0b111e',
+            surface: '#111827',
+            card: '#151d2e',
+            accent: '#22d3ee',
+            'accent-glow': '#38bdf8',
+            muted: '#94a3b8',
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+          },
+          animation: {
+            'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
+            'spin-slow': 'spin 3s linear infinite',
+            'fade-up': 'fadeUp 0.4s ease-out forwards',
+            'typing': 'typing 1.2s ease-in-out infinite',
+          },
+          keyframes: {
+            pulseGlow: {
+              '0%, 100%': { boxShadow: '0 0 20px rgba(34, 211, 238, 0.3)' },
+              '50%': { boxShadow: '0 0 40px rgba(34, 211, 238, 0.6), 0 0 80px rgba(56, 189, 248, 0.2)' },
+            },
+            fadeUp: {
+              '0%': { opacity: '0', transform: 'translateY(12px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            },
+            typing: {
+              '0%, 100%': { opacity: '0.4' },
+              '50%': { opacity: '1' },
+            },
+          },
+        },
+      },
+    };
+  </script>
+
+  <!-- Inter font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    /* Custom scrollbar for chat */
+    #chat-messages::-webkit-scrollbar { width: 4px; }
+    #chat-messages::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+
+    /* Phone frame notch */
+    .phone-notch {
+      background: #0b111e;
+      width: 96px;
+      height: 22px;
+      border-radius: 0 0 14px 14px;
+      margin: 0 auto;
+    }
+
+    /* Watermark diagonal stripes */
+    .watermark-overlay {
+      background: repeating-linear-gradient(
+        -45deg,
+        transparent,
+        transparent 40px,
+        rgba(34, 211, 238, 0.04) 40px,
+        rgba(34, 211, 238, 0.04) 80px
+      );
+    }
+
+    /* Glowing spinner ring */
+    .spinner-ring {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      border: 3px solid rgba(34, 211, 238, 0.15);
+      border-top-color: #22d3ee;
+      border-right-color: #38bdf8;
+      animation: spin 1s linear infinite;
+      box-shadow: 0 0 30px rgba(34, 211, 238, 0.4), inset 0 0 20px rgba(34, 211, 238, 0.1);
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Button press feedback */
+    .option-btn:active {
+      transform: scale(0.97);
+    }
+
+    /* Chat bubble entrance */
+    .bubble-enter {
+      animation: fadeUp 0.35s ease-out forwards;
+    }
+
+    /* Typing dots */
+    .typing-dot {
+      animation: typingBounce 1.4s ease-in-out infinite;
+    }
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes typingBounce {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+      30% { transform: translateY(-4px); opacity: 1; }
+    }
+  </style>
+</head>
+
+<body class="bg-base text-white font-sans antialiased min-h-screen overflow-x-hidden">
+
+  <!-- Ambient background glow -->
+  <div class="fixed inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
+    <div class="absolute -top-32 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-cyan-500/8 blur-[120px]"></div>
+    <div class="absolute bottom-0 right-0 w-[400px] h-[400px] rounded-full bg-sky-500/6 blur-[100px]"></div>
+  </div>
+
+  <div class="relative z-10 max-w-lg mx-auto px-4 pb-10">
+
+    <!-- ========== HEADER ========== -->
+    <header class="flex items-center justify-between py-5">
+      <div class="flex items-center gap-2.5">
+        <!-- Logo icon -->
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-accent to-accent-glow flex items-center justify-center shadow-lg shadow-cyan-500/20">
+          <svg class="w-4.5 h-4.5 text-base" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+          </svg>
+        </div>
+        <span class="text-lg font-bold tracking-tight">Webs<span class="text-accent">Connect</span></span>
+      </div>
+      <span class="text-[10px] font-semibold uppercase tracking-widest px-2.5 py-1 rounded-full border border-accent/30 text-accent bg-accent/10">
+        Beta
+      </span>
+    </header>
+
+    <!-- ========== HERO ========== -->
+    <section class="text-center mb-6">
+      <h1 class="text-[1.35rem] sm:text-2xl font-extrabold leading-snug tracking-tight">
+        India's First <span class="text-transparent bg-clip-text bg-gradient-to-r from-accent to-accent-glow">100% Mobile-First</span> AI Website Builder.
+      </h1>
+      <p class="mt-2.5 text-sm sm:text-base text-muted leading-relaxed">
+        No Laptop. No Code. Just Chat &amp; Go Live in <span class="text-white font-semibold">60 Seconds</span>.
+      </p>
+    </section>
+
+    <!-- ========== CHAT CONTAINER ========== -->
+    <section id="chat-section" class="rounded-2xl border border-slate-700/50 bg-surface/80 backdrop-blur-sm shadow-2xl shadow-black/40 overflow-hidden">
+
+      <!-- Chat header bar (WhatsApp/Telegram style) -->
+      <div class="flex items-center gap-3 px-4 py-3 bg-card border-b border-slate-700/40">
+        <div class="w-9 h-9 rounded-full bg-gradient-to-br from-accent to-sky-500 flex items-center justify-center text-sm font-bold text-base shrink-0">
+          AI
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-semibold truncate">WebsConnect AI</p>
+          <p class="text-[11px] text-accent flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-accent inline-block"></span>
+            Online
+          </p>
+        </div>
+      </div>
+
+      <!-- Chat messages area -->
+      <div id="chat-messages" class="px-3 py-4 space-y-3 min-h-[220px] max-h-[340px] overflow-y-auto">
+        <!-- Messages injected by JS -->
+      </div>
+
+      <!-- Typing indicator (hidden by default) -->
+      <div id="typing-indicator" class="hidden px-3 pb-2">
+        <div class="inline-flex items-center gap-2 bg-card rounded-2xl rounded-tl-sm px-4 py-2.5 border border-slate-700/40">
+          <span class="text-xs text-muted">AI is typing</span>
+          <span class="flex gap-1">
+            <span class="typing-dot w-1.5 h-1.5 rounded-full bg-accent inline-block"></span>
+            <span class="typing-dot w-1.5 h-1.5 rounded-full bg-accent inline-block"></span>
+            <span class="typing-dot w-1.5 h-1.5 rounded-full bg-accent inline-block"></span>
+          </span>
+        </div>
+      </div>
+
+      <!-- Selection buttons -->
+      <div id="options-container" class="px-3 pb-4 pt-1 space-y-2">
+        <!-- Buttons injected by JS -->
+      </div>
+    </section>
+
+    <!-- Trust badges -->
+    <div class="flex items-center justify-center gap-5 mt-6 text-[11px] text-muted">
+      <span class="flex items-center gap-1">
+        <svg class="w-3.5 h-3.5 text-accent" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+        No code needed
+      </span>
+      <span class="flex items-center gap-1">
+        <svg class="w-3.5 h-3.5 text-accent" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+        Mobile-first
+      </span>
+      <span class="flex items-center gap-1">
+        <svg class="w-3.5 h-3.5 text-accent" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+        ₹499 to go live
+      </span>
+    </div>
+  </div>
+
+  <!-- ========== LOADING MODAL ========== -->
+  <div id="loading-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-base/95 backdrop-blur-md">
+    <div class="text-center px-6 max-w-sm">
+      <div class="spinner-ring mx-auto mb-6"></div>
+      <h2 class="text-lg font-bold mb-2">Building your website</h2>
+      <p id="loading-text" class="text-sm text-accent font-medium animate-typing">Analyzing requirements...</p>
+      <div class="mt-6 w-full h-1 rounded-full bg-slate-800 overflow-hidden">
+        <div id="loading-bar" class="h-full bg-gradient-to-r from-accent to-accent-glow rounded-full transition-all duration-700 ease-out" style="width: 0%"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== PREVIEW + WATERMARK MODAL ========== -->
+  <div id="preview-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-base/95 backdrop-blur-md p-4 overflow-y-auto">
+    <div class="w-full max-w-sm my-auto">
+
+      <!-- Smartphone frame -->
+      <div class="relative mx-auto w-[280px] rounded-[2rem] border-[3px] border-slate-600 bg-slate-900 p-2 shadow-2xl shadow-black/60">
+        <div class="phone-notch"></div>
+
+        <!-- Screen content -->
+        <div class="relative rounded-[1.4rem] overflow-hidden bg-white aspect-[9/16] watermark-overlay">
+
+          <!-- Mock website preview -->
+          <div class="h-full flex flex-col text-slate-800 text-[10px]">
+            <!-- Mock nav -->
+            <div class="bg-slate-900 text-white px-3 py-2 flex items-center justify-between">
+              <span id="preview-business-name" class="font-bold text-[11px]">Your Business</span>
+              <span class="text-[8px] opacity-60">Menu</span>
+            </div>
+            <!-- Mock hero -->
+            <div class="bg-gradient-to-br from-slate-800 to-slate-600 text-white px-3 py-5 text-center flex-1 flex flex-col justify-center">
+              <p class="text-[13px] font-bold leading-tight" id="preview-headline">Welcome to Your Site</p>
+              <p class="text-[8px] mt-1 opacity-70" id="preview-tagline">Built with WebsConnect AI</p>
+              <div class="mt-3 mx-auto w-16 h-5 rounded bg-accent/80 text-[7px] flex items-center justify-center font-semibold text-slate-900">
+                Contact Us
+              </div>
+            </div>
+            <!-- Mock features -->
+            <div class="grid grid-cols-3 gap-1 p-2 bg-slate-50">
+              <div class="bg-white rounded p-1.5 text-center shadow-sm">
+                <div class="text-sm">📸</div>
+                <p class="text-[6px] mt-0.5 font-medium">Gallery</p>
+              </div>
+              <div class="bg-white rounded p-1.5 text-center shadow-sm">
+                <div class="text-sm">💬</div>
+                <p class="text-[6px] mt-0.5 font-medium">Chat</p>
+              </div>
+              <div class="bg-white rounded p-1.5 text-center shadow-sm">
+                <div class="text-sm">💳</div>
+                <p class="text-[6px] mt-0.5 font-medium">Pay</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Watermark banner -->
+          <div class="absolute inset-0 flex items-center justify-center bg-black/50 backdrop-blur-[2px]">
+            <div class="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
+              <span class="text-white/10 text-2xl font-black rotate-[-25deg] tracking-widest uppercase">Preview</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Home indicator -->
+        <div class="w-24 h-1 rounded-full bg-slate-600 mx-auto mt-2"></div>
+      </div>
+
+      <!-- Upgrade CTA overlay -->
+      <div class="mt-5 rounded-2xl border border-accent/30 bg-card/90 backdrop-blur-sm p-5 text-center shadow-lg shadow-cyan-500/10">
+        <div class="inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-accent bg-accent/10 px-3 py-1 rounded-full mb-3">
+          <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/></svg>
+          Watermarked Preview
+        </div>
+        <h3 class="text-base font-bold leading-snug">
+          Your website is ready!
+        </h3>
+        <p class="text-xs text-muted mt-2 leading-relaxed">
+          To remove the watermark, map your custom subdomain, and take it <span class="text-white font-medium">100% live</span>, upgrade for just
+          <span class="text-accent font-bold text-sm">₹499</span>.
+        </p>
+        <button
+          id="checkout-btn"
+          class="mt-4 w-full py-3.5 rounded-xl font-bold text-sm text-base bg-gradient-to-r from-accent to-accent-glow text-slate-900 shadow-lg shadow-cyan-500/30 animate-pulse-glow transition-transform active:scale-[0.97]"
+        >
+          Activate Website Now →
+        </button>
+        <p class="text-[10px] text-muted mt-2">Secure UPI · Card · Net Banking</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== JAVASCRIPT: Step Management ========== -->
+  <script>
+    (function () {
+      'use strict';
+
+      // ─── DOM References ───────────────────────────────────────────
+      const chatMessages    = document.getElementById('chat-messages');
+      const optionsContainer = document.getElementById('options-container');
+      const typingIndicator = document.getElementById('typing-indicator');
+      const loadingModal    = document.getElementById('loading-modal');
+      const loadingText     = document.getElementById('loading-text');
+      const loadingBar      = document.getElementById('loading-bar');
+      const previewModal    = document.getElementById('preview-modal');
+      const checkoutBtn     = document.getElementById('checkout-btn');
+
+      // ─── Conversation Flow Definition ───────────────────────────
+      // Each step: AI message + option buttons. Step 3 triggers generation.
+      const STEPS = [
+        {
+          id: 1,
+          aiMessage: "Hey there! Let's build your website. What is your business type/niche?",
+          options: [
+            { label: 'Photography 📸', value: 'photography' },
+            { label: 'Gym & Fitness 🏋️‍♂️', value: 'gym' },
+            { label: 'Bakery & Cafe 🥐', value: 'bakery' },
+            { label: 'Salon & Spa 💈', value: 'salon' },
+          ],
+        },
+        {
+          id: 2,
+          aiMessage: 'Great choice! What visual vibe should your website have?',
+          options: [
+            { label: 'Dark & Premium 🌌', value: 'dark' },
+            { label: 'Light & Minimal ⚪', value: 'light' },
+            { label: 'Colorful & Bold 🎨', value: 'colorful' },
+          ],
+        },
+        {
+          id: 3,
+          aiMessage: 'Almost done! Pick the core feature you need most:',
+          options: [
+            { label: 'WhatsApp Chat 💬', value: 'whatsapp' },
+            { label: 'UPI/QR Payments 💳', value: 'upi' },
+            { label: 'Image Portfolio Grid 🖼️', value: 'portfolio' },
+          ],
+        },
+      ];
+
+      // Loading screen status messages
+      const LOADING_MESSAGES = [
+        'Analyzing requirements...',
+        'Composing structural semantic HTML...',
+        'Injecting responsive Tailwind styles...',
+        'Finalizing Vercel edge deployment...',
+      ];
+
+      // ─── User selections stored across steps ────────────────────
+      const userChoices = {
+        niche: '',
+        vibe: '',
+        feature: '',
+      };
+
+      let currentStep = 0;
+
+      // ─── Render Helpers ─────────────────────────────────────────
+
+      /** Append a chat bubble (AI = left, user = right) */
+      function addBubble(text, isUser) {
+        const wrapper = document.createElement('div');
+        wrapper.className = `flex ${isUser ? 'justify-end' : 'justify-start'} bubble-enter`;
+
+        const bubble = document.createElement('div');
+        bubble.className = isUser
+          ? 'max-w-[80%] bg-accent/20 border border-accent/30 text-white rounded-2xl rounded-tr-sm px-4 py-2.5 text-sm leading-relaxed'
+          : 'max-w-[85%] bg-card border border-slate-700/50 text-slate-100 rounded-2xl rounded-tl-sm px-4 py-2.5 text-sm leading-relaxed';
+
+        bubble.textContent = text;
+        wrapper.appendChild(bubble);
+        chatMessages.appendChild(wrapper);
+
+        // Auto-scroll to latest message
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
+
+      /** Render clickable option buttons for the current step */
+      function renderOptions(options) {
+        optionsContainer.innerHTML = '';
+        options.forEach(function (opt) {
+          const btn = document.createElement('button');
+          btn.className = [
+            'option-btn w-full text-left px-4 py-3.5 rounded-xl',
+            'bg-card border border-slate-700/50 hover:border-accent/40',
+            'text-sm font-medium text-white',
+            'transition-all duration-200 ease-out',
+            'hover:bg-accent/5 active:bg-accent/10',
+            'focus:outline-none focus:ring-2 focus:ring-accent/40',
+          ].join(' ');
+          btn.textContent = opt.label;
+          btn.dataset.value = opt.value;
+          btn.dataset.label = opt.label;
+          btn.addEventListener('click', function () {
+            handleOptionClick(opt.label, opt.value);
+          });
+          optionsContainer.appendChild(btn);
+        });
+      }
+
+      /** Show/hide the "AI is typing..." indicator */
+      function setTyping(visible) {
+        typingIndicator.classList.toggle('hidden', !visible);
+        if (visible) {
+          chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+      }
+
+      // ─── Step Flow Logic ────────────────────────────────────────
+
+      /** Process a user option selection */
+      function handleOptionClick(label, value) {
+        // Disable all buttons to prevent double-taps
+        optionsContainer.querySelectorAll('button').forEach(function (b) {
+          b.disabled = true;
+          b.classList.add('opacity-50', 'pointer-events-none');
+        });
+
+        // Record selection
+        if (currentStep === 0) userChoices.niche = value;
+        else if (currentStep === 1) userChoices.vibe = value;
+        else if (currentStep === 2) userChoices.feature = value;
+
+        // Show user bubble
+        addBubble(label, true);
+
+        // Hide options during typing pause
+        optionsContainer.innerHTML = '';
+        setTyping(true);
+
+        setTimeout(function () {
+          setTyping(false);
+          currentStep++;
+
+          if (currentStep < STEPS.length) {
+            // Move to next step
+            addBubble(STEPS[currentStep].aiMessage, false);
+            renderOptions(STEPS[currentStep].options);
+          } else {
+            // All steps done → start generation
+            startGeneration();
+          }
+        }, 1000);
+      }
+
+      /** Kick off the loading/generation screen */
+      function startGeneration() {
+        addBubble('Perfect! Generating your website now... 🚀', false);
+
+        loadingModal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+
+        var msgIndex = 0;
+        var barProgress = 0;
+        var barStep = 100 / LOADING_MESSAGES.length;
+
+        // Cycle through loading messages
+        var msgInterval = setInterval(function () {
+          msgIndex++;
+          if (msgIndex < LOADING_MESSAGES.length) {
+            loadingText.textContent = LOADING_MESSAGES[msgIndex];
+            barProgress += barStep;
+            loadingBar.style.width = barProgress + '%';
+          }
+        }, 1800);
+
+        // Complete after all messages shown
+        setTimeout(function () {
+          clearInterval(msgInterval);
+          loadingBar.style.width = '100%';
+          loadingText.textContent = 'Done! ✨';
+
+          setTimeout(function () {
+            loadingModal.classList.add('hidden');
+            showPreview();
+          }, 800);
+        }, LOADING_MESSAGES.length * 1800 + 500);
+      }
+
+      /** Show the watermarked phone preview with upgrade CTA */
+      function showPreview() {
+        // Personalize preview based on user choices
+        var nicheNames = {
+          photography: 'LensCraft Studio',
+          gym: 'IronPulse Fitness',
+          bakery: 'Crumb & Bean Cafe',
+          salon: 'Glow & Grace Spa',
+        };
+        var vibeTaglines = {
+          dark: 'Premium. Bold. Unforgettable.',
+          light: 'Clean. Simple. Beautiful.',
+          colorful: 'Vibrant. Energetic. Unique.',
+        };
+
+        document.getElementById('preview-business-name').textContent =
+          nicheNames[userChoices.niche] || 'Your Business';
+        document.getElementById('preview-headline').textContent =
+          'Welcome to ' + (nicheNames[userChoices.niche] || 'Your Site');
+        document.getElementById('preview-tagline').textContent =
+          vibeTaglines[userChoices.vibe] || 'Built with WebsConnect AI';
+
+        previewModal.classList.remove('hidden');
+      }
+
+      // ─── Checkout button (placeholder for payment integration) ──
+      checkoutBtn.addEventListener('click', function () {
+        // TODO: Wire to Razorpay / payment gateway + DigitalOcean backend
+        alert('Checkout coming soon! ₹499 activation — payment gateway integration in progress.');
+      });
+
+      // ─── Initialize: Step 1 ─────────────────────────────────────
+      function init() {
+        addBubble(STEPS[0].aiMessage, false);
+        renderOptions(STEPS[0].options);
+      }
+
+      init();
+    })();
+  </script>
+</body>
+</html>

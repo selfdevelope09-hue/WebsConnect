@@ -1,0 +1,11 @@
+node_modules
+.expo
+.git
+.claude
+*.md
+!README.md
+App.js
+app.json
+index.js
+package-lock.json
+package.json
