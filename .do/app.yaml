@@ -10,7 +10,7 @@ services:
     dockerfile_path: Dockerfile
     source_dir: /
     github:
-      repo: YOUR_GITHUB_USER/websConnect
+      repo: selfdevelop09-hue/WebsConnect
       branch: main
       deploy_on_push: true
     instance_count: 1
