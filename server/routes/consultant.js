@@ -7,6 +7,7 @@
 const GROQ_API_KEY = process.env.GROQ_API_KEY || '';
 const GROQ_MODEL = process.env.GROQ_MODEL || 'llama-3.3-70b-versatile';
 const ROOT_DOMAIN = process.env.ROOT_DOMAIN || 'websconnect.in';
+const { CONNECT_KNOWLEDGE } = require('../data/connectKnowledge');
 
 // Build a compact catalog string (niche id + title + group) so the model can
 // recommend a real preset the frontend can launch.
@@ -64,7 +65,9 @@ function loadCatalog() {
 
 loadCatalog();
 
-function buildSystemPrompt() {
+function buildSystemPrompt(options) {
+  const includeCatalog = options?.includeCatalog !== false;
+  const includeKnowledge = options?.includeKnowledge !== false;
   return `You are "WebsConnect AI Consultant", an expert local business and website advisor for WebsConnect (websconnect.in) — India's 100% mobile-first AI website builder.
 
 ## LANGUAGE
@@ -92,6 +95,7 @@ function buildSystemPrompt() {
 ## RESPONSE STYLE
 - Keep it concise, scannable and mobile-friendly. Use short bullet points. NEVER write huge walls of text.
 - Use light emojis for warmth (📸🍰💈💪), but don't overdo it.
+- You are also the official public-information assistant for WebsConnect and the Connect ecosystem. If a visitor asks about the founder, owner, company, ventures, blogs, privacy or legal terms, answer that question directly from the official knowledge below. Do not force the website-building flow into that answer.
 
 ## CATEGORY RECOMMENDATION (VERY IMPORTANT)
 - When (and only when) you recommend a specific category, add this machine-readable tag as the VERY LAST line of your message, on its own line, using the exact niche id from the catalog:
@@ -99,8 +103,20 @@ function buildSystemPrompt() {
 - Example: [[category:food]]
 - Use ONLY an id that exists in the catalog. If you are still asking questions and not yet recommending, do NOT add the tag.
 
-## WEBSCONNECT CATEGORY CATALOG (id = Title (Group))
-${CATALOG_LINES || 'food = Food & Bakery, salon = Salon & Beauty, services = Home Services (fallback list)'}`;
+${includeKnowledge ? CONNECT_KNOWLEDGE : ''}
+
+${includeCatalog ? `## WEBSCONNECT CATEGORY CATALOG (id = Title (Group))
+${CATALOG_LINES || 'food = Food & Bakery, salon = Salon & Beauty, services = Home Services (fallback list)'}` : '## CATEGORY CATALOG\nOmitted for this company-information question. Do not output a category tag unless the visitor changes the topic to building a website.'}`;
+}
+
+function isCompanyKnowledgeQuestion(message, history) {
+  const knowledgeTerms = /\b(atharva|darshanwar|founder|owner|ceo|connect ecosystem|websconnect|stadiumconnect|auronx|auron|blog|article|privacy|policy|disclaimer|legal|funding|seed|valuation|net worth|headquarters|company|venture|invisible devops|age|journey|milestone|philosophy|who (made|built|started|founded)|kisne banaya|maalik|malik)\b/i;
+  if (knowledgeTerms.test(String(message || ''))) return true;
+
+  // Preserve the knowledge context for short follow-ups such as "aur batao"
+  // or "unki age kya hai?" after a founder/company question.
+  return (Array.isArray(history) ? history.slice(-4) : [])
+    .some((item) => knowledgeTerms.test(String(item?.content || '')));
 }
 
 function sanitizeHistory(raw) {
@@ -201,7 +217,17 @@ function mountConsultantRoutes(router) {
         return res.status(400).json({ error: 'Please type a message.' });
       }
 
-      const messages = [{ role: 'system', content: buildSystemPrompt() }, ...history];
+      // The full 400-category catalog is unnecessary for founder/company
+      // questions and can push Groq's free-tier token budget. Keep the public
+      // knowledge, but omit the catalog for those requests.
+      const knowledgeQuestion = isCompanyKnowledgeQuestion(message, history);
+      const messages = [{
+        role: 'system',
+        content: buildSystemPrompt({
+          includeCatalog: !knowledgeQuestion,
+          includeKnowledge: knowledgeQuestion,
+        }),
+      }, ...history];
       if (message) messages.push({ role: 'user', content: message });
 
       const raw = await callGroq(messages);
@@ -222,4 +248,4 @@ function mountConsultantRoutes(router) {
   });
 }
 
-module.exports = { mountConsultantRoutes };
+module.exports = { mountConsultantRoutes, buildSystemPrompt, isCompanyKnowledgeQuestion };
