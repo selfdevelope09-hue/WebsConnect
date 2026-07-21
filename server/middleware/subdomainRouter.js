@@ -54,9 +54,13 @@ function subdomainRouter(options = {}) {
     try {
       const subdomain = parseSubdomain(req.hostname, rootDomain);
 
-      // ── Apex or www → landing page (except /api/* paths) ───────
+      // ── Apex or www → landing page (except /api/* and static assets) ─
       if (subdomain === null || subdomain === 'www') {
         if (req.path.startsWith('/api')) {
+          return next();
+        }
+        // Static assets (.png, .css, .js, etc.) → let express.static serve them
+        if (/\.[a-z0-9]+$/i.test(req.path)) {
           return next();
         }
         return res.sendFile(landingPage);
