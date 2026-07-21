@@ -291,6 +291,15 @@
             <label class="text-[11px] font-semibold text-slate-300">Services You Offer</label>
             <input id="tf-services" type="text" placeholder="e.g. Wedding, Pre-wedding, Maternity, Events" class="tf-input" />
           </div>
+          <div class="rounded-xl border border-brand/25 bg-brand/5 p-3">
+            <label class="text-[11px] font-semibold text-sky-300">🌐 Apna Free Domain Choose Karo</label>
+            <div class="flex items-center gap-2">
+              <input id="tf-domain" type="text" placeholder="e.g. lenscraft" autocapitalize="none" autocomplete="off" class="tf-input flex-1 min-w-0" />
+              <span class="text-xs text-muted shrink-0 mt-1.5">.websconnect.in</span>
+            </div>
+            <p id="tf-domain-status" class="text-[11px] mt-1.5 min-h-[14px]"></p>
+            <p class="text-[10px] text-muted mt-0.5">Khali chhodo toh hum studio name se auto bana denge.</p>
+          </div>
           <div>
             <label class="text-[11px] font-semibold text-slate-300">AI ko aur kya batana hai? (Custom changes)</label>
             <textarea id="tf-extra" rows="3" placeholder="e.g. Pricing section chahiye, Starting ₹15,000. Hindi tagline daalna. 10 saal ka experience mention karna." class="tf-input resize-none"></textarea>
@@ -943,6 +952,11 @@
       const t = TEMPLATES.find(function (x) { return x.id === templateId; });
       if (!t) return;
       state.activeTemplate = t;
+      state.desiredSlug = '';
+      state.slugInput = '';
+      state.slugStatus = 'unchecked';
+      $('tf-domain').value = '';
+      $('tf-domain-status').textContent = '';
       $('template-modal-title').textContent = t.emoji + ' ' + t.name;
       $('template-modal-preview').innerHTML = templateMockHtml(t);
       $('template-error').classList.add('hidden');
@@ -961,6 +975,18 @@
         $('template-error').classList.remove('hidden');
         $('tf-studio').focus();
         return;
+      }
+      if (state.slugInput) {
+        if (state.slugStatus === 'taken') {
+          $('template-error').textContent = 'Chosen domain taken hai — doosra try karo ya khali chhodo.';
+          $('template-error').classList.remove('hidden');
+          return;
+        }
+        if (state.slugStatus !== 'available') {
+          $('template-error').textContent = 'Domain availability check hone do, ek second ruko.';
+          $('template-error').classList.remove('hidden');
+          return;
+        }
       }
       $('template-error').classList.add('hidden');
 
@@ -1004,6 +1030,9 @@
         requirements: {},
       };
       state.step = 0;
+      state.desiredSlug = '';
+      state.slugInput = '';
+      state.slugStatus = 'unchecked';
       showBuilder();
       const categoryMap = {
         bakery: 'food', photography: 'creative', portfolio: 'creative',
@@ -1022,9 +1051,59 @@
       const category = state.choices.requirements.category?.value;
       let dynamic = DYNAMIC_QUESTIONS[category] || [];
       if (dynamic === 'booking') dynamic = BOOKING_QUESTIONS;
-      return questions.concat(dynamic.map(function (q) {
+      const all = questions.concat(dynamic.map(function (q) {
         return Object.assign({ section: 'Step 5 · Smart Business Questions', help: 'AI is asking this based on your selected category.' }, q);
       }));
+      all.push({
+        id: 'domain', type: 'domain', section: 'Step 6 · Your Free Domain',
+        question: '🌐 Apna website domain choose karo',
+        help: 'Agar available hoga toh website isi naam pe live hogi. Khali chhodo toh hum auto bana denge.',
+        options: [],
+      });
+      return all;
+    }
+
+    // ── Domain availability checker ────────────────────────────
+    let slugCheckTimer = null;
+    function attachSlugChecker(inputEl, statusEl) {
+      inputEl.addEventListener('input', function () {
+        clearTimeout(slugCheckTimer);
+        state.desiredSlug = '';
+        state.slugStatus = 'unchecked';
+        const cleaned = inputEl.value.toLowerCase().replace(/[^a-z0-9-]/g, '');
+        if (cleaned !== inputEl.value) inputEl.value = cleaned;
+        state.slugInput = cleaned;
+        if (!cleaned) {
+          statusEl.textContent = '';
+          return;
+        }
+        if (cleaned.length < 3) {
+          statusEl.textContent = 'Kam se kam 3 characters chahiye';
+          statusEl.className = statusEl.className.replace(/text-(emerald|red)-400/g, '') + ' text-muted';
+          return;
+        }
+        statusEl.textContent = 'Checking availability…';
+        statusEl.style.color = '#8b9bb4';
+        slugCheckTimer = setTimeout(async function () {
+          try {
+            const res = await fetch('/api/slug-check?slug=' + encodeURIComponent(cleaned));
+            const data = await res.json();
+            if (inputEl.value !== cleaned) return;
+            if (data.available) {
+              state.desiredSlug = data.slug;
+              state.slugStatus = 'available';
+              statusEl.textContent = '✓ ' + data.slug + '.websconnect.in available hai!';
+              statusEl.style.color = '#34d399';
+            } else {
+              state.slugStatus = 'taken';
+              statusEl.textContent = '✗ ' + (data.reason || 'Yeh domain available nahi hai');
+              statusEl.style.color = '#f87171';
+            }
+          } catch (e) {
+            statusEl.textContent = '';
+          }
+        }, 500);
+      });
     }
 
     function renderWizard() {
@@ -1044,6 +1123,28 @@
       $('wizard-back').classList.toggle('opacity-40', state.step === 0);
       $('wizard-next').textContent = state.step === questions.length - 1 ? 'Build My Website ✨' : 'Next →';
       wizardOptions.innerHTML = '';
+
+      if (q.type === 'domain') {
+        const wrap = document.createElement('div');
+        wrap.className = 'rounded-xl border border-brand/25 bg-brand/5 p-3';
+        wrap.innerHTML =
+          '<div class="flex items-center gap-2">' +
+            '<input id="wizard-domain-input" type="text" placeholder="e.g. rameshbakery" autocapitalize="none" autocomplete="off" class="tf-input flex-1 min-w-0" style="margin-top:0" />' +
+            '<span class="text-xs text-muted shrink-0">.websconnect.in</span>' +
+          '</div>' +
+          '<p id="wizard-domain-status" class="text-[11px] mt-2 min-h-[14px]"></p>';
+        wizardOptions.appendChild(wrap);
+        const input = document.getElementById('wizard-domain-input');
+        const status = document.getElementById('wizard-domain-status');
+        input.value = state.slugInput || '';
+        if (state.slugStatus === 'available' && state.desiredSlug) {
+          status.textContent = '✓ ' + state.desiredSlug + '.websconnect.in available hai!';
+          status.style.color = '#34d399';
+        }
+        attachSlugChecker(input, status);
+        setTimeout(function () { input.focus(); }, 100);
+        return;
+      }
 
       q.options.forEach(function (raw) {
         const opt = { label: raw[0], value: raw[1], inputType: raw[2], placeholder: raw[3] };
@@ -1120,6 +1221,13 @@
     }
 
     function validateWizardQuestion(q) {
+      if (q.type === 'domain') {
+        if (!state.slugInput) return '';
+        if (state.slugInput.length < 3) return 'Domain kam se kam 3 characters ka hona chahiye.';
+        if (state.slugStatus === 'taken') return 'Yeh domain taken hai — doosra naam try karo ya khali chhodo.';
+        if (state.slugStatus !== 'available') return 'Availability check hone do, ek second ruko.';
+        return '';
+      }
       const saved = state.choices.requirements[q.id];
       if (!saved || (q.multi && !saved.values?.length)) return 'Please select at least one option.';
       const selected = q.multi ? saved.values : [saved];
@@ -1185,6 +1293,7 @@
             prompt: state.choices.prompt,
             businessName: state.choices.businessName || '',
             requirements: state.choices.requirements,
+            desiredSlug: state.slugStatus === 'available' ? state.desiredSlug : '',
           }),
         });
         const data = await res.json();
@@ -1308,6 +1417,7 @@
         $('template-modal').classList.add('hidden');
       });
       $('btn-template-generate').addEventListener('click', submitTemplateForm);
+      attachSlugChecker($('tf-domain'), $('tf-domain-status'));
       $('btn-preview-home').addEventListener('click', showHome);
       $('btn-build-another').addEventListener('click', function () {
         $('preview-modal').classList.add('hidden');

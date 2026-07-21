@@ -93,6 +93,23 @@ function makeSlugBase(niche, businessName) {
   return cleaned || 'site';
 }
 
+const RESERVED_SLUGS = new Set([
+  'www', 'api', 'mail', 'email', 'admin', 'app', 'ftp', 'smtp', 'ns1', 'ns2',
+  'blog', 'shop', 'store', 'support', 'help', 'status', 'dashboard', 'login',
+  'auth', 'cdn', 'static', 'assets', 'dev', 'staging', 'test', 'websconnect',
+  'stadiumconnect', 'auronx', 'connect',
+]);
+
+function sanitizeSlug(raw) {
+  return String(raw || '')
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9-]/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 30);
+}
+
 async function uniqueSlug(pool, base) {
   for (let i = 0; i < 8; i++) {
     const suffix = crypto.randomBytes(2).toString('hex');
@@ -129,6 +146,25 @@ async function callOpenRouter(messages) {
 }
 
 function mountGenerateRoutes(router) {
+  router.get('/slug-check', async (req, res) => {
+    try {
+      const slug = sanitizeSlug(req.query.slug);
+      if (!slug || slug.length < 3) {
+        return res.json({ available: false, slug, reason: 'Kam se kam 3 characters chahiye' });
+      }
+      if (RESERVED_SLUGS.has(slug)) {
+        return res.json({ available: false, slug, reason: 'Yeh naam reserved hai' });
+      }
+      const pool = getPool();
+      if (!pool) return res.status(503).json({ error: 'Database unavailable' });
+      const { rows } = await pool.query('SELECT 1 FROM sites WHERE slug = $1', [slug]);
+      res.json({ available: !rows.length, slug, reason: rows.length ? 'Yeh domain already taken hai' : '' });
+    } catch (err) {
+      console.error('slug-check:', err.message);
+      res.status(500).json({ error: 'Check failed' });
+    }
+  });
+
   router.post('/generate', authMiddleware, async (req, res) => {
     try {
       if (!OPENROUTER_API_KEY) {
@@ -139,9 +175,23 @@ function mountGenerateRoutes(router) {
         return res.status(503).json({ error: 'Database unavailable' });
       }
 
-      const { niche, vibe, feature, prompt, businessName, requirements } = req.body || {};
+      const { niche, vibe, feature, prompt, businessName, requirements, desiredSlug } = req.body || {};
       if (requirements && (typeof requirements !== 'object' || JSON.stringify(requirements).length > 20000)) {
         return res.status(400).json({ error: 'Invalid or oversized requirements' });
+      }
+
+      // Reserve the user's chosen domain before spending AI tokens
+      let chosenSlug = null;
+      const wanted = sanitizeSlug(desiredSlug);
+      if (wanted && wanted.length >= 3) {
+        if (RESERVED_SLUGS.has(wanted)) {
+          return res.status(409).json({ error: `"${wanted}" reserved hai — doosra naam choose karo.` });
+        }
+        const { rows } = await pool.query('SELECT 1 FROM sites WHERE slug = $1', [wanted]);
+        if (rows.length) {
+          return res.status(409).json({ error: `"${wanted}.${ROOT_DOMAIN}" already taken hai — doosra naam try karo.` });
+        }
+        chosenSlug = wanted;
       }
 
       const content = await callOpenRouter([
@@ -155,7 +205,13 @@ function mountGenerateRoutes(router) {
         return res.status(502).json({ error: 'AI returned invalid output. Try again.' });
       }
 
-      const slug = await uniqueSlug(pool, makeSlugBase(niche, businessName));
+      let slug = chosenSlug;
+      if (slug) {
+        // Re-verify in case someone claimed it during generation
+        const { rows } = await pool.query('SELECT 1 FROM sites WHERE slug = $1', [slug]);
+        if (rows.length) slug = null;
+      }
+      if (!slug) slug = await uniqueSlug(pool, makeSlugBase(niche, businessName));
 
       await pool.query(
         `INSERT INTO sites (slug, index_html, status) VALUES ($1, $2, 'active')`,
