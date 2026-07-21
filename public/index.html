@@ -527,6 +527,11 @@
           ['🐾 Pet Care, Vet Clinic & Grooming', 'petcare'],
           ['🧵 Custom Tailor & Fashion Designer', 'tailor'],
           ['🌾 Agriculture, Seeds & Nursery', 'agri'],
+          ['🔩 Hardware, Electrical & Sanitaryware', 'hardware'],
+          ['☕ Co-Working Space & Study Room', 'coworking'],
+          ['🖨️ Printing, Signage & Packaging', 'printing'],
+          ['📱 Electronics Repair & Refurbished', 'gadgets'],
+          ['🚗 Driving School & RTO Consultant', 'driving'],
           ['✍️ Write Custom Category', 'custom', 'text', 'Enter your business category']
         ]
       },
@@ -633,7 +638,16 @@
         { id: 'dietaryHighlight', question: 'Aapka dietary highlight kya hai?', options: [['100% Pure Veg','pure-veg'],['Veg & Non-Veg Both','veg-nonveg'],['Vegan / Organic Options Available','vegan-organic'],['Custom Food Tag','custom','text','Enter your dietary highlight']] }
       ],
       salon: 'booking', gym: 'booking', clinic: 'booking', auto: 'booking', legal: 'booking',
-      interior: 'booking', petcare: 'booking', tailor: 'booking',
+      interior: 'booking', petcare: 'booking', tailor: 'booking', coworking: 'booking', driving: 'booking',
+      hardware: [
+        { id: 'hardwareCustomers', question: 'Aapke main customers kaun hain?', options: [['Retail (Ghar ke customers)','retail'],['Contractors & Builders (Wholesale)','wholesale'],['Dono (Retail + Wholesale)','both'],['Custom Customer Base','custom','text','Describe your customers']] }
+      ],
+      printing: [
+        { id: 'printTurnaround', question: 'Aapki delivery speed kya hai?', options: [['Same-Day Printing Available','same-day'],['1-2 Din ka Standard Turnaround','1-2-days'],['Bulk Orders (3-7 Din)','bulk'],['Custom Turnaround','custom','text','Describe your delivery timeline']] }
+      ],
+      gadgets: [
+        { id: 'repairMode', question: 'Aap repair service kaise dete hain?', options: [['Doorstep Repair (Ghar pe aake)','doorstep'],['Shop Par Le Aao','in-shop'],['Dono Options','both'],['Custom Service Mode','custom','text','Describe your repair service']] }
+      ],
       venue: [
         { id: 'venueEvents', question: 'Aapke venue par kaunse events hote hain?', options: [['Weddings & Receptions','weddings'],['Corporate Events & Conferences','corporate'],['Sab Types (Weddings + Corporate + Parties)','all-events'],['Custom Event Types','custom','text','List your event types']] },
         { id: 'venueCatering', question: 'Catering ka arrangement kya hai?', options: [['In-House Catering Only','in-house'],['Outside Caterers Allowed','outside-allowed'],['Dono Options Available','both'],['Custom Catering Rule','custom','text','Describe your catering policy']] }

@@ -31,6 +31,11 @@ const NICHE_NAMES = {
   petcare: 'Pet Care, Vet Clinic & Grooming',
   tailor: 'Custom Tailoring & Fashion Design',
   agri: 'Agriculture Equipment, Seeds & Nursery',
+  hardware: 'Hardware, Electrical & Sanitaryware Store',
+  coworking: 'Co-Working Space, Shared Office & Study Room',
+  printing: 'Printing, Signage & Packaging Solutions',
+  gadgets: 'Electronics Repair & Refurbished Gadgets',
+  driving: 'Driving School & RTO Consultancy',
 };
 
 // ── Category page blueprints ──────────────────────────────────
@@ -296,6 +301,89 @@ PAGE 3 — ADVISORY, REVIEWS & ORDERS (===PAGE:contact===):
 - Shop address + map link + UPI QR for direct payments (only if supplied).`,
 };
 
+const HARDWARE_BLUEPRINT = {
+  second: 'catalog',
+  text: `PAGE 1 — HOME (===PAGE:index===):
+- Hero: modern bathware/hardware shop photo, headline like "Top Quality Pipes, Fittings, Electricals & Bathroom Fixtures", CTAs: "Get Instant WhatsApp Quote" (wa.me) and "View Product Range" → /catalog.
+- Partner brand strip: brand names the shop actually stocks (e.g. Jaguar, Havells, Supreme, Finolex — use supplied brands; text badges, no fake logos).
+- Trust badges: 100% Original Products | Contractor Wholesale Rates | Fast On-Site Delivery (adapt).
+- Top selling categories: Bath Fittings, Modular Switches, Water Tanks, LED Lighting (adapt to what they sell).
+PAGE 2 — CATALOG & PRICE LISTS (===PAGE:catalog===):
+- Category tabs: [Plumbing] [Electricals] [Sanitaryware] [Paints & Tools] (adapt) — must actually filter with vanilla JS.
+- Product cards: brand name, model, list price vs discounted price, packaging size, and an "Inquire Bulk Rate" WhatsApp button with the item pre-filled.
+- Contractor & builder banner: dedicated section inviting architects/plumbers/contractors to send full material lists on WhatsApp.
+PAGE 3 — STORE, REVIEWS & QUOTE (===PAGE:contact===):
+- Store showcase: showroom floor, warehouse stock, delivery vehicle photos (relevant Unsplash images).
+- Builder & contractor testimonials: review cards.
+- Material list quote form: name, project type, material requirements textarea — submit opens WhatsApp; add a "Send List Photo/PDF on WhatsApp" button.
+- Store address + map link (https://maps.google.com/?q=<address>) + advance token UPI QR (only if UPI ID supplied; use https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=<url-encoded upi://pay?pa=UPIID&pn=NAME>).`,
+};
+
+const COWORKING_BLUEPRINT = {
+  second: 'plans',
+  text: `PAGE 1 — HOME (===PAGE:index===):
+- Hero: sleek co-working/study space photo, headline like "High-Speed WiFi, Silent Work Desks & Premium Coffee", CTAs: "Book Free Day Pass" → /contact and "View Desk Rates" → /plans.
+- Key amenities grid: WiFi speed, power backup, silent zones, AC & ergonomic chairs, tea/coffee (use supplied amenities).
+- Pricing snapshot: Daily Pass, Dedicated Desk, Private Cabin, Conference Room rate cards (use supplied pricing style).
+PAGE 2 — PLANS & TOUR (===PAGE:plans===):
+- Detailed membership cards: Flexi Desk (daily/monthly pricing + features), Private Office (capacity, locking, GST registration assistance), Meeting/Conference Room (per-hour rates with projector/TV setup) — adapt to supplied offerings.
+- Photo gallery: open desks, calling booths, cafeteria (relevant Unsplash images).
+PAGE 3 — COMMUNITY, REVIEWS & BOOKING (===PAGE:contact===):
+- Community highlights: who works here — freelancers, startups, students.
+- Member reviews: rating cards with quotes.
+- Seat reservation form: plan select (Daily Pass / Monthly Desk / Meeting Room), start date (input type=date), number of seats — submit opens WhatsApp with everything pre-filled.
+- Map link + instant pass payment UPI QR (only if supplied).`,
+};
+
+const PRINTING_BLUEPRINT = {
+  second: 'rates',
+  text: `PAGE 1 — HOME (===PAGE:index===):
+- Hero: digital printing machine photo, headline like "Custom Business Cards, Flex Banners, Acrylic Signage & Packaging Boxes", CTAs: "Get Instant Estimate" → /contact and "Send Design on WhatsApp" (wa.me).
+- USPs: Same-Day Printing | High-Resolution Offset & Digital | Doorstep Delivery (adapt).
+- Popular offerings grid: Visiting Cards, Letterheads, Vinyl Stickers, LED Neon Boards, Custom T-Shirts/Mugs (adapt).
+PAGE 2 — RATES & GUIDELINES (===PAGE:rates===):
+- Product rate cards: visiting cards (matte/gloss/velvet per 1000), banners & boards (star flex/backlit/glow sign per sq.ft), corporate gifting (mugs, diaries, lanyards with bulk discounts) — use supplied pricing style.
+- Artwork & file submission guidelines: accepted formats (PDF, CDR, AI) and resolution specs.
+PAGE 3 — PORTFOLIO, REVIEWS & ORDER (===PAGE:contact===):
+- Printed work showcase: gallery of signage and packaging work.
+- Client reviews: corporate clients, retail stores, event managers.
+- Quick print order form: product type select, quantity, dimensions, notes — submit opens WhatsApp; add a "Send Design File on WhatsApp" button.
+- Press location + map link + advance UPI QR (only if supplied).`,
+};
+
+const GADGET_REPAIR_BLUEPRINT = {
+  second: 'rates',
+  text: `PAGE 1 — HOME (===PAGE:index===):
+- Hero: technician repairing phone/laptop photo, headline like "Doorstep Smartphone, Laptop & Tablet Repair in 30 Minutes", CTAs: "Book Repair Call" (tel: or wa.me) and "Check Repair Rates" → /rates.
+- Trust badges: warranty on parts, No Fix - No Fee, 100% Data Safety (only claim warranty periods that are supplied).
+- Brand expertise strip: Apple, Samsung, OnePlus, Dell, HP, Lenovo (adapt to supplied brands).
+PAGE 2 — RATE CARD & REFURBISHED (===PAGE:rates===):
+- Repair rates: Screen Replacement, Battery Change, Water Damage, Motherboard Repair with estimated pricing (use supplied pricing style, mark as estimates).
+- Refurbished devices section: pre-owned showcase with specs, warranty period, condition rating (A+/A), price tags — include only if the business sells refurbished.
+- Step-by-step process: Free Inspection → Instant Estimate → Quick Repair → Warranty Card (visual timeline).
+PAGE 3 — LAB, REVIEWS & BOOKING (===PAGE:contact===):
+- Repair lab section: equipment photos and technician expertise (certifications only if supplied).
+- Customer reviews with repaired-device photos.
+- Doorstep booking form: device select (Mobile/Laptop/Tablet), brand & model input, issue description, pickup address — submit opens WhatsApp with the repair request pre-filled.
+- Shop address + map link + service fee UPI QR (only if supplied).`,
+};
+
+const DRIVING_BLUEPRINT = {
+  second: 'courses',
+  text: `PAGE 1 — HOME (===PAGE:index===):
+- Hero: dual-control training car with instructor photo, headline like "Learn Driving Confidently with Certified Instructors & RTO Support", CTAs: "Enroll Today" → /contact and "View Course Packages" → /courses.
+- Key USPs: Dual-Control Cars | Female Instructors Available | Learner & Permanent License Assistance (adapt to supplied services).
+- Quick stats: use ONLY supplied numbers; otherwise qualitative badges (Certified Instructors, Structured Curriculum, Flexible Timings).
+PAGE 2 — COURSES & RTO SERVICES (===PAGE:courses===):
+- Course comparison cards: Beginner (days + daily practice + theory), Refresher (short course for licence-holders), VIP/Executive (flexible timings + doorstep pickup) — adapt durations/pricing to supplied details.
+- RTO services list: License Renewal, RC Transfer, Address Change, International Driving Permit (adapt) with assistance CTAs.
+PAGE 3 — INSTRUCTORS, REVIEWS & ADMISSION (===PAGE:contact===):
+- Instructor credentials: profiles with experience (govt certification only if supplied).
+- Student success stories: reviews and license success cards.
+- Admission & slot booking form: transmission select (Manual/Automatic), preferred slot (Morning/Evening), doorstep pickup yes/no — submit opens WhatsApp with the enrollment request pre-filled.
+- Office address + map link + admission advance UPI QR (only if supplied).`,
+};
+
 const CATEGORY_BLUEPRINTS = {
   food: FOOD_BLUEPRINT,
   bakery: FOOD_BLUEPRINT,
@@ -317,6 +405,11 @@ const CATEGORY_BLUEPRINTS = {
   petcare: PETCARE_BLUEPRINT,
   tailor: TAILOR_BLUEPRINT,
   agri: AGRI_BLUEPRINT,
+  hardware: HARDWARE_BLUEPRINT,
+  coworking: COWORKING_BLUEPRINT,
+  printing: PRINTING_BLUEPRINT,
+  gadgets: GADGET_REPAIR_BLUEPRINT,
+  driving: DRIVING_BLUEPRINT,
 };
 
 function buildSystemPrompt() {
