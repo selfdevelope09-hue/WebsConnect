@@ -6,6 +6,11 @@
   <meta name="theme-color" content="#050816" />
   <meta name="description" content="WebsConnect — India's first 100% mobile-first AI website builder." />
   <title>WebsConnect AI — Website Builder</title>
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="apple-touch-icon" href="/logo.png" />
+  <meta property="og:image" content="https://websconnect.in/logo.png" />
+  <meta property="og:title" content="WebsConnect AI — Website Builder" />
+  <meta property="og:description" content="No Laptop. No Code. Just Chat & Go Live in 60 Seconds." />
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -66,7 +71,7 @@
         <svg class="w-5 h-5 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M4 7h16M4 12h16M4 17h16"/></svg>
       </button>
       <div class="flex items-center gap-1.5">
-        <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-accent to-indigo-400 flex items-center justify-center text-[10px] font-black text-base">W</div>
+        <img src="/logo.png" alt="WebsConnect" class="w-7 h-7 rounded-lg object-contain" />
         <span class="font-bold text-sm tracking-tight">WebsConnect <span class="text-accent">AI</span></span>
       </div>
       <div class="flex items-center gap-2">
@@ -208,7 +213,7 @@
   <div id="login-modal" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/70 backdrop-blur-sm p-4">
     <div class="w-full max-w-sm rounded-3xl bg-surface border border-white/10 p-6 shadow-2xl">
       <div class="text-center">
-        <div class="mx-auto w-12 h-12 rounded-2xl bg-gradient-to-br from-accent to-indigo-500 flex items-center justify-center text-lg font-black text-base">W</div>
+        <img src="/logo.png" alt="WebsConnect" class="mx-auto w-14 h-14 rounded-2xl object-contain" />
         <h3 class="mt-3 text-lg font-bold">Continue with Google</h3>
         <p class="mt-1.5 text-xs text-muted leading-relaxed">
           Guest mode se browse kar sakte ho. Website build / save karne ke liye Google login zaroori hai.
@@ -228,6 +233,7 @@
       <button id="btn-builder-back" class="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
       </button>
+      <img src="/logo.png" alt="" class="w-9 h-9 rounded-full object-contain bg-white/5 p-1" />
       <div class="flex-1 min-w-0">
         <p class="text-sm font-semibold truncate">WebsConnect AI</p>
         <p class="text-[11px] text-accent flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-accent"></span> Online</p>
@@ -246,7 +252,10 @@
   <!-- Loading -->
   <div id="loading-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-base/95 backdrop-blur-md">
     <div class="text-center px-6 max-w-sm">
-      <div class="spinner-ring mx-auto mb-6"></div>
+      <div class="relative mx-auto mb-6 w-16 h-16">
+        <div class="spinner-ring absolute inset-0"></div>
+        <img src="/logo.png" alt="" class="absolute inset-0 m-auto w-8 h-8 object-contain" />
+      </div>
       <h2 class="text-lg font-bold mb-2">Building your website</h2>
       <p id="loading-text" class="text-sm text-accent font-medium">Analyzing requirements...</p>
       <div class="mt-6 w-full h-1 rounded-full bg-slate-800 overflow-hidden">
