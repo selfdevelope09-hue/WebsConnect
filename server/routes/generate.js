@@ -25,6 +25,111 @@ const NICHE_NAMES = {
   blog: 'Blog',
 };
 
+// ── Category page blueprints ──────────────────────────────────
+// Exact 3-page structures per business category. The AI must follow
+// the matching blueprint so every generated site has the right
+// conversion-focused layout for its niche.
+
+const FOOD_BLUEPRINT = {
+  second: 'menu',
+  text: `PAGE 1 — HOME (===PAGE:index===):
+- Header: business name/logo, nav (Home, Menu, Contact Us), WhatsApp CTA button in the header.
+- Hero: high-res food/bakery image background, catchy localized headline (e.g. "Freshly Baked Everyday in <city>"), two CTAs: "Order on WhatsApp" (wa.me) + "View Menu" (/menu).
+- Top 3 Bestsellers: card layout with image, item name, price tag, and an "Add to Order" button that opens WhatsApp with that exact item name pre-filled.
+- Why Choose Us: 3 icon cards (e.g. 100% Eggless, Pure Butter, Same-Day Delivery — adapt to the supplied details).
+- Quick Contact Strip: phone, shop address, today's opening hours (only supplied details).
+PAGE 2 — FULL MENU (===PAGE:menu===):
+- Category filter tabs: [All] [Cakes] [Pastries] [Savories] [Beverages] (adapt categories to the actual business) — must actually filter the grid with vanilla JS.
+- Product grid: each item has image, name, weight/size options (500g / 1kg), price, and a direct WhatsApp order button that sends the exact item name in the chat message.
+- Custom Order Banner: "Planning a Wedding or Birthday? Order Custom Designer Cakes" with a CTA to /contact.
+PAGE 3 — ABOUT, REVIEWS & LOCATION (===PAGE:contact===):
+- Founder/bakery story: short paragraph about the journey and hygiene standards.
+- Customer testimonials: 4-5 star review cards.
+- Location & hours: exact address, opening/closing timings, and an "Open in Google Maps" link (https://maps.google.com/?q=<address>) if the address is supplied.
+- Direct Payment: if a UPI ID is supplied, embed a UPI QR code image (https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=<url-encoded upi://pay?pa=UPIID&pn=NAME>) plus an upi://pay button.`,
+};
+
+const SALON_GYM_BLUEPRINT = {
+  second: 'services',
+  text: `PAGE 1 — HOME (===PAGE:index===):
+- Hero banner: premium interior photo, headline like "Transform Your Look Today" (adapt for gym), CTA button "Book Appointment" → /contact.
+- Popular Packages: 3 pricing cards (e.g. Bridal Glow, Hair Spa Combo, Monthly Gym Pass — adapt) each with a booking CTA.
+- Stats counter strip: use supplied numbers/ratings only; otherwise qualitative badges (Expert Stylists, Hygienic Studio, Flexible Timings).
+- Urgency banner: "Need a slot today? Check availability on WhatsApp" with a wa.me button.
+PAGE 2 — SERVICES RATE CARD (===PAGE:services===):
+- Service categories as tab/accordion view (Hair, Skin, Nails, Spa — or workout programs for a gym) working with vanilla JS.
+- Detailed rate table: service name, duration (e.g. 45 mins), price, and a "Book This" button that opens WhatsApp with the service name pre-filled.
+- Transformation gallery: before vs after image pairs.
+PAGE 3 — EXPERTS, REVIEWS & BOOKING (===PAGE:contact===):
+- Meet the Experts: team profile cards with specialization.
+- Reviews grid: client feedback cards with star ratings.
+- Appointment booking form: date picker (input type=date), time slot select, service select, name — submit opens WhatsApp with all details pre-filled.
+- Map link to the address (if supplied) + UPI QR code for slot confirmation (only if UPI ID supplied, same qrserver.com technique).`,
+};
+
+const RETAIL_BLUEPRINT = {
+  second: 'collection',
+  text: `PAGE 1 — HOME (===PAGE:index===):
+- Hero: high-fashion lookbook banner, headline like "Exclusive Designer Ethnic Wear" (adapt), CTA "Explore Collection" → /collection.
+- Featured Collections: category cards (e.g. Lehengas, Sarees, Western Dresses, Accessories — adapt to the store).
+- New Arrivals: horizontal scroll slider of latest products with price badges.
+- Trust badges strip: e.g. Custom Fitting Available, Premium Fabric, Easy Exchange (adapt to supplied details; no fake shipping claims).
+PAGE 2 — PRODUCT SHOWCASE (===PAGE:collection===):
+- Filter bar: filter chips by occasion/category/price range — must actually filter the grid with vanilla JS.
+- Product cards: image, product title, SKU/code, price, and a "Buy via WhatsApp" button that pre-fills the product code + name in the message.
+- Size & Fitting Guide: a popup modal (vanilla JS) with measurement instructions.
+PAGE 3 — STORY, STORE & SUPPORT (===PAGE:contact===):
+- Designer story: brief note on heritage and craftsmanship.
+- Store visit / video-call booking: small form (name, preferred date/time) whose submit opens WhatsApp.
+- FAQ section: shipping, return/exchange policy (use supplied policies or clearly generic wording).
+- Map link + UPI QR code (only if address / UPI ID supplied).`,
+};
+
+const REPAIR_BLUEPRINT = {
+  second: 'services',
+  text: `PAGE 1 — HOME (===PAGE:index===):
+- Hero: clean bold banner, urgency headline (e.g. "24/7 Professional AC Repair & Plumbing — at your door in 30 mins", adapt to the trade), one BIG high-contrast "Call Technician Now" button (tel: if phone supplied, else wa.me).
+- Core services grid: icon cards (e.g. Plumbing, Electrical, AC Service, Cleaning — adapt).
+- Why Us: Verified Technicians | Upfront Pricing | Service Guarantee badges.
+- Instant rate estimator: a dropdown of common jobs that shows the estimated price with vanilla JS.
+PAGE 2 — RATE CARD (===PAGE:services===):
+- Categorized service cards: detailed task list (e.g. AC Jet Wash, PCB Repair, Gas Refill) with fixed prices and a WhatsApp book button per task.
+- Work process timeline: Book Online → Technician Arrives → Pay After Satisfaction (3-step visual).
+PAGE 3 — TRUST, REVIEWS & BOOKING (===PAGE:contact===):
+- Trust section: verified staff / background-checked badges (qualitative unless specifics supplied).
+- Customer reviews with photos of completed work (relevant Unsplash images).
+- Service booking form: address input, preferred time, issue description — submit opens WhatsApp with everything pre-filled.`,
+};
+
+const CREATIVE_BLUEPRINT = {
+  second: 'portfolio',
+  text: `PAGE 1 — HOME (===PAGE:index===):
+- Hero: full-screen photography/work banner with two CTAs: "View Portfolio" → /portfolio and "Check Availability" → /contact.
+- Selected Work: masonry grid of 6 best shots/projects (link to /portfolio).
+- Stats/clients strip: use supplied numbers only; otherwise qualitative highlights.
+PAGE 2 — PORTFOLIO & PACKAGES (===PAGE:portfolio===):
+- Category tabs: e.g. [Weddings] [Pre-Weddings] [Commercial] [Events] (adapt) — must actually filter with vanilla JS.
+- High-res gallery grid with a lightbox modal view on tap (vanilla JS).
+- Package pricing cards: Basic / Standard / Premium with feature checklists and "Book" CTAs → /contact.
+PAGE 3 — ABOUT, TESTIMONIALS & INQUIRY (===PAGE:contact===):
+- Creator bio: story plus equipment details (cameras, drones) if supplied.
+- Client testimonials: quote cards.
+- Inquiry & booking form: event date, event type, venue location — submit opens WhatsApp with a pre-filled quote request.`,
+};
+
+const CATEGORY_BLUEPRINTS = {
+  food: FOOD_BLUEPRINT,
+  bakery: FOOD_BLUEPRINT,
+  salon: SALON_GYM_BLUEPRINT,
+  gym: SALON_GYM_BLUEPRINT,
+  fashion: RETAIL_BLUEPRINT,
+  store: RETAIL_BLUEPRINT,
+  services: REPAIR_BLUEPRINT,
+  photography: CREATIVE_BLUEPRINT,
+  creative: CREATIVE_BLUEPRINT,
+  portfolio: CREATIVE_BLUEPRINT,
+};
+
 function buildSystemPrompt() {
   return [
     'You are WebsConnect AI, an expert mobile-first website generator for small Indian businesses.',
@@ -37,7 +142,7 @@ function buildSystemPrompt() {
     '===PAGE:contact===',
     '<!DOCTYPE html>... complete contact page ...',
     '',
-    'For <second>, pick ONE lowercase word that fits the business: portfolio, services, menu, gallery, or about.',
+    'For <second>, pick ONE lowercase word that fits the business: portfolio, services, menu, collection, gallery, or about. If the user message specifies a PAGE BLUEPRINT, use its exact page names and follow its structure section-by-section.',
     'Rules for EVERY page:',
     '- Complete self-contained HTML document using Tailwind CSS via <script src="https://cdn.tailwindcss.com"></script>.',
     '- Identical sticky header/nav on all three pages with working links: <a href="/">Home</a>, <a href="/<second>">, <a href="/contact">Contact</a>. Highlight the active page.',
@@ -75,6 +180,7 @@ function formatRequirements(requirements) {
 
 function buildUserPrompt({ niche, vibe, feature, prompt, businessName, requirements }) {
   const detailedRequirements = formatRequirements(requirements);
+  const blueprint = CATEGORY_BLUEPRINTS[niche];
   return [
     `Business type: ${NICHE_NAMES[niche] || niche || 'local business'}`,
     `Business name: ${businessName || 'create a catchy realistic name'}`,
@@ -82,6 +188,9 @@ function buildUserPrompt({ niche, vibe, feature, prompt, businessName, requireme
     feature ? `Primary action key: ${feature}` : '',
     prompt ? `Owner's description: ${prompt}` : '',
     detailedRequirements ? `\nCOMPLETE DISCOVERY ANSWERS:\n${detailedRequirements}` : '',
+    blueprint
+      ? `\nPAGE BLUEPRINT — follow this structure section-by-section (second page must be named "${blueprint.second}", so nav links are /, /${blueprint.second}, /contact):\n${blueprint.text}`
+      : '',
     'Create the navigation, content hierarchy, calls-to-action, sections, and integrations from these answers.',
     'Generate the complete website now.',
   ].filter(Boolean).join('\n');
