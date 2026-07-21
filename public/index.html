@@ -1,533 +1,839 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="description" content="WebsConnect — India's first 100% mobile-first AI website builder. No laptop. No code. Chat & go live in 60 seconds." />
-  <title>WebsConnect — AI Website Builder</title>
-
-  <!-- Tailwind CSS via CDN -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#050816" />
+  <meta name="description" content="WebsConnect — India's first 100% mobile-first AI website builder." />
+  <title>WebsConnect AI — Website Builder</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
       theme: {
         extend: {
           colors: {
-            base: '#0b111e',
-            surface: '#111827',
-            card: '#151d2e',
+            base: '#050816',
+            surface: '#0c1224',
+            card: '#121a2f',
             accent: '#22d3ee',
-            'accent-glow': '#38bdf8',
+            glow: '#818cf8',
             muted: '#94a3b8',
           },
-          fontFamily: {
-            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
-          },
-          animation: {
-            'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
-            'spin-slow': 'spin 3s linear infinite',
-            'fade-up': 'fadeUp 0.4s ease-out forwards',
-            'typing': 'typing 1.2s ease-in-out infinite',
-          },
-          keyframes: {
-            pulseGlow: {
-              '0%, 100%': { boxShadow: '0 0 20px rgba(34, 211, 238, 0.3)' },
-              '50%': { boxShadow: '0 0 40px rgba(34, 211, 238, 0.6), 0 0 80px rgba(56, 189, 248, 0.2)' },
-            },
-            fadeUp: {
-              '0%': { opacity: '0', transform: 'translateY(12px)' },
-              '100%': { opacity: '1', transform: 'translateY(0)' },
-            },
-            typing: {
-              '0%, 100%': { opacity: '0.4' },
-              '50%': { opacity: '1' },
-            },
-          },
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
         },
       },
     };
   </script>
-
-  <!-- Inter font -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
   <style>
-    /* Custom scrollbar for chat */
-    #chat-messages::-webkit-scrollbar { width: 4px; }
-    #chat-messages::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
-
-    /* Phone frame notch */
-    .phone-notch {
-      background: #0b111e;
-      width: 96px;
-      height: 22px;
-      border-radius: 0 0 14px 14px;
-      margin: 0 auto;
-    }
-
-    /* Watermark diagonal stripes */
-    .watermark-overlay {
-      background: repeating-linear-gradient(
-        -45deg,
-        transparent,
-        transparent 40px,
-        rgba(34, 211, 238, 0.04) 40px,
-        rgba(34, 211, 238, 0.04) 80px
-      );
-    }
-
-    /* Glowing spinner ring */
+    html, body { background: #050816; }
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    .glow-btn { box-shadow: 0 0 24px rgba(34,211,238,.35), 0 0 60px rgba(99,102,241,.2); }
+    .cat-card { min-width: 148px; }
+    .bubble-enter { animation: fadeUp .35s ease-out; }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(10px);} to { opacity:1; transform:none;} }
+    .typing-dot { animation: bounce 1.2s ease-in-out infinite; }
+    .typing-dot:nth-child(2) { animation-delay:.15s; }
+    .typing-dot:nth-child(3) { animation-delay:.3s; }
+    @keyframes bounce { 0%,60%,100%{transform:translateY(0);opacity:.4} 30%{transform:translateY(-4px);opacity:1} }
     .spinner-ring {
-      width: 72px;
-      height: 72px;
-      border-radius: 50%;
-      border: 3px solid rgba(34, 211, 238, 0.15);
-      border-top-color: #22d3ee;
-      border-right-color: #38bdf8;
-      animation: spin 1s linear infinite;
-      box-shadow: 0 0 30px rgba(34, 211, 238, 0.4), inset 0 0 20px rgba(34, 211, 238, 0.1);
+      width:64px;height:64px;border-radius:50%;
+      border:3px solid rgba(34,211,238,.15);border-top-color:#22d3ee;
+      animation:spin 1s linear infinite;
     }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    /* Button press feedback */
-    .option-btn:active {
-      transform: scale(0.97);
-    }
-
-    /* Chat bubble entrance */
-    .bubble-enter {
-      animation: fadeUp 0.35s ease-out forwards;
-    }
-
-    /* Typing dots */
-    .typing-dot {
-      animation: typingBounce 1.4s ease-in-out infinite;
-    }
-    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
-    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
-
-    @keyframes typingBounce {
-      0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
-      30% { transform: translateY(-4px); opacity: 1; }
-    }
+    @keyframes spin { to { transform:rotate(360deg);} }
+    .safe-bottom { padding-bottom: calc(5.5rem + env(safe-area-inset-bottom)); }
+    .phone-notch { width:96px;height:20px;background:#050816;border-radius:0 0 12px 12px;margin:0 auto; }
   </style>
 </head>
-
 <body class="bg-base text-white font-sans antialiased min-h-screen overflow-x-hidden">
 
-  <!-- Ambient background glow -->
-  <div class="fixed inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
-    <div class="absolute -top-32 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-cyan-500/8 blur-[120px]"></div>
-    <div class="absolute bottom-0 right-0 w-[400px] h-[400px] rounded-full bg-sky-500/6 blur-[100px]"></div>
+  <!-- Ambient glow -->
+  <div class="fixed inset-0 pointer-events-none" aria-hidden="true">
+    <div class="absolute -top-24 left-1/2 -translate-x-1/2 w-[420px] h-[420px] rounded-full bg-indigo-500/20 blur-[100px]"></div>
+    <div class="absolute bottom-20 right-0 w-[280px] h-[280px] rounded-full bg-cyan-500/10 blur-[90px]"></div>
   </div>
 
-  <div class="relative z-10 max-w-lg mx-auto px-4 pb-10">
+  <!-- ===================== HOME SCREEN ===================== -->
+  <div id="screen-home" class="relative z-10 max-w-md mx-auto safe-bottom">
 
-    <!-- ========== HEADER ========== -->
-    <header class="flex items-center justify-between py-5">
-      <div class="flex items-center gap-2.5">
-        <!-- Logo icon -->
-        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-accent to-accent-glow flex items-center justify-center shadow-lg shadow-cyan-500/20">
-          <svg class="w-4.5 h-4.5 text-base" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-          </svg>
-        </div>
-        <span class="text-lg font-bold tracking-tight">Webs<span class="text-accent">Connect</span></span>
+    <!-- Top nav -->
+    <header class="flex items-center justify-between px-4 pt-4 pb-2">
+      <button id="btn-menu" class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center" aria-label="Menu">
+        <svg class="w-5 h-5 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+      <div class="flex items-center gap-1.5">
+        <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-accent to-indigo-400 flex items-center justify-center text-[10px] font-black text-base">W</div>
+        <span class="font-bold text-sm tracking-tight">WebsConnect <span class="text-accent">AI</span></span>
       </div>
-      <span class="text-[10px] font-semibold uppercase tracking-widest px-2.5 py-1 rounded-full border border-accent/30 text-accent bg-accent/10">
-        Beta
-      </span>
+      <div class="flex items-center gap-2">
+        <button class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-gradient-to-r from-amber-400 to-orange-400 text-slate-900 flex items-center gap-1">
+          <span>👑</span> Pro
+        </button>
+        <button id="btn-avatar" class="w-9 h-9 rounded-full overflow-hidden border border-white/20 bg-card">
+          <img id="avatar-img" class="w-full h-full object-cover hidden" alt="" />
+          <span id="avatar-guest" class="w-full h-full flex items-center justify-center text-xs font-bold text-accent">G</span>
+        </button>
+      </div>
     </header>
 
-    <!-- ========== HERO ========== -->
-    <section class="text-center mb-6">
-      <h1 class="text-[1.35rem] sm:text-2xl font-extrabold leading-snug tracking-tight">
-        India's First <span class="text-transparent bg-clip-text bg-gradient-to-r from-accent to-accent-glow">100% Mobile-First</span> AI Website Builder.
+    <!-- Hero -->
+    <section class="px-4 pt-3 text-center">
+      <span class="inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider px-3 py-1 rounded-full border border-accent/30 bg-accent/10 text-accent">
+        <span class="w-1.5 h-1.5 rounded-full bg-accent"></span>
+        India's First 100% Mobile-First
+      </span>
+      <h1 class="mt-3 text-[1.85rem] font-extrabold leading-tight tracking-tight">
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-sky-400 to-indigo-400">AI Website Builder</span>
       </h1>
-      <p class="mt-2.5 text-sm sm:text-base text-muted leading-relaxed">
+      <p class="mt-2 text-sm text-muted leading-relaxed">
         No Laptop. No Code. Just Chat &amp; Go Live in <span class="text-white font-semibold">60 Seconds</span>.
+      </p>
+      <div class="mt-3 flex flex-wrap justify-center gap-2">
+        <span class="px-2.5 py-1 rounded-full text-[10px] bg-white/5 border border-white/10 text-slate-300">✨ No Code</span>
+        <span class="px-2.5 py-1 rounded-full text-[10px] bg-white/5 border border-white/10 text-slate-300">📱 Mobile-First</span>
+        <span class="px-2.5 py-1 rounded-full text-[10px] bg-white/5 border border-white/10 text-slate-300">🤖 AI Powered</span>
+        <span class="px-2.5 py-1 rounded-full text-[10px] bg-white/5 border border-white/10 text-slate-300">⚡ Go Live Fast</span>
+      </div>
+      <button id="btn-start-building" class="mt-5 w-full glow-btn py-3.5 rounded-2xl font-bold text-sm bg-gradient-to-r from-cyan-400 to-indigo-500 text-slate-900 active:scale-[0.98] transition">
+        ✨ Start Building with AI
+      </button>
+      <p class="mt-2.5 text-[11px] text-muted flex items-center justify-center gap-2">
+        <span class="flex -space-x-1.5">
+          <span class="w-5 h-5 rounded-full bg-pink-400 border-2 border-base"></span>
+          <span class="w-5 h-5 rounded-full bg-sky-400 border-2 border-base"></span>
+          <span class="w-5 h-5 rounded-full bg-violet-400 border-2 border-base"></span>
+        </span>
+        <span><strong class="text-white">2,498+</strong> websites already built</span>
       </p>
     </section>
 
-    <!-- ========== CHAT CONTAINER ========== -->
-    <section id="chat-section" class="rounded-2xl border border-slate-700/50 bg-surface/80 backdrop-blur-sm shadow-2xl shadow-black/40 overflow-hidden">
-
-      <!-- Chat header bar (WhatsApp/Telegram style) -->
-      <div class="flex items-center gap-3 px-4 py-3 bg-card border-b border-slate-700/40">
-        <div class="w-9 h-9 rounded-full bg-gradient-to-br from-accent to-sky-500 flex items-center justify-center text-sm font-bold text-base shrink-0">
-          AI
-        </div>
-        <div class="flex-1 min-w-0">
-          <p class="text-sm font-semibold truncate">WebsConnect AI</p>
-          <p class="text-[11px] text-accent flex items-center gap-1">
-            <span class="w-1.5 h-1.5 rounded-full bg-accent inline-block"></span>
-            Online
-          </p>
-        </div>
+    <!-- Prompt box -->
+    <section class="px-4 mt-6">
+      <p class="text-sm font-semibold mb-2">What type of website do you want to build today? 👋</p>
+      <div class="flex items-center gap-2 bg-card border border-white/10 rounded-2xl px-3 py-2 focus-within:border-accent/40 transition">
+        <input id="prompt-input" type="text" placeholder="e.g. I need a photography portfolio website."
+          class="flex-1 bg-transparent text-sm outline-none placeholder:text-slate-500 py-2" />
+        <button id="btn-send-prompt" class="w-10 h-10 shrink-0 rounded-full bg-gradient-to-br from-accent to-indigo-500 flex items-center justify-center active:scale-95 transition">
+          <svg class="w-4 h-4 text-slate-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </button>
       </div>
-
-      <!-- Chat messages area -->
-      <div id="chat-messages" class="px-3 py-4 space-y-3 min-h-[220px] max-h-[340px] overflow-y-auto">
-        <!-- Messages injected by JS -->
-      </div>
-
-      <!-- Typing indicator (hidden by default) -->
-      <div id="typing-indicator" class="hidden px-3 pb-2">
-        <div class="inline-flex items-center gap-2 bg-card rounded-2xl rounded-tl-sm px-4 py-2.5 border border-slate-700/40">
-          <span class="text-xs text-muted">AI is typing</span>
-          <span class="flex gap-1">
-            <span class="typing-dot w-1.5 h-1.5 rounded-full bg-accent inline-block"></span>
-            <span class="typing-dot w-1.5 h-1.5 rounded-full bg-accent inline-block"></span>
-            <span class="typing-dot w-1.5 h-1.5 rounded-full bg-accent inline-block"></span>
-          </span>
-        </div>
-      </div>
-
-      <!-- Selection buttons -->
-      <div id="options-container" class="px-3 pb-4 pt-1 space-y-2">
-        <!-- Buttons injected by JS -->
+      <div class="mt-3 flex gap-2 overflow-x-auto hide-scrollbar pb-1">
+        <button class="chip shrink-0 px-3.5 py-1.5 rounded-full text-xs font-medium bg-white/5 border border-white/10" data-niche="business">Business</button>
+        <button class="chip shrink-0 px-3.5 py-1.5 rounded-full text-xs font-medium bg-white/5 border border-white/10" data-niche="portfolio">Portfolio</button>
+        <button class="chip shrink-0 px-3.5 py-1.5 rounded-full text-xs font-medium bg-white/5 border border-white/10" data-niche="store">Store</button>
+        <button class="chip shrink-0 px-3.5 py-1.5 rounded-full text-xs font-medium bg-white/5 border border-white/10" data-niche="blog">Blog</button>
+        <button class="chip shrink-0 px-3.5 py-1.5 rounded-full text-xs font-medium bg-white/5 border border-white/10" data-niche="more">… More</button>
       </div>
     </section>
 
-    <!-- Trust badges -->
-    <div class="flex items-center justify-center gap-5 mt-6 text-[11px] text-muted">
-      <span class="flex items-center gap-1">
-        <svg class="w-3.5 h-3.5 text-accent" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-        No code needed
-      </span>
-      <span class="flex items-center gap-1">
-        <svg class="w-3.5 h-3.5 text-accent" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-        Mobile-first
-      </span>
-      <span class="flex items-center gap-1">
-        <svg class="w-3.5 h-3.5 text-accent" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-        ₹499 to go live
-      </span>
+    <!-- Popular categories -->
+    <section class="mt-6">
+      <div class="px-4 flex items-center justify-between mb-3">
+        <h2 class="font-bold text-sm">Popular Categories</h2>
+        <button class="text-[11px] text-accent font-medium">See all</button>
+      </div>
+      <div class="flex gap-3 overflow-x-auto hide-scrollbar px-4 pb-1">
+        <button class="cat-card category-btn text-left rounded-2xl overflow-hidden border border-white/10 bg-card" data-niche="photography" data-label="Photography 📸">
+          <div class="h-24 bg-cover bg-center" style="background-image:url('https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=400&q=80')"></div>
+          <div class="p-2.5"><p class="text-xs font-bold">Photography</p><p class="text-[10px] text-muted">Capture &amp; showcase</p></div>
+        </button>
+        <button class="cat-card category-btn text-left rounded-2xl overflow-hidden border border-white/10 bg-card" data-niche="gym" data-label="Gym & Fitness 🏋️‍♂️">
+          <div class="h-24 bg-cover bg-center" style="background-image:url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&q=80')"></div>
+          <div class="p-2.5"><p class="text-xs font-bold">Gym &amp; Fitness</p><p class="text-[10px] text-muted">Train &amp; transform</p></div>
+        </button>
+        <button class="cat-card category-btn text-left rounded-2xl overflow-hidden border border-white/10 bg-card" data-niche="bakery" data-label="Bakery & Cafe 🥐">
+          <div class="h-24 bg-cover bg-center" style="background-image:url('https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400&q=80')"></div>
+          <div class="p-2.5"><p class="text-xs font-bold">Bakery &amp; Cafe</p><p class="text-[10px] text-muted">Fresh &amp; delicious</p></div>
+        </button>
+        <button class="cat-card category-btn text-left rounded-2xl overflow-hidden border border-white/10 bg-card" data-niche="salon" data-label="Salon & Spa 💈">
+          <div class="h-24 bg-cover bg-center" style="background-image:url('https://images.unsplash.com/photo-1560066984-138dadb4c035?w=400&q=80')"></div>
+          <div class="p-2.5"><p class="text-xs font-bold">Salon &amp; Spa</p><p class="text-[10px] text-muted">Glow &amp; relax</p></div>
+        </button>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section class="px-4 mt-6">
+      <h2 class="font-bold text-sm mb-3">Why WebsConnect?</h2>
+      <div class="grid grid-cols-2 gap-2.5">
+        <div class="rounded-2xl bg-card border border-white/10 p-3"><div class="text-lg">⚡</div><p class="text-xs font-semibold mt-1">AI Website in 60 Sec</p></div>
+        <div class="rounded-2xl bg-card border border-white/10 p-3"><div class="text-lg">📱</div><p class="text-xs font-semibold mt-1">Mobile-First Design</p></div>
+        <div class="rounded-2xl bg-card border border-white/10 p-3"><div class="text-lg">📈</div><p class="text-xs font-semibold mt-1">Built-in SEO</p></div>
+        <div class="rounded-2xl bg-card border border-white/10 p-3"><div class="text-lg">🌐</div><p class="text-xs font-semibold mt-1">Custom Domain</p></div>
+        <div class="rounded-2xl bg-card border border-white/10 p-3"><div class="text-lg">☁️</div><p class="text-xs font-semibold mt-1">Hosting Included</p></div>
+        <div class="rounded-2xl bg-card border border-white/10 p-3"><div class="text-lg">🎧</div><p class="text-xs font-semibold mt-1">24/7 Support</p></div>
+      </div>
+    </section>
+
+    <!-- Recent projects -->
+    <section class="px-4 mt-6 mb-4">
+      <h2 class="font-bold text-sm mb-3">Your Recent Projects</h2>
+      <div id="projects-list" class="space-y-2">
+        <div id="projects-empty" class="rounded-2xl border border-dashed border-white/15 bg-card/50 p-4 text-center">
+          <p class="text-xs text-muted">No projects yet. Start building — Google login required to save.</p>
+          <button id="btn-empty-start" class="mt-3 text-xs font-semibold text-accent">Start your first website →</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Bottom nav -->
+  <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 z-40 bg-surface/95 backdrop-blur-lg border-t border-white/10">
+    <div class="max-w-md mx-auto flex items-end justify-around px-2 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
+      <button class="nav-item flex flex-col items-center gap-0.5 w-14 text-accent" data-nav="home">
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3l9 8h-3v9h-5v-6H11v6H6v-9H3l9-8z"/></svg>
+        <span class="text-[9px] font-semibold">Home</span>
+      </button>
+      <button class="nav-item flex flex-col items-center gap-0.5 w-14 text-slate-400" data-nav="projects">
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V7z"/></svg>
+        <span class="text-[9px] font-medium">Projects</span>
+      </button>
+      <button id="nav-create" class="relative -mt-5 w-14 h-14 rounded-full glow-btn bg-gradient-to-br from-cyan-400 to-indigo-500 flex items-center justify-center text-slate-900 text-2xl font-bold border-4 border-base">+</button>
+      <button class="nav-item flex flex-col items-center gap-0.5 w-14 text-slate-400" data-nav="templates">
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4 5h6v6H4V5zm10 0h6v6h-6V5zM4 13h6v6H4v-6zm10 0h6v6h-6v-6z"/></svg>
+        <span class="text-[9px] font-medium">Templates</span>
+      </button>
+      <button class="nav-item flex flex-col items-center gap-0.5 w-14 text-slate-400" data-nav="account">
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM4 21a8 8 0 1116 0"/></svg>
+        <span class="text-[9px] font-medium">Account</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ===================== LOGIN MODAL ===================== -->
+  <div id="login-modal" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+    <div class="w-full max-w-sm rounded-3xl bg-surface border border-white/10 p-6 shadow-2xl">
+      <div class="text-center">
+        <div class="mx-auto w-12 h-12 rounded-2xl bg-gradient-to-br from-accent to-indigo-500 flex items-center justify-center text-lg font-black text-base">W</div>
+        <h3 class="mt-3 text-lg font-bold">Continue with Google</h3>
+        <p class="mt-1.5 text-xs text-muted leading-relaxed">
+          Guest mode se browse kar sakte ho. Website build / save karne ke liye Google login zaroori hai.
+        </p>
+        <p id="guest-badge" class="mt-2 text-[10px] text-slate-500 font-mono"></p>
+      </div>
+      <div id="google-btn-wrap" class="mt-5 flex justify-center min-h-[44px]"></div>
+      <p id="login-error" class="hidden mt-3 text-xs text-red-400 text-center"></p>
+      <p id="login-setup-hint" class="hidden mt-3 text-[11px] text-amber-300/90 text-center leading-relaxed"></p>
+      <button id="btn-login-close" class="mt-4 w-full py-2.5 text-xs text-muted">Pehle browse karo — baad mein login</button>
     </div>
   </div>
 
-  <!-- ========== LOADING MODAL ========== -->
+  <!-- ===================== BUILDER (CHAT) ===================== -->
+  <div id="screen-builder" class="hidden relative z-10 max-w-md mx-auto min-h-screen flex flex-col pb-4">
+    <header class="flex items-center gap-3 px-4 py-3 border-b border-white/10 bg-surface/80 backdrop-blur sticky top-0 z-20">
+      <button id="btn-builder-back" class="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+      </button>
+      <div class="flex-1 min-w-0">
+        <p class="text-sm font-semibold truncate">WebsConnect AI</p>
+        <p class="text-[11px] text-accent flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-accent"></span> Online</p>
+      </div>
+    </header>
+    <div id="chat-messages" class="flex-1 px-3 py-4 space-y-3 overflow-y-auto min-h-[280px]"></div>
+    <div id="typing-indicator" class="hidden px-3 pb-2">
+      <div class="inline-flex items-center gap-2 bg-card rounded-2xl rounded-tl-sm px-4 py-2.5 border border-white/10">
+        <span class="text-xs text-muted">AI is typing</span>
+        <span class="flex gap-1"><span class="typing-dot w-1.5 h-1.5 rounded-full bg-accent"></span><span class="typing-dot w-1.5 h-1.5 rounded-full bg-accent"></span><span class="typing-dot w-1.5 h-1.5 rounded-full bg-accent"></span></span>
+      </div>
+    </div>
+    <div id="options-container" class="px-3 space-y-2"></div>
+  </div>
+
+  <!-- Loading -->
   <div id="loading-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-base/95 backdrop-blur-md">
     <div class="text-center px-6 max-w-sm">
       <div class="spinner-ring mx-auto mb-6"></div>
       <h2 class="text-lg font-bold mb-2">Building your website</h2>
-      <p id="loading-text" class="text-sm text-accent font-medium animate-typing">Analyzing requirements...</p>
+      <p id="loading-text" class="text-sm text-accent font-medium">Analyzing requirements...</p>
       <div class="mt-6 w-full h-1 rounded-full bg-slate-800 overflow-hidden">
-        <div id="loading-bar" class="h-full bg-gradient-to-r from-accent to-accent-glow rounded-full transition-all duration-700 ease-out" style="width: 0%"></div>
+        <div id="loading-bar" class="h-full bg-gradient-to-r from-accent to-indigo-400 rounded-full transition-all duration-700" style="width:0%"></div>
       </div>
     </div>
   </div>
 
-  <!-- ========== PREVIEW + WATERMARK MODAL ========== -->
+  <!-- Preview -->
   <div id="preview-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-base/95 backdrop-blur-md p-4 overflow-y-auto">
     <div class="w-full max-w-sm my-auto">
-
-      <!-- Smartphone frame -->
-      <div class="relative mx-auto w-[280px] rounded-[2rem] border-[3px] border-slate-600 bg-slate-900 p-2 shadow-2xl shadow-black/60">
+      <div class="relative mx-auto w-[280px] rounded-[2rem] border-[3px] border-slate-600 bg-slate-900 p-2 shadow-2xl">
         <div class="phone-notch"></div>
-
-        <!-- Screen content -->
-        <div class="relative rounded-[1.4rem] overflow-hidden bg-white aspect-[9/16] watermark-overlay">
-
-          <!-- Mock website preview -->
+        <div class="relative rounded-[1.4rem] overflow-hidden bg-white aspect-[9/16]">
           <div class="h-full flex flex-col text-slate-800 text-[10px]">
-            <!-- Mock nav -->
-            <div class="bg-slate-900 text-white px-3 py-2 flex items-center justify-between">
+            <div class="bg-slate-900 text-white px-3 py-2 flex justify-between">
               <span id="preview-business-name" class="font-bold text-[11px]">Your Business</span>
               <span class="text-[8px] opacity-60">Menu</span>
             </div>
-            <!-- Mock hero -->
             <div class="bg-gradient-to-br from-slate-800 to-slate-600 text-white px-3 py-5 text-center flex-1 flex flex-col justify-center">
-              <p class="text-[13px] font-bold leading-tight" id="preview-headline">Welcome to Your Site</p>
+              <p class="text-[13px] font-bold" id="preview-headline">Welcome</p>
               <p class="text-[8px] mt-1 opacity-70" id="preview-tagline">Built with WebsConnect AI</p>
-              <div class="mt-3 mx-auto w-16 h-5 rounded bg-accent/80 text-[7px] flex items-center justify-center font-semibold text-slate-900">
-                Contact Us
-              </div>
+              <div class="mt-3 mx-auto w-16 h-5 rounded bg-cyan-400/90 text-[7px] flex items-center justify-center font-semibold text-slate-900">Contact Us</div>
             </div>
-            <!-- Mock features -->
             <div class="grid grid-cols-3 gap-1 p-2 bg-slate-50">
-              <div class="bg-white rounded p-1.5 text-center shadow-sm">
-                <div class="text-sm">📸</div>
-                <p class="text-[6px] mt-0.5 font-medium">Gallery</p>
-              </div>
-              <div class="bg-white rounded p-1.5 text-center shadow-sm">
-                <div class="text-sm">💬</div>
-                <p class="text-[6px] mt-0.5 font-medium">Chat</p>
-              </div>
-              <div class="bg-white rounded p-1.5 text-center shadow-sm">
-                <div class="text-sm">💳</div>
-                <p class="text-[6px] mt-0.5 font-medium">Pay</p>
-              </div>
+              <div class="bg-white rounded p-1.5 text-center shadow-sm"><div class="text-sm">📸</div><p class="text-[6px] font-medium">Gallery</p></div>
+              <div class="bg-white rounded p-1.5 text-center shadow-sm"><div class="text-sm">💬</div><p class="text-[6px] font-medium">Chat</p></div>
+              <div class="bg-white rounded p-1.5 text-center shadow-sm"><div class="text-sm">💳</div><p class="text-[6px] font-medium">Pay</p></div>
             </div>
           </div>
-
-          <!-- Watermark banner -->
-          <div class="absolute inset-0 flex items-center justify-center bg-black/50 backdrop-blur-[2px]">
-            <div class="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
-              <span class="text-white/10 text-2xl font-black rotate-[-25deg] tracking-widest uppercase">Preview</span>
-            </div>
+          <div class="absolute inset-0 flex items-center justify-center bg-black/40">
+            <span class="text-white/15 text-2xl font-black -rotate-[25deg] tracking-widest uppercase">Preview</span>
           </div>
         </div>
-
-        <!-- Home indicator -->
         <div class="w-24 h-1 rounded-full bg-slate-600 mx-auto mt-2"></div>
       </div>
-
-      <!-- Upgrade CTA overlay -->
-      <div class="mt-5 rounded-2xl border border-accent/30 bg-card/90 backdrop-blur-sm p-5 text-center shadow-lg shadow-cyan-500/10">
-        <div class="inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-accent bg-accent/10 px-3 py-1 rounded-full mb-3">
-          <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/></svg>
-          Watermarked Preview
-        </div>
-        <h3 class="text-base font-bold leading-snug">
-          Your website is ready!
-        </h3>
-        <p class="text-xs text-muted mt-2 leading-relaxed">
-          To remove the watermark, map your custom subdomain, and take it <span class="text-white font-medium">100% live</span>, upgrade for just
-          <span class="text-accent font-bold text-sm">₹499</span>.
-        </p>
-        <button
-          id="checkout-btn"
-          class="mt-4 w-full py-3.5 rounded-xl font-bold text-sm text-base bg-gradient-to-r from-accent to-accent-glow text-slate-900 shadow-lg shadow-cyan-500/30 animate-pulse-glow transition-transform active:scale-[0.97]"
-        >
-          Activate Website Now →
-        </button>
-        <p class="text-[10px] text-muted mt-2">Secure UPI · Card · Net Banking</p>
+      <div class="mt-5 rounded-2xl border border-accent/30 bg-card p-5 text-center">
+        <h3 class="text-base font-bold">Your website is ready!</h3>
+        <p class="text-xs text-muted mt-2">Watermark hatao, custom subdomain lo — upgrade <span class="text-accent font-bold">₹499</span></p>
+        <button id="checkout-btn" class="mt-4 w-full py-3.5 rounded-xl font-bold text-sm bg-gradient-to-r from-accent to-indigo-400 text-slate-900 glow-btn">Activate Website Now →</button>
+        <button id="btn-preview-home" class="mt-2 w-full py-2 text-xs text-muted">← Back to Home</button>
       </div>
     </div>
   </div>
 
-  <!-- ========== JAVASCRIPT: Step Management ========== -->
   <script>
-    (function () {
-      'use strict';
+  (function () {
+    'use strict';
 
-      // ─── DOM References ───────────────────────────────────────────
-      const chatMessages    = document.getElementById('chat-messages');
-      const optionsContainer = document.getElementById('options-container');
-      const typingIndicator = document.getElementById('typing-indicator');
-      const loadingModal    = document.getElementById('loading-modal');
-      const loadingText     = document.getElementById('loading-text');
-      const loadingBar      = document.getElementById('loading-bar');
-      const previewModal    = document.getElementById('preview-modal');
-      const checkoutBtn     = document.getElementById('checkout-btn');
+    // ── State ──────────────────────────────────────────────────
+    const state = {
+      guestId: null,
+      user: null,
+      token: null,
+      googleClientId: null,
+      googleAuthEnabled: false,
+      pendingAction: null, // { type, payload }
+      choices: { niche: '', vibe: '', feature: '', prompt: '' },
+      step: 0,
+    };
 
-      // ─── Conversation Flow Definition ───────────────────────────
-      // Each step: AI message + option buttons. Step 3 triggers generation.
-      const STEPS = [
-        {
-          id: 1,
-          aiMessage: "Hey there! Let's build your website. What is your business type/niche?",
-          options: [
-            { label: 'Photography 📸', value: 'photography' },
-            { label: 'Gym & Fitness 🏋️‍♂️', value: 'gym' },
-            { label: 'Bakery & Cafe 🥐', value: 'bakery' },
-            { label: 'Salon & Spa 💈', value: 'salon' },
-          ],
-        },
-        {
-          id: 2,
-          aiMessage: 'Great choice! What visual vibe should your website have?',
-          options: [
-            { label: 'Dark & Premium 🌌', value: 'dark' },
-            { label: 'Light & Minimal ⚪', value: 'light' },
-            { label: 'Colorful & Bold 🎨', value: 'colorful' },
-          ],
-        },
-        {
-          id: 3,
-          aiMessage: 'Almost done! Pick the core feature you need most:',
-          options: [
-            { label: 'WhatsApp Chat 💬', value: 'whatsapp' },
-            { label: 'UPI/QR Payments 💳', value: 'upi' },
-            { label: 'Image Portfolio Grid 🖼️', value: 'portfolio' },
-          ],
-        },
-      ];
+    const STEPS = [
+      {
+        aiMessage: "Hey! Let's build your website. What is your business type/niche?",
+        options: [
+          { label: 'Photography 📸', value: 'photography' },
+          { label: 'Gym & Fitness 🏋️‍♂️', value: 'gym' },
+          { label: 'Bakery & Cafe 🥐', value: 'bakery' },
+          { label: 'Salon & Spa 💈', value: 'salon' },
+        ],
+      },
+      {
+        aiMessage: 'Great choice! What visual vibe should your website have?',
+        options: [
+          { label: 'Dark & Premium 🌌', value: 'dark' },
+          { label: 'Light & Minimal ⚪', value: 'light' },
+          { label: 'Colorful & Bold 🎨', value: 'colorful' },
+        ],
+      },
+      {
+        aiMessage: 'Almost done! Pick the core feature you need most:',
+        options: [
+          { label: 'WhatsApp Chat 💬', value: 'whatsapp' },
+          { label: 'UPI/QR Payments 💳', value: 'upi' },
+          { label: 'Image Portfolio Grid 🖼️', value: 'portfolio' },
+        ],
+      },
+    ];
 
-      // Loading screen status messages
-      const LOADING_MESSAGES = [
-        'Analyzing requirements...',
-        'Composing structural semantic HTML...',
-        'Injecting responsive Tailwind styles...',
-        'Finalizing Vercel edge deployment...',
-      ];
+    const LOADING_MESSAGES = [
+      'Analyzing requirements...',
+      'Composing structural semantic HTML...',
+      'Injecting responsive Tailwind styles...',
+      'Finalizing edge deployment...',
+    ];
 
-      // ─── User selections stored across steps ────────────────────
-      const userChoices = {
-        niche: '',
-        vibe: '',
-        feature: '',
-      };
+    // ── DOM ────────────────────────────────────────────────────
+    const $ = (id) => document.getElementById(id);
+    const screenHome = $('screen-home');
+    const screenBuilder = $('screen-builder');
+    const bottomNav = $('bottom-nav');
+    const loginModal = $('login-modal');
+    const chatMessages = $('chat-messages');
+    const optionsContainer = $('options-container');
+    const typingIndicator = $('typing-indicator');
 
-      let currentStep = 0;
-
-      // ─── Render Helpers ─────────────────────────────────────────
-
-      /** Append a chat bubble (AI = left, user = right) */
-      function addBubble(text, isUser) {
-        const wrapper = document.createElement('div');
-        wrapper.className = `flex ${isUser ? 'justify-end' : 'justify-start'} bubble-enter`;
-
-        const bubble = document.createElement('div');
-        bubble.className = isUser
-          ? 'max-w-[80%] bg-accent/20 border border-accent/30 text-white rounded-2xl rounded-tr-sm px-4 py-2.5 text-sm leading-relaxed'
-          : 'max-w-[85%] bg-card border border-slate-700/50 text-slate-100 rounded-2xl rounded-tl-sm px-4 py-2.5 text-sm leading-relaxed';
-
-        bubble.textContent = text;
-        wrapper.appendChild(bubble);
-        chatMessages.appendChild(wrapper);
-
-        // Auto-scroll to latest message
-        chatMessages.scrollTop = chatMessages.scrollHeight;
+    // ── Guest ID ───────────────────────────────────────────────
+    function ensureGuestId() {
+      let id = localStorage.getItem('wc_guest_id');
+      if (!id) {
+        id = 'guest_' + (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2));
+        localStorage.setItem('wc_guest_id', id);
       }
+      state.guestId = id;
+      $('guest-badge').textContent = 'Guest ID: ' + id.slice(0, 18) + '…';
+      fetch('/api/auth/guest', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ guestId: id }),
+      }).catch(function () {});
+      return id;
+    }
 
-      /** Render clickable option buttons for the current step */
-      function renderOptions(options) {
-        optionsContainer.innerHTML = '';
-        options.forEach(function (opt) {
-          const btn = document.createElement('button');
-          btn.className = [
-            'option-btn w-full text-left px-4 py-3.5 rounded-xl',
-            'bg-card border border-slate-700/50 hover:border-accent/40',
-            'text-sm font-medium text-white',
-            'transition-all duration-200 ease-out',
-            'hover:bg-accent/5 active:bg-accent/10',
-            'focus:outline-none focus:ring-2 focus:ring-accent/40',
-          ].join(' ');
-          btn.textContent = opt.label;
-          btn.dataset.value = opt.value;
-          btn.dataset.label = opt.label;
-          btn.addEventListener('click', function () {
-            handleOptionClick(opt.label, opt.value);
-          });
-          optionsContainer.appendChild(btn);
-        });
-      }
+    function isLoggedIn() {
+      return Boolean(state.token && state.user);
+    }
 
-      /** Show/hide the "AI is typing..." indicator */
-      function setTyping(visible) {
-        typingIndicator.classList.toggle('hidden', !visible);
-        if (visible) {
-          chatMessages.scrollTop = chatMessages.scrollHeight;
+    function setLoggedInUI() {
+      if (state.user) {
+        $('avatar-guest').classList.add('hidden');
+        const img = $('avatar-img');
+        if (state.user.avatarUrl) {
+          img.src = state.user.avatarUrl;
+          img.classList.remove('hidden');
+        } else {
+          img.classList.add('hidden');
+          $('avatar-guest').textContent = (state.user.name || 'U').charAt(0).toUpperCase();
+          $('avatar-guest').classList.remove('hidden');
         }
+        loadProjects();
+      } else {
+        $('avatar-img').classList.add('hidden');
+        $('avatar-guest').textContent = 'G';
+        $('avatar-guest').classList.remove('hidden');
+      }
+    }
+
+    // ── Auth gate ──────────────────────────────────────────────
+    /** Require Google login before continuing build. */
+    function requireAuth(action) {
+      if (isLoggedIn()) {
+        runPendingAction(action);
+        return;
+      }
+      state.pendingAction = action;
+      openLoginModal();
+    }
+
+    function openLoginModal() {
+      loginModal.classList.remove('hidden');
+      renderGoogleButton();
+    }
+
+    function closeLoginModal() {
+      loginModal.classList.add('hidden');
+    }
+
+    function renderGoogleButton() {
+      const wrap = $('google-btn-wrap');
+      const err = $('login-error');
+      const hint = $('login-setup-hint');
+      err.classList.add('hidden');
+      hint.classList.add('hidden');
+      wrap.innerHTML = '';
+
+      if (!state.googleAuthEnabled || !state.googleClientId) {
+        hint.classList.remove('hidden');
+        hint.innerHTML = 'Google login setup pending.<br/>Admin ko Google Cloud OAuth Client ID set karna hoga (<code>GOOGLE_CLIENT_ID</code>).';
+        return;
       }
 
-      // ─── Step Flow Logic ────────────────────────────────────────
-
-      /** Process a user option selection */
-      function handleOptionClick(label, value) {
-        // Disable all buttons to prevent double-taps
-        optionsContainer.querySelectorAll('button').forEach(function (b) {
-          b.disabled = true;
-          b.classList.add('opacity-50', 'pointer-events-none');
-        });
-
-        // Record selection
-        if (currentStep === 0) userChoices.niche = value;
-        else if (currentStep === 1) userChoices.vibe = value;
-        else if (currentStep === 2) userChoices.feature = value;
-
-        // Show user bubble
-        addBubble(label, true);
-
-        // Hide options during typing pause
-        optionsContainer.innerHTML = '';
-        setTyping(true);
-
-        setTimeout(function () {
-          setTyping(false);
-          currentStep++;
-
-          if (currentStep < STEPS.length) {
-            // Move to next step
-            addBubble(STEPS[currentStep].aiMessage, false);
-            renderOptions(STEPS[currentStep].options);
-          } else {
-            // All steps done → start generation
-            startGeneration();
-          }
-        }, 1000);
+      if (!window.google || !google.accounts || !google.accounts.id) {
+        wrap.innerHTML = '<p class="text-xs text-muted">Loading Google…</p>';
+        setTimeout(renderGoogleButton, 400);
+        return;
       }
 
-      /** Kick off the loading/generation screen */
-      function startGeneration() {
-        addBubble('Perfect! Generating your website now... 🚀', false);
-
-        loadingModal.classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
-
-        var msgIndex = 0;
-        var barProgress = 0;
-        var barStep = 100 / LOADING_MESSAGES.length;
-
-        // Cycle through loading messages
-        var msgInterval = setInterval(function () {
-          msgIndex++;
-          if (msgIndex < LOADING_MESSAGES.length) {
-            loadingText.textContent = LOADING_MESSAGES[msgIndex];
-            barProgress += barStep;
-            loadingBar.style.width = barProgress + '%';
-          }
-        }, 1800);
-
-        // Complete after all messages shown
-        setTimeout(function () {
-          clearInterval(msgInterval);
-          loadingBar.style.width = '100%';
-          loadingText.textContent = 'Done! ✨';
-
-          setTimeout(function () {
-            loadingModal.classList.add('hidden');
-            showPreview();
-          }, 800);
-        }, LOADING_MESSAGES.length * 1800 + 500);
-      }
-
-      /** Show the watermarked phone preview with upgrade CTA */
-      function showPreview() {
-        // Personalize preview based on user choices
-        var nicheNames = {
-          photography: 'LensCraft Studio',
-          gym: 'IronPulse Fitness',
-          bakery: 'Crumb & Bean Cafe',
-          salon: 'Glow & Grace Spa',
-        };
-        var vibeTaglines = {
-          dark: 'Premium. Bold. Unforgettable.',
-          light: 'Clean. Simple. Beautiful.',
-          colorful: 'Vibrant. Energetic. Unique.',
-        };
-
-        document.getElementById('preview-business-name').textContent =
-          nicheNames[userChoices.niche] || 'Your Business';
-        document.getElementById('preview-headline').textContent =
-          'Welcome to ' + (nicheNames[userChoices.niche] || 'Your Site');
-        document.getElementById('preview-tagline').textContent =
-          vibeTaglines[userChoices.vibe] || 'Built with WebsConnect AI';
-
-        previewModal.classList.remove('hidden');
-      }
-
-      // ─── Checkout button (placeholder for payment integration) ──
-      checkoutBtn.addEventListener('click', function () {
-        // TODO: Wire to Razorpay / payment gateway + DigitalOcean backend
-        alert('Checkout coming soon! ₹499 activation — payment gateway integration in progress.');
+      google.accounts.id.initialize({
+        client_id: state.googleClientId,
+        callback: handleGoogleCredential,
+        auto_select: false,
+        cancel_on_tap_outside: true,
       });
 
-      // ─── Initialize: Step 1 ─────────────────────────────────────
-      function init() {
+      google.accounts.id.renderButton(wrap, {
+        theme: 'filled_blue',
+        size: 'large',
+        width: 280,
+        text: 'continue_with',
+        shape: 'pill',
+      });
+    }
+
+    async function handleGoogleCredential(response) {
+      try {
+        const res = await fetch('/api/auth/google', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            credential: response.credential,
+            guestId: state.guestId,
+          }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Login failed');
+
+        state.token = data.token;
+        state.user = data.user;
+        localStorage.setItem('wc_token', data.token);
+        localStorage.setItem('wc_user', JSON.stringify(data.user));
+        setLoggedInUI();
+        closeLoginModal();
+
+        if (state.pendingAction) {
+          const action = state.pendingAction;
+          state.pendingAction = null;
+          runPendingAction(action);
+        }
+      } catch (e) {
+        const err = $('login-error');
+        err.textContent = e.message || 'Login failed';
+        err.classList.remove('hidden');
+      }
+    }
+
+    function runPendingAction(action) {
+      if (!action) return;
+      if (action.type === 'start') {
+        startBuilder(action.payload || {});
+      } else if (action.type === 'prompt') {
+        startBuilder({ prompt: action.payload, niche: guessNiche(action.payload) });
+      } else if (action.type === 'niche') {
+        startBuilder({ niche: action.payload.niche, label: action.payload.label, prompt: action.payload.label });
+      }
+    }
+
+    function guessNiche(text) {
+      const t = (text || '').toLowerCase();
+      if (t.includes('photo')) return 'photography';
+      if (t.includes('gym') || t.includes('fitness')) return 'gym';
+      if (t.includes('bakery') || t.includes('cafe')) return 'bakery';
+      if (t.includes('salon') || t.includes('spa')) return 'salon';
+      if (t.includes('store') || t.includes('shop')) return 'store';
+      if (t.includes('blog')) return 'blog';
+      return 'business';
+    }
+
+    // ── Screens ────────────────────────────────────────────────
+    function showHome() {
+      screenHome.classList.remove('hidden');
+      screenBuilder.classList.add('hidden');
+      bottomNav.classList.remove('hidden');
+      $('preview-modal').classList.add('hidden');
+      $('loading-modal').classList.add('hidden');
+    }
+
+    function showBuilder() {
+      screenHome.classList.add('hidden');
+      screenBuilder.classList.remove('hidden');
+      bottomNav.classList.add('hidden');
+    }
+
+    // ── Builder chat ───────────────────────────────────────────
+    function startBuilder(opts) {
+      opts = opts || {};
+      state.choices = {
+        niche: opts.niche || '',
+        vibe: '',
+        feature: '',
+        prompt: opts.prompt || opts.label || '',
+      };
+      state.step = 0;
+      chatMessages.innerHTML = '';
+      optionsContainer.innerHTML = '';
+      showBuilder();
+
+      if (opts.niche && opts.label) {
+        // User already picked niche from home — skip step 0
+        addBubble(STEPS[0].aiMessage, false);
+        addBubble(opts.label, true);
+        state.choices.niche = opts.niche;
+        setTyping(true);
+        setTimeout(function () {
+          setTyping(false);
+          state.step = 1;
+          addBubble(STEPS[1].aiMessage, false);
+          renderOptions(STEPS[1].options);
+        }, 900);
+      } else if (opts.prompt) {
+        addBubble(STEPS[0].aiMessage, false);
+        addBubble(opts.prompt, true);
+        if (opts.niche) state.choices.niche = opts.niche;
+        setTyping(true);
+        setTimeout(function () {
+          setTyping(false);
+          // If niche known, jump to vibe; else show niche options
+          if (state.choices.niche && ['photography','gym','bakery','salon'].includes(state.choices.niche)) {
+            state.step = 1;
+            addBubble(STEPS[1].aiMessage, false);
+            renderOptions(STEPS[1].options);
+          } else {
+            state.step = 0;
+            addBubble('Got it! Confirm your niche:', false);
+            renderOptions(STEPS[0].options);
+          }
+        }, 900);
+      } else {
         addBubble(STEPS[0].aiMessage, false);
         renderOptions(STEPS[0].options);
       }
+    }
 
-      init();
-    })();
+    function addBubble(text, isUser) {
+      const wrap = document.createElement('div');
+      wrap.className = 'flex ' + (isUser ? 'justify-end' : 'justify-start') + ' bubble-enter';
+      const bubble = document.createElement('div');
+      bubble.className = isUser
+        ? 'max-w-[80%] bg-accent/20 border border-accent/30 rounded-2xl rounded-tr-sm px-4 py-2.5 text-sm'
+        : 'max-w-[85%] bg-card border border-white/10 rounded-2xl rounded-tl-sm px-4 py-2.5 text-sm';
+      bubble.textContent = text;
+      wrap.appendChild(bubble);
+      chatMessages.appendChild(wrap);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function renderOptions(options) {
+      optionsContainer.innerHTML = '';
+      options.forEach(function (opt) {
+        const btn = document.createElement('button');
+        btn.className = 'w-full text-left px-4 py-3.5 rounded-xl bg-card border border-white/10 text-sm font-medium hover:border-accent/40 active:scale-[0.98] transition';
+        btn.textContent = opt.label;
+        btn.addEventListener('click', function () { handleOption(opt.label, opt.value); });
+        optionsContainer.appendChild(btn);
+      });
+    }
+
+    function setTyping(v) {
+      typingIndicator.classList.toggle('hidden', !v);
+    }
+
+    function handleOption(label, value) {
+      optionsContainer.querySelectorAll('button').forEach(function (b) {
+        b.disabled = true;
+        b.classList.add('opacity-50');
+      });
+      if (state.step === 0) state.choices.niche = value;
+      else if (state.step === 1) state.choices.vibe = value;
+      else if (state.step === 2) state.choices.feature = value;
+
+      addBubble(label, true);
+      optionsContainer.innerHTML = '';
+      setTyping(true);
+
+      setTimeout(function () {
+        setTyping(false);
+        state.step++;
+        if (state.step < STEPS.length) {
+          addBubble(STEPS[state.step].aiMessage, false);
+          renderOptions(STEPS[state.step].options);
+        } else {
+          startGeneration();
+        }
+      }, 1000);
+    }
+
+    async function startGeneration() {
+      addBubble('Perfect! Generating your website now... 🚀', false);
+
+      // Persist project if logged in
+      if (isLoggedIn()) {
+        try {
+          await fetch('/api/projects', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: 'Bearer ' + state.token,
+            },
+            body: JSON.stringify({
+              title: 'My ' + (state.choices.niche || 'Website'),
+              niche: state.choices.niche,
+              vibe: state.choices.vibe,
+              feature: state.choices.feature,
+              prompt: state.choices.prompt,
+            }),
+          });
+        } catch (e) {}
+      }
+
+      $('loading-modal').classList.remove('hidden');
+      var msgIndex = 0;
+      var bar = 0;
+      var step = 100 / LOADING_MESSAGES.length;
+      var iv = setInterval(function () {
+        msgIndex++;
+        if (msgIndex < LOADING_MESSAGES.length) {
+          $('loading-text').textContent = LOADING_MESSAGES[msgIndex];
+          bar += step;
+          $('loading-bar').style.width = bar + '%';
+        }
+      }, 1600);
+
+      setTimeout(function () {
+        clearInterval(iv);
+        $('loading-bar').style.width = '100%';
+        $('loading-text').textContent = 'Done! ✨';
+        setTimeout(function () {
+          $('loading-modal').classList.add('hidden');
+          showPreview();
+        }, 700);
+      }, LOADING_MESSAGES.length * 1600 + 400);
+    }
+
+    function showPreview() {
+      var names = { photography: 'LensCraft Studio', gym: 'IronPulse Fitness', bakery: 'Crumb & Bean Cafe', salon: 'Glow & Grace Spa', business: 'Your Business', portfolio: 'Studio Portfolio', store: 'Shop Local', blog: 'My Blog' };
+      var tags = { dark: 'Premium. Bold. Unforgettable.', light: 'Clean. Simple. Beautiful.', colorful: 'Vibrant. Energetic. Unique.' };
+      $('preview-business-name').textContent = names[state.choices.niche] || 'Your Business';
+      $('preview-headline').textContent = 'Welcome to ' + (names[state.choices.niche] || 'Your Site');
+      $('preview-tagline').textContent = tags[state.choices.vibe] || 'Built with WebsConnect AI';
+      $('preview-modal').classList.remove('hidden');
+      loadProjects();
+    }
+
+    async function loadProjects() {
+      const list = $('projects-list');
+      const empty = $('projects-empty');
+      if (!isLoggedIn()) {
+        list.querySelectorAll('.project-card').forEach(function (el) { el.remove(); });
+        empty.classList.remove('hidden');
+        return;
+      }
+      try {
+        const res = await fetch('/api/projects', {
+          headers: { Authorization: 'Bearer ' + state.token },
+        });
+        const data = await res.json();
+        list.querySelectorAll('.project-card').forEach(function (el) { el.remove(); });
+        if (!data.projects || !data.projects.length) {
+          empty.classList.remove('hidden');
+          return;
+        }
+        empty.classList.add('hidden');
+        data.projects.forEach(function (p) {
+          const card = document.createElement('div');
+          card.className = 'project-card rounded-2xl border border-white/10 bg-card p-3 flex gap-3';
+          card.innerHTML =
+            '<div class="w-14 h-14 rounded-xl bg-gradient-to-br from-slate-700 to-slate-900 shrink-0"></div>' +
+            '<div class="flex-1 min-w-0">' +
+            '<div class="flex items-center gap-2"><p class="text-xs font-bold truncate">' + escapeHtml(p.title) + '</p>' +
+            '<span class="text-[9px] px-1.5 py-0.5 rounded-full ' + (p.status === 'active' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300') + '">' + (p.status === 'active' ? 'Live' : 'Draft') + '</span></div>' +
+            '<p class="text-[10px] text-muted mt-0.5">' + escapeHtml(p.niche || 'Website') + ' · updated recently</p>' +
+            '<div class="mt-1.5 flex gap-2"><button class="text-[10px] text-accent font-semibold">Edit</button><button class="text-[10px] text-muted">Preview</button></div>' +
+            '</div>';
+          list.appendChild(card);
+        });
+      } catch (e) {}
+    }
+
+    function escapeHtml(s) {
+      return String(s || '').replace(/[&<>"']/g, function (c) {
+        return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c];
+      });
+    }
+
+    // ── Event bindings ─────────────────────────────────────────
+    function bindEvents() {
+      $('btn-start-building').addEventListener('click', function () {
+        requireAuth({ type: 'start', payload: {} });
+      });
+      $('btn-empty-start').addEventListener('click', function () {
+        requireAuth({ type: 'start', payload: {} });
+      });
+      $('nav-create').addEventListener('click', function () {
+        requireAuth({ type: 'start', payload: {} });
+      });
+      $('btn-send-prompt').addEventListener('click', sendPrompt);
+      $('prompt-input').addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') sendPrompt();
+      });
+
+      document.querySelectorAll('.chip').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          const niche = btn.dataset.niche;
+          const label = btn.textContent.trim();
+          requireAuth({ type: 'niche', payload: { niche: niche, label: label } });
+        });
+      });
+
+      document.querySelectorAll('.category-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          requireAuth({
+            type: 'niche',
+            payload: { niche: btn.dataset.niche, label: btn.dataset.label },
+          });
+        });
+      });
+
+      $('btn-login-close').addEventListener('click', closeLoginModal);
+      $('btn-builder-back').addEventListener('click', showHome);
+      $('btn-preview-home').addEventListener('click', showHome);
+      $('btn-avatar').addEventListener('click', function () {
+        if (!isLoggedIn()) openLoginModal();
+      });
+      $('checkout-btn').addEventListener('click', function () {
+        alert('Checkout coming soon — ₹499 activation (Razorpay).');
+      });
+
+      document.querySelectorAll('.nav-item').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          const nav = btn.dataset.nav;
+          if (nav === 'home') showHome();
+          else if (nav === 'account') {
+            if (!isLoggedIn()) openLoginModal();
+            else alert('Logged in as ' + state.user.email);
+          } else if (nav === 'projects') {
+            if (!isLoggedIn()) openLoginModal();
+            else {
+              showHome();
+              $('projects-list').scrollIntoView({ behavior: 'smooth' });
+            }
+          } else {
+            requireAuth({ type: 'start', payload: {} });
+          }
+        });
+      });
+    }
+
+    function sendPrompt() {
+      const val = $('prompt-input').value.trim();
+      if (!val) {
+        $('prompt-input').focus();
+        return;
+      }
+      requireAuth({ type: 'prompt', payload: val });
+    }
+
+    // ── Boot ───────────────────────────────────────────────────
+    async function boot() {
+      ensureGuestId();
+      bindEvents();
+
+      // Restore session
+      const savedToken = localStorage.getItem('wc_token');
+      const savedUser = localStorage.getItem('wc_user');
+      if (savedToken && savedUser) {
+        state.token = savedToken;
+        try { state.user = JSON.parse(savedUser); } catch (e) {}
+        // Validate
+        try {
+          const res = await fetch('/api/auth/me', {
+            headers: { Authorization: 'Bearer ' + savedToken },
+          });
+          if (res.ok) {
+            const data = await res.json();
+            state.user = data.user;
+            localStorage.setItem('wc_user', JSON.stringify(data.user));
+          } else {
+            state.token = null;
+            state.user = null;
+            localStorage.removeItem('wc_token');
+            localStorage.removeItem('wc_user');
+          }
+        } catch (e) {}
+      }
+      setLoggedInUI();
+
+      try {
+        const res = await fetch('/api/config');
+        const cfg = await res.json();
+        state.googleClientId = cfg.googleClientId || '';
+        state.googleAuthEnabled = Boolean(cfg.googleAuthEnabled);
+      } catch (e) {
+        state.googleAuthEnabled = false;
+      }
+    }
+
+    boot();
+  })();
   </script>
 </body>
 </html>

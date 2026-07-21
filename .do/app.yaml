@@ -24,6 +24,14 @@ services:
         scope: RUN_TIME
         type: SECRET
         value: ${websconnect-db.DATABASE_URL}
+      - key: GOOGLE_CLIENT_ID
+        scope: RUN_TIME
+        type: SECRET
+        value: ""
+      - key: SESSION_SECRET
+        scope: RUN_TIME
+        type: SECRET
+        value: "websconnect-session-change-me"
 
 databases:
   - name: websconnect-db
