@@ -26,6 +26,11 @@ const NICHE_NAMES = {
   auto: 'Auto Garage, Car Wash & Detailing',
   movers: 'Packers, Movers & Transport',
   legal: 'Legal, CA & Financial Consultancy',
+  interior: 'Interior Design & Contracting',
+  venue: 'Event Venue, Banquet Hall & Catering',
+  petcare: 'Pet Care, Vet Clinic & Grooming',
+  tailor: 'Custom Tailoring & Fashion Design',
+  agri: 'Agriculture Equipment, Seeds & Nursery',
 };
 
 // ── Category page blueprints ──────────────────────────────────
@@ -206,6 +211,91 @@ PAGE 3 — FIRM, CLIENTS & CONSULTATION (===PAGE:contact===):
 - Office address + map link + consultation fee UPI QR (only if supplied).`,
 };
 
+const INTERIOR_BLUEPRINT = {
+  second: 'portfolio',
+  text: `PAGE 1 — HOME (===PAGE:index===):
+- Hero: full-width finished living room / 3D render photo, headline like "Turn Your House Into a Luxury Dream Home", CTAs: "Book Free Design Consultation" → /contact and "View Portfolio" → /portfolio.
+- Trust counters: use ONLY supplied numbers (homes designed, warranty years, delivery days); otherwise qualitative badges (Quality Materials, On-Time Delivery, Transparent Pricing).
+- Service badges: Full Home Interiors, Modular Kitchen, Commercial Office Setup, Turnkey Civil Contracting (adapt to supplied services).
+PAGE 2 — PORTFOLIO & ESTIMATOR (===PAGE:portfolio===):
+- Interactive design style tabs: [Modern Minimalist] [Royal Classic] [Industrial] [Bohemian] (adapt) — must actually filter the gallery with vanilla JS.
+- Gallery grid: high-res photos of living rooms, bedrooms, modular kitchens (relevant Unsplash images).
+- Instant cost estimator: dropdown (1BHK / 2BHK / 3BHK / Villa) that shows an estimated budget range with vanilla JS (use supplied pricing style, mark as estimates).
+PAGE 3 — DESIGNER, REVIEWS & BOOKING (===PAGE:contact===):
+- Lead designer/architect profile: experience, certifications (only if supplied), design philosophy.
+- Homeowner testimonials: quote cards.
+- Consultation booking form: city/area, home type select, budget preference select — submit opens WhatsApp with all details pre-filled, plus a note "Share your floor plan on WhatsApp".
+- Office/experience center address + map link + advance token UPI QR (only if UPI ID supplied; use https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=<url-encoded upi://pay?pa=UPIID&pn=NAME>).`,
+};
+
+const VENUE_BLUEPRINT = {
+  second: 'packages',
+  text: `PAGE 1 — HOME (===PAGE:index===):
+- Hero: grand decorated banquet hall/lawn photo, headline like "<city>'s Premium Venue for Weddings & Corporate Events", CTAs: "Check Date Availability" → /contact and "View Packages" → /packages.
+- Ecosystem strip: a small section noting large-scale sports and mega-event bookings are powered by StadiumConnect, linking to https://stadiumconnect.in (target=_blank).
+- Capacity highlights: guest capacity, AC banquet + lawn, in-house catering, parking — use supplied numbers only, else qualitative.
+PAGE 2 — MENUS, DECOR & PACKAGES (===PAGE:packages===):
+- Decor themes grid: photos of stage setup, mandap, entrance, lighting options.
+- Catering menu cards: e.g. Deluxe Veg, Royal Non-Veg, Live Counters (Chaat, Chinese, Mocktails) with per-plate rates (use supplied pricing style).
+- Venue tour: large gallery section of the venue spaces.
+PAGE 3 — RULES, REVIEWS & DATE INQUIRY (===PAGE:contact===):
+- Policy checklist: parking, DJ curfew timing, green rooms, safety standards (adapt to supplied details).
+- Client reviews: cards from couples and corporate organizers.
+- Date inquiry form: event type select (Wedding/Birthday/Corporate), expected guest count, preferred date (input type=date) — submit opens WhatsApp with everything pre-filled for the venue manager.
+- Map link + booking advance UPI QR (only if supplied).`,
+};
+
+const PETCARE_BLUEPRINT = {
+  second: 'services',
+  text: `PAGE 1 — HOME (===PAGE:index===):
+- Hero: cute dog/cat photo, headline like "Professional Pet Care, Grooming & Veterinary Clinic", CTAs: "Book Grooming Slot" → /contact and "Emergency Vet Call" (tel: if phone supplied).
+- Service icons grid: Pet Grooming & Spa, Vet Vaccination, Pet Boarding/Hostel, Emergency Care (adapt).
+- Trust badges: Certified Veterinarians | Stress-Free Handling | Organic Products (certifications only if supplied).
+PAGE 2 — PACKAGES & OPD (===PAGE:services===):
+- Grooming package cards: Bath & Dry, Full Haircut & Styling, Nail Trimming, Tick Treatment — prices by pet size (Small/Medium/Large) using supplied pricing style.
+- Vaccination & OPD chart: common puppy/kitten vaccination schedule table and consulting fees.
+- Pet hostel facilities: photos of boarding space, play area, monitoring facilities.
+PAGE 3 — VET, GALLERY & BOOKING (===PAGE:contact===):
+- Vet bio: qualifications (BVSc/MVSc ONLY if supplied) and experience.
+- Happy pets gallery: before/after grooming photos (relevant Unsplash pet images).
+- Slot booking form: pet type select (Dog/Cat/Other), breed input, service select, date & preferred time — submit opens WhatsApp with all details pre-filled.
+- Clinic address + map link + UPI QR for slot confirmation (only if supplied).`,
+};
+
+const TAILOR_BLUEPRINT = {
+  second: 'ratecard',
+  text: `PAGE 1 — HOME (===PAGE:index===):
+- Hero: fabric & sewing aesthetic banner, headline like "Perfect Fitting Suits, Sherwanis & Designer Blouses", CTAs: "Book Doorstep Measurement" → /contact and "View Rate Card" → /ratecard.
+- Key USPs: e.g. Express Delivery | Free Alterations | Home Pickup & Delivery (adapt to supplied services).
+- Services grid: Men's Suits & Tuxedos, Kurta Pajama, Women's Designer Suits/Lehengas, Uniform Stitching (adapt).
+PAGE 2 — RATE CARD & FABRICS (===PAGE:ratecard===):
+- Transparent stitching price list: shirt/trouser, blazer, lehenga, blouse etc. with rates (use supplied pricing style).
+- Measurement guide: simple visual/text guide showing how to measure shoulders, chest and length at home.
+- Fabric & pattern showcase: photos of suitings, silks and embroidery options.
+PAGE 3 — BOUTIQUE, REVIEWS & ORDER (===PAGE:contact===):
+- Master tailor story: bespoke tailoring heritage and experience (supplied facts only).
+- Customer reviews with fitting photos.
+- Doorstep measurement/pickup form: address, preferred date/time, garment type select — submit opens WhatsApp with all details pre-filled.
+- Shop address + map link + token advance UPI QR (only if supplied).`,
+};
+
+const AGRI_BLUEPRINT = {
+  second: 'catalog',
+  text: `PAGE 1 — HOME (===PAGE:index===):
+- Hero: lush green farm/nursery photo, headline like "Certified Hybrid Seeds, Organic Fertilizers & Farm Equipment", CTAs: "Order on WhatsApp" (wa.me) and "View Product Catalog" → /catalog.
+- Trust badges: Govt Approved Dealer | Genuine Products | Doorstep Village Delivery (govt approval only if supplied).
+- Seasonal highlights banner: recommended seeds/fertilizers for the current season (Kharif/Rabi).
+PAGE 2 — CATALOG & RENTALS (===PAGE:catalog===):
+- Category tabs: [Seeds] [Fertilizers & Pesticides] [Garden Plants] [Farm Tools & Pumps] (adapt) — must actually filter with vanilla JS.
+- Product cards: item name, weight/quantity (e.g. 5kg bag), dosage instructions, price, and a WhatsApp order button that sends the exact item name in chat.
+- Equipment rental section: tools/sprayers/cutters with per-day rental rates (if the business offers rentals).
+PAGE 3 — ADVISORY, REVIEWS & ORDERS (===PAGE:contact===):
+- Expert/agronomist profile: crop advisory support details (supplied facts only).
+- Farmer testimonials: review cards from local farmers.
+- Bulk order & soil testing inquiry form: name, village/city, requirement description — submit opens WhatsApp with everything pre-filled.
+- Shop address + map link + UPI QR for direct payments (only if supplied).`,
+};
+
 const CATEGORY_BLUEPRINTS = {
   food: FOOD_BLUEPRINT,
   bakery: FOOD_BLUEPRINT,
@@ -222,6 +312,11 @@ const CATEGORY_BLUEPRINTS = {
   auto: AUTO_BLUEPRINT,
   movers: MOVERS_BLUEPRINT,
   legal: LEGAL_BLUEPRINT,
+  interior: INTERIOR_BLUEPRINT,
+  venue: VENUE_BLUEPRINT,
+  petcare: PETCARE_BLUEPRINT,
+  tailor: TAILOR_BLUEPRINT,
+  agri: AGRI_BLUEPRINT,
 };
 
 function buildSystemPrompt() {

@@ -522,6 +522,11 @@
           ['🏎️ Auto Garage, Car Wash & Detailing', 'auto'],
           ['📦 Packers, Movers & Transport', 'movers'],
           ['⚖️ Legal, CA & Financial Consultant', 'legal'],
+          ['🏗️ Interior Designer & Contractor', 'interior'],
+          ['🪩 Event Venue, Banquet Hall & Caterer', 'venue'],
+          ['🐾 Pet Care, Vet Clinic & Grooming', 'petcare'],
+          ['🧵 Custom Tailor & Fashion Designer', 'tailor'],
+          ['🌾 Agriculture, Seeds & Nursery', 'agri'],
           ['✍️ Write Custom Category', 'custom', 'text', 'Enter your business category']
         ]
       },
@@ -628,6 +633,14 @@
         { id: 'dietaryHighlight', question: 'Aapka dietary highlight kya hai?', options: [['100% Pure Veg','pure-veg'],['Veg & Non-Veg Both','veg-nonveg'],['Vegan / Organic Options Available','vegan-organic'],['Custom Food Tag','custom','text','Enter your dietary highlight']] }
       ],
       salon: 'booking', gym: 'booking', clinic: 'booking', auto: 'booking', legal: 'booking',
+      interior: 'booking', petcare: 'booking', tailor: 'booking',
+      venue: [
+        { id: 'venueEvents', question: 'Aapke venue par kaunse events hote hain?', options: [['Weddings & Receptions','weddings'],['Corporate Events & Conferences','corporate'],['Sab Types (Weddings + Corporate + Parties)','all-events'],['Custom Event Types','custom','text','List your event types']] },
+        { id: 'venueCatering', question: 'Catering ka arrangement kya hai?', options: [['In-House Catering Only','in-house'],['Outside Caterers Allowed','outside-allowed'],['Dono Options Available','both'],['Custom Catering Rule','custom','text','Describe your catering policy']] }
+      ],
+      agri: [
+        { id: 'agriFocus', question: 'Aapka main product focus kya hai?', options: [['Seeds & Fertilizers','seeds-fertilizers'],['Plants & Nursery','nursery'],['Farm Equipment & Tools','equipment'],['Sab Kuch (Complete Agri Store)','all'],['Custom Focus','custom','text','Describe your main products']] }
+      ],
       movers: [
         { id: 'moveScope', question: 'Aap kaunsi shifting services dete hain?', options: [['Local (Same City) Shifting','local'],['Intercity / All India','intercity'],['Local + Intercity Both','both'],['Custom Coverage','custom','text','Describe your coverage area']] }
       ],
