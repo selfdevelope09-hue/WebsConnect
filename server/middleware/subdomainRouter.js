@@ -104,9 +104,22 @@ function subdomainRouter(options = {}) {
 </html>`);
       }
 
-      // Serve the AI-generated HTML stored for this tenant
+      // Serve the AI-generated HTML stored for this tenant.
+      // Multi-page sites keep pages in JSONB: { index, portfolio, contact, ... }
+      // /            → pages.index (or index_html)
+      // /portfolio   → pages.portfolio
+      // unknown path → pages.index (soft fallback)
+      const pageKey = req.path
+        .replace(/^\/+|\/+$/g, '')
+        .replace(/\.html$/i, '')
+        .toLowerCase() || 'index';
+      const pages = site.pages || {};
+      const html = pages[pageKey]
+        || (pageKey === 'index' ? site.index_html : null)
+        || pages.index
+        || site.index_html;
       res.set('Content-Type', 'text/html; charset=utf-8');
-      return res.send(site.index_html);
+      return res.send(html);
     } catch (err) {
       next(err);
     }

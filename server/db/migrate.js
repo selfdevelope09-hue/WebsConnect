@@ -14,6 +14,8 @@ CREATE TABLE IF NOT EXISTS sites (
 
 CREATE INDEX IF NOT EXISTS idx_sites_slug_active ON sites (slug) WHERE status = 'active';
 
+ALTER TABLE sites ADD COLUMN IF NOT EXISTS pages JSONB;
+
 CREATE TABLE IF NOT EXISTS users (
   id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   google_id   TEXT UNIQUE NOT NULL,

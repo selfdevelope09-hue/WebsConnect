@@ -28,20 +28,34 @@ const NICHE_NAMES = {
 function buildSystemPrompt() {
   return [
     'You are WebsConnect AI, an expert mobile-first website generator for small Indian businesses.',
-    'Generate ONE complete, production-ready, self-contained index.html file.',
-    'Rules:',
-    '- Use Tailwind CSS via <script src="https://cdn.tailwindcss.com"></script>.',
-    '- Mobile-first, responsive, modern, polished. Smooth scroll, nice typography (Google Fonts via link).',
-    '- Include: sticky header with business name, hero section with strong headline + CTA, about/services section, gallery or features grid, testimonials (2-3 realistic), contact section with phone/WhatsApp button, footer.',
+    'Generate a complete MULTI-PAGE website: exactly THREE standalone HTML pages, in this EXACT output format:',
+    '',
+    '===PAGE:index===',
+    '<!DOCTYPE html>... complete home page ...',
+    '===PAGE:<second>===',
+    '<!DOCTYPE html>... complete second page ...',
+    '===PAGE:contact===',
+    '<!DOCTYPE html>... complete contact page ...',
+    '',
+    'For <second>, pick ONE lowercase word that fits the business: portfolio, services, menu, gallery, or about.',
+    'Rules for EVERY page:',
+    '- Complete self-contained HTML document using Tailwind CSS via <script src="https://cdn.tailwindcss.com"></script>.',
+    '- Identical sticky header/nav on all three pages with working links: <a href="/">Home</a>, <a href="/<second>">, <a href="/contact">Contact</a>. Highlight the active page.',
+    '- Identical footer on all pages with nav links repeated.',
+    '- EVERY button and link must work: internal page links (/, /<second>, /contact), tel:, mailto:, https://wa.me/, upi://pay, or same-page #anchors. NEVER a dead href="#".',
+    '- Primary CTAs on the home page should lead to /contact or the second page.',
+    '- Mobile-first, responsive, modern, polished. Consistent colors/fonts across all pages (Google Fonts via link).',
+    '- Home page: hero with strong headline + CTA buttons, highlights/services preview, trust signals, teaser of second page content.',
+    '- Second page: the full detailed content (complete portfolio grid / full menu / all services with details).',
+    '- Contact page: all contact details, working hours, WhatsApp/call CTAs, address, and a simple enquiry form whose submit button opens WhatsApp (wa.me link) if a number exists.',
     '- Use royalty-free Unsplash image URLs (https://images.unsplash.com/...) relevant to the business.',
     '- All text content in English, tailored to the business. Realistic sample content — no lorem ipsum.',
     '- Follow every supplied business requirement precisely. Do not ignore contact, audience, hours, color, pricing, trust, or niche-specific details.',
     '- Never invent a phone number, email, address, UPI ID, certification, rating, client count, or business claim. If not supplied, omit it or use a clearly editable placeholder.',
     '- If a WhatsApp number is supplied, normalize it for a functional https://wa.me/ link.',
     '- If UPI is requested, include the supplied UPI ID and a functional upi://pay link. Never fabricate an ID.',
-    '- If portfolio requested: a responsive image grid gallery.',
     '- No external JS frameworks. Vanilla JS only if needed.',
-    '- Output ONLY the raw HTML document. No markdown fences, no explanation. Start with <!DOCTYPE html>.',
+    '- Output ONLY the three pages with ===PAGE:xxx=== markers. No markdown fences, no explanation.',
   ].join('\n');
 }
 
@@ -85,6 +99,22 @@ function extractHtml(text) {
     return null;
   }
   return html;
+}
+
+/** Parse ===PAGE:key=== delimited multi-page output into { key: html }. */
+function extractPages(text) {
+  if (!text) return null;
+  const parts = text.split(/===\s*PAGE:\s*([a-z0-9-]+)\s*===/i);
+  const pages = {};
+  for (let i = 1; i < parts.length - 1; i += 2) {
+    const key = parts[i].toLowerCase().trim();
+    const html = extractHtml(parts[i + 1]);
+    if (key && html) pages[key] = html;
+  }
+  if (pages.index) return pages;
+  // Fallback: model returned a single page without markers
+  const single = extractHtml(text);
+  return single ? { index: single } : null;
 }
 
 function makeSlugBase(niche, businessName) {
@@ -132,7 +162,7 @@ async function callOpenRouter(messages) {
     body: JSON.stringify({
       model: OPENROUTER_MODEL,
       messages,
-      max_tokens: 16000,
+      max_tokens: 50000,
       temperature: 0.7,
     }),
   });
@@ -199,11 +229,13 @@ function mountGenerateRoutes(router) {
         { role: 'user', content: buildUserPrompt({ niche, vibe, feature, prompt, businessName, requirements }) },
       ]);
 
-      const html = extractHtml(content);
-      if (!html) {
+      const pages = extractPages(content);
+      if (!pages || !pages.index) {
         console.error('generate: model returned non-HTML, length', content.length);
         return res.status(502).json({ error: 'AI returned invalid output. Try again.' });
       }
+      const html = pages.index;
+      console.log('generate: pages =', Object.keys(pages).join(', '));
 
       let slug = chosenSlug;
       if (slug) {
@@ -214,8 +246,8 @@ function mountGenerateRoutes(router) {
       if (!slug) slug = await uniqueSlug(pool, makeSlugBase(niche, businessName));
 
       await pool.query(
-        `INSERT INTO sites (slug, index_html, status) VALUES ($1, $2, 'active')`,
-        [slug, html]
+        `INSERT INTO sites (slug, index_html, pages, status) VALUES ($1, $2, $3, 'active')`,
+        [slug, html, JSON.stringify(pages)]
       );
       await pool.query(
         `INSERT INTO projects (user_id, title, slug, niche, vibe, feature, prompt, status, index_html)

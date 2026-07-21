@@ -35,7 +35,7 @@ async function findActiveSiteBySlug(slug) {
   }
 
   const { rows } = await db.query(
-    `SELECT slug, index_html
+    `SELECT slug, index_html, pages
      FROM sites
      WHERE slug = $1 AND status = 'active'
      LIMIT 1`,
