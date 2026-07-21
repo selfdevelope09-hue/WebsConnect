@@ -256,7 +256,7 @@
     </div>
   </div>
 
-  <!-- ===================== BUILDER (CHAT) ===================== -->
+  <!-- ===================== AI REQUIREMENTS WIZARD ===================== -->
   <div id="screen-builder" class="hidden relative z-10 max-w-md mx-auto min-h-screen flex flex-col pb-4">
     <header class="flex items-center gap-3 px-4 py-3 border-b border-white/10 bg-surface/80 backdrop-blur sticky top-0 z-20">
       <button id="btn-builder-back" class="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
@@ -264,18 +264,35 @@
       </button>
       <span class="logo-badge w-9 h-9"><img src="/logo.png" alt="" /></span>
       <div class="flex-1 min-w-0">
-        <p class="text-sm font-semibold truncate">WebsConnect AI</p>
-        <p class="text-[11px] text-sky-400 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-brand"></span> Online</p>
+        <p class="text-sm font-semibold truncate">WebsConnect AI Planner</p>
+        <p class="text-[11px] text-sky-400 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-brand"></span> Understanding your business</p>
       </div>
     </header>
-    <div id="chat-messages" class="flex-1 px-3 py-4 space-y-3 overflow-y-auto min-h-[280px]"></div>
-    <div id="typing-indicator" class="hidden px-3 pb-2">
-      <div class="inline-flex items-center gap-2 bg-card rounded-2xl rounded-tl-sm px-4 py-2.5 border border-white/10">
-        <span class="text-xs text-muted">AI is typing</span>
-        <span class="flex gap-1"><span class="typing-dot w-1.5 h-1.5 rounded-full bg-brand"></span><span class="typing-dot w-1.5 h-1.5 rounded-full bg-brand"></span><span class="typing-dot w-1.5 h-1.5 rounded-full bg-brand"></span></span>
+    <main class="flex-1 px-4 py-5">
+      <div class="flex items-center justify-between gap-3">
+        <div>
+          <p id="wizard-section" class="text-[10px] font-semibold uppercase tracking-wider text-sky-300"></p>
+          <p id="wizard-progress-label" class="text-xs text-muted mt-1"></p>
+        </div>
+        <span id="wizard-percent" class="text-xs font-bold text-white"></span>
       </div>
-    </div>
-    <div id="options-container" class="px-3 space-y-2"></div>
+      <div class="mt-3 h-1.5 rounded-full bg-slate-800 overflow-hidden">
+        <div id="wizard-progress" class="h-full rounded-full bg-gradient-to-r from-sky-400 to-blue-600 transition-all duration-300"></div>
+      </div>
+
+      <section class="mt-5 rounded-2xl bg-surface border border-white/10 p-4">
+        <h1 id="wizard-question" class="text-lg font-bold text-white leading-snug"></h1>
+        <p id="wizard-help" class="text-xs text-muted mt-1.5"></p>
+        <p id="wizard-error" class="hidden mt-3 text-xs text-red-400"></p>
+        <div id="wizard-options" class="mt-4 space-y-2.5"></div>
+      </section>
+
+      <div class="mt-5 flex gap-3">
+        <button id="wizard-back" class="w-28 py-3 rounded-xl bg-white/5 border border-white/10 text-sm font-semibold text-slate-300 active:scale-[.98] transition">← Back</button>
+        <button id="wizard-next" class="flex-1 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-blue-700 text-sm font-bold text-white glow-btn active:scale-[.98] transition">Next →</button>
+      </div>
+      <p class="mt-3 text-center text-[10px] text-muted">Your answers help AI create a more accurate website.</p>
+    </main>
   </div>
 
   <!-- Loading -->
@@ -374,36 +391,134 @@
       googleClientId: null,
       googleAuthEnabled: false,
       pendingAction: null, // { type, payload }
-      choices: { niche: '', vibe: '', feature: '', prompt: '' },
+      choices: { niche: '', vibe: '', feature: '', prompt: '', requirements: {} },
       step: 0,
     };
 
-    const STEPS = [
+    const CORE_QUESTIONS = [
       {
-        aiMessage: "Hey! Let's build your website. What is your business type/niche?",
+        id: 'category', section: 'Step 1 · Core Business Identification',
+        question: 'Which best describes your business?', help: 'Apni primary business category select karein.',
         options: [
-          { label: 'Photography 📸', value: 'photography' },
-          { label: 'Gym & Fitness 🏋️‍♂️', value: 'gym' },
-          { label: 'Bakery & Cafe 🥐', value: 'bakery' },
-          { label: 'Salon & Spa 💈', value: 'salon' },
-        ],
+          ['🍩 Food, Restaurant & Cafe', 'food'], ['💈 Salon, Spa & Beauty Care', 'salon'],
+          ['🏋️ Gym, Fitness & Yoga Center', 'gym'], ['👗 Fashion, Clothing & Boutique', 'fashion'],
+          ['🛠️ Services (Plumber, Electrician, Auto Repair)', 'services'],
+          ['📸 Creative & Agency (Photographer, Digital Marketing)', 'creative'],
+          ['🩺 Clinic, Healthcare & Pharmacy', 'clinic'], ['🎓 Coaching, School & Education', 'education'],
+          ['✍️ Write Custom Category', 'custom', 'text', 'Enter your business category']
+        ]
       },
       {
-        aiMessage: 'Great choice! What visual vibe should your website have?',
+        id: 'businessStage', section: 'Step 1 · Core Business Identification',
+        question: 'Aapka business kitna purana hai?', help: 'This helps AI choose the right trust messaging.',
         options: [
-          { label: 'Dark & Premium 🌌', value: 'dark' },
-          { label: 'Light & Minimal ⚪', value: 'light' },
-          { label: 'Colorful & Bold 🎨', value: 'colorful' },
-        ],
+          ['🚀 Brand New (Abhi start kar rahe hain)', 'brand-new'], ['🟢 1 to 3 Years Old', '1-3-years'],
+          ['⭐ Established (3+ Years)', 'established'], ['✍️ Custom Status', 'custom', 'text', 'Describe your business stage']
+        ]
       },
       {
-        aiMessage: 'Almost done! Pick the core feature you need most:',
+        id: 'targetAudience', section: 'Step 1 · Core Business Identification',
+        question: 'Aapki website par zyada tar kaun aane waale hain?', help: 'Choose your main customer group.',
         options: [
-          { label: 'WhatsApp Chat 💬', value: 'whatsapp' },
-          { label: 'UPI/QR Payments 💳', value: 'upi' },
-          { label: 'Image Portfolio Grid 🖼️', value: 'portfolio' },
-        ],
+          ['📍 Local Area Residents', 'local-residents'], ['🧑‍🎓 Youth & College Students', 'youth-students'],
+          ['👔 Corporate Professionals & B2B Clients', 'corporate-b2b'], ['👨‍👩‍👧 Families & Home Owners', 'families'],
+          ['🇮🇳 All-India Online Shoppers', 'india-shoppers'], ['✍️ Custom Audience', 'custom', 'text', 'Describe your target audience']
+        ]
       },
+      {
+        id: 'brandVibe', section: 'Step 2 · Branding, Design & Vibe',
+        question: 'Website ka overall mood kaisa dikhna chahiye?', help: 'AI will apply this personality across the complete website.',
+        options: [
+          ['✨ Modern & Premium (Sleek, Clean, High-End)', 'modern-premium'],
+          ['🔥 Bold & Energetic (Vibrant colors, High contrast)', 'bold-energetic'],
+          ['🌿 Natural & Minimalist (Soft tones, Clean text)', 'natural-minimal'],
+          ['💼 Professional & Trustworthy (Corporate style)', 'professional-trustworthy'],
+          ['✍️ Custom Style Note', 'custom', 'text', 'Describe the exact visual style']
+        ]
+      },
+      {
+        id: 'colorTheme', section: 'Step 2 · Branding, Design & Vibe',
+        question: 'Aapko apni website pe kaunse colors chahiye?', help: 'Select one color system for a consistent brand.',
+        options: [
+          ['🟦 Royal Blue & White', 'royal-blue-white'], ['⬛ Dark Gold & Black', 'dark-gold-black'],
+          ['🟩 Emerald Green & White', 'emerald-green-white'], ['🟥 Fiery Red & Orange', 'red-orange'],
+          ['🟪 Neon Purple & Dark Mode', 'neon-purple-dark'],
+          ['✍️ Pick Custom Hex Code / Color', 'custom', 'text', 'e.g. #0F172A, #22D3EE']
+        ]
+      },
+      {
+        id: 'primaryAction', section: 'Step 3 · Products, Services & Features',
+        question: 'Website par aakar customer sabse pehle kya kare?', help: 'This becomes the primary call-to-action.',
+        options: [
+          ['💬 Directly WhatsApp par Message kare', 'whatsapp'], ['📲 Call Kare (Direct Phone Dial)', 'call'],
+          ['💳 Instant Online Payment / Order Kare (UPI QR)', 'upi-payment'],
+          ['📅 Appointment / Table Book Kare', 'booking'], ['📍 Google Maps Location dekhe', 'maps'],
+          ['✍️ Custom Action Goal', 'custom', 'text', 'Describe your main conversion goal']
+        ]
+      },
+      {
+        id: 'offeringCount', section: 'Step 3 · Products, Services & Features',
+        question: 'Kitni services/products display karna chahte ho?', help: 'AI will create the matching content layout.',
+        options: [
+          ['🎯 Single Hero Product / Service', 'single'], ['📦 3 to 5 Featured Products/Services', '3-5'],
+          ['📚 6 to 10 Detailed Services List', '6-10'], ['📋 Full Catalog / Digital Menu', 'catalog'],
+          ['✍️ Custom Count', 'custom', 'text', 'Enter the count or catalog requirement']
+        ]
+      },
+      {
+        id: 'trustProof', section: 'Step 3 · Products, Services & Features',
+        question: 'Customer ka bharosa jeetne ke liye kya dikhana hai?', help: 'You can select multiple trust signals.', multi: true,
+        options: [
+          ['⭐ Customer Reviews & Ratings', 'reviews'], ['🏆 Achievements & Years of Experience', 'achievements'],
+          ['📜 Govt/Official Certificates & Badges', 'certificates'], ['🖼️ Before & After / Portfolio Gallery', 'portfolio'],
+          ['✍️ Custom Trust Proof', 'custom', 'text', 'Describe another trust signal']
+        ]
+      },
+      {
+        id: 'contactInfo', section: 'Step 4 · Contact, Location & Payments',
+        question: 'Header/Footer me kaunsi contact details dikhani hain?', help: 'Select all that apply and enter exact details.', multi: true,
+        options: [
+          ['📱 WhatsApp Number', 'whatsapp', 'tel', 'e.g. +91 98765 43210'],
+          ['📞 Calling Phone Number', 'phone', 'tel', 'e.g. +91 98765 43210'],
+          ['📧 Business Email ID', 'email', 'email', 'e.g. hello@business.com'],
+          ['📍 Physical Shop / Office Address', 'address', 'text', 'Enter full business address'],
+          ['✍️ Skip Contact Details', 'skip']
+        ]
+      },
+      {
+        id: 'paymentSetup', section: 'Step 4 · Contact, Location & Payments',
+        question: 'Kya aapko instant Payment option chahiye?', help: 'WebsConnect never stores banking passwords or card details.',
+        options: [
+          ['💳 Yes, Enable Native UPI QR Code', 'upi', 'text', 'Enter UPI ID e.g. 9876543210@paytm'],
+          ['💬 No, Direct WhatsApp Billing Only', 'whatsapp-billing'],
+          ['✍️ Custom Payment Link / Gateway', 'custom', 'url', 'Paste payment link or gateway name']
+        ]
+      },
+      {
+        id: 'workingHours', section: 'Step 4 · Contact, Location & Payments',
+        question: 'Aapka business kab khula rehta hai?', help: 'These hours will appear in your contact section.',
+        options: [
+          ['⏰ Open 24/7 (Online Business)', '24-7'], ['🗓️ Mon to Sat: 9:00 AM - 9:00 PM', 'mon-sat-9-9'],
+          ['🗓️ Everyday: 10:00 AM - 10:00 PM', 'everyday-10-10'],
+          ['✍️ Custom Operating Hours', 'custom', 'text', 'e.g. Tue-Sun, 11 AM to 8 PM']
+        ]
+      }
+    ];
+
+    const DYNAMIC_QUESTIONS = {
+      food: [
+        { id: 'foodOrdering', question: 'Aap orders kaise accept karte hain?', options: [['Table Booking Only','table-booking'],['Takeaway / Pickup','pickup'],['Home Delivery via WhatsApp','whatsapp-delivery'],['Custom Food Service','custom','text','Describe your ordering mechanism']] },
+        { id: 'dietaryHighlight', question: 'Aapka dietary highlight kya hai?', options: [['100% Pure Veg','pure-veg'],['Veg & Non-Veg Both','veg-nonveg'],['Vegan / Organic Options Available','vegan-organic'],['Custom Food Tag','custom','text','Enter your dietary highlight']] }
+      ],
+      salon: 'booking', gym: 'booking', clinic: 'booking',
+      creative: [
+        { id: 'workSamples', question: 'Kaunse primary work samples dikhane hain?', options: [['Photo & Video Gallery Grid','gallery'],['Case Studies & Client Results','case-studies'],['Video Embeds (YouTube / Instagram Reels)','video-embeds'],['Custom Media Requirement','custom','text','Describe your portfolio media']] }
+      ]
+    };
+
+    const BOOKING_QUESTIONS = [
+      { id: 'bookingPreference', question: 'Aapki booking preference kya hai?', options: [['Prior Appointment Mandatory','appointment'],['Walk-ins Welcome','walk-ins'],['Both Options','both'],['Custom Booking Rule','custom','text','Describe your booking rule']] },
+      { id: 'pricingDisplay', question: 'Website par prices kaise dikhane hain?', options: [['Show Exact Price List','exact-prices'],['Show “Starting From ₹XX”','starting-from'],['Hide Prices (Quote on Request)','quote-request'],['Custom Price Format','custom','text','Describe your price format']] }
     ];
 
     const LOADING_MESSAGES = [
@@ -419,9 +534,7 @@
     const screenBuilder = $('screen-builder');
     const bottomNav = $('bottom-nav');
     const loginModal = $('login-modal');
-    const chatMessages = $('chat-messages');
-    const optionsContainer = $('options-container');
-    const typingIndicator = $('typing-indicator');
+    const wizardOptions = $('wizard-options');
 
     // ── Guest ID ───────────────────────────────────────────────
     function ensureGuestId() {
@@ -589,112 +702,171 @@
       bottomNav.classList.add('hidden');
     }
 
-    // ── Builder chat ───────────────────────────────────────────
+    // ── AI requirements wizard ─────────────────────────────────
     function startBuilder(opts) {
       opts = opts || {};
       state.choices = {
-        niche: opts.niche || '',
+        niche: '',
         vibe: '',
         feature: '',
         prompt: opts.prompt || opts.label || '',
+        requirements: {},
       };
       state.step = 0;
-      chatMessages.innerHTML = '';
-      optionsContainer.innerHTML = '';
       showBuilder();
+      const categoryMap = {
+        bakery: 'food', photography: 'creative', portfolio: 'creative',
+        gym: 'gym', salon: 'salon', store: 'fashion', blog: 'creative'
+      };
+      const mapped = categoryMap[opts.niche];
+      if (mapped) {
+        state.choices.requirements.category = { value: mapped, label: opts.label || opts.niche };
+        state.choices.niche = mapped;
+      }
+      renderWizard();
+    }
 
-      if (opts.niche && opts.label) {
-        // User already picked niche from home — skip step 0
-        addBubble(STEPS[0].aiMessage, false);
-        addBubble(opts.label, true);
-        state.choices.niche = opts.niche;
-        setTyping(true);
-        setTimeout(function () {
-          setTyping(false);
-          state.step = 1;
-          addBubble(STEPS[1].aiMessage, false);
-          renderOptions(STEPS[1].options);
-        }, 900);
-      } else if (opts.prompt) {
-        addBubble(STEPS[0].aiMessage, false);
-        addBubble(opts.prompt, true);
-        if (opts.niche) state.choices.niche = opts.niche;
-        setTyping(true);
-        setTimeout(function () {
-          setTyping(false);
-          // If niche known, jump to vibe; else show niche options
-          if (state.choices.niche && ['photography','gym','bakery','salon'].includes(state.choices.niche)) {
-            state.step = 1;
-            addBubble(STEPS[1].aiMessage, false);
-            renderOptions(STEPS[1].options);
-          } else {
-            state.step = 0;
-            addBubble('Got it! Confirm your niche:', false);
-            renderOptions(STEPS[0].options);
-          }
-        }, 900);
+    function getWizardQuestions() {
+      const questions = CORE_QUESTIONS.slice();
+      const category = state.choices.requirements.category?.value;
+      let dynamic = DYNAMIC_QUESTIONS[category] || [];
+      if (dynamic === 'booking') dynamic = BOOKING_QUESTIONS;
+      return questions.concat(dynamic.map(function (q) {
+        return Object.assign({ section: 'Step 5 · Smart Business Questions', help: 'AI is asking this based on your selected category.' }, q);
+      }));
+    }
+
+    function renderWizard() {
+      const questions = getWizardQuestions();
+      if (state.step >= questions.length) state.step = questions.length - 1;
+      const q = questions[state.step];
+      const saved = state.choices.requirements[q.id];
+      const percent = Math.round(((state.step + 1) / questions.length) * 100);
+      $('wizard-section').textContent = q.section;
+      $('wizard-progress-label').textContent = 'Question ' + (state.step + 1) + ' of ' + questions.length;
+      $('wizard-percent').textContent = percent + '%';
+      $('wizard-progress').style.width = percent + '%';
+      $('wizard-question').textContent = q.question;
+      $('wizard-help').textContent = q.help || '';
+      $('wizard-error').classList.add('hidden');
+      $('wizard-back').disabled = state.step === 0;
+      $('wizard-back').classList.toggle('opacity-40', state.step === 0);
+      $('wizard-next').textContent = state.step === questions.length - 1 ? 'Build My Website ✨' : 'Next →';
+      wizardOptions.innerHTML = '';
+
+      q.options.forEach(function (raw) {
+        const opt = { label: raw[0], value: raw[1], inputType: raw[2], placeholder: raw[3] };
+        const selected = q.multi
+          ? Boolean(saved?.values?.some(function (v) { return v.value === opt.value; }))
+          : saved?.value === opt.value;
+        const wrap = document.createElement('div');
+        const btn = document.createElement('button');
+        btn.className = 'w-full text-left px-4 py-3.5 rounded-xl bg-card border border-white/10 text-sm font-medium hover:border-accent/40 active:scale-[0.98] transition';
+        if (selected) btn.className += ' border-sky-400/70 bg-brand/15 ring-1 ring-sky-400/30';
+        btn.textContent = opt.label;
+        btn.type = 'button';
+        btn.addEventListener('click', function () { selectWizardOption(q, opt); });
+        wrap.appendChild(btn);
+
+        if (opt.inputType && selected) {
+          const input = document.createElement('input');
+          input.type = opt.inputType;
+          input.placeholder = opt.placeholder || 'Enter details';
+          input.value = getSavedInput(saved, opt.value);
+          input.className = 'mt-2 w-full rounded-xl bg-base border border-white/10 px-4 py-3 text-sm text-white outline-none focus:border-sky-400/60';
+          input.addEventListener('input', function () { saveWizardInput(q, opt, input.value); });
+          wrap.appendChild(input);
+          setTimeout(function () { if (!input.value) input.focus(); }, 0);
+        }
+        wizardOptions.appendChild(wrap);
+      });
+    }
+
+    function getSavedInput(saved, value) {
+      if (!saved) return '';
+      if (saved.values) {
+        const item = saved.values.find(function (v) { return v.value === value; });
+        return item?.input || '';
+      }
+      return saved.input || '';
+    }
+
+    function selectWizardOption(q, opt) {
+      const current = state.choices.requirements[q.id];
+      if (q.multi) {
+        let values = current?.values ? current.values.slice() : [];
+        if (opt.value === 'skip') {
+          values = [{ value: opt.value, label: opt.label, input: '' }];
+        } else {
+          values = values.filter(function (v) { return v.value !== 'skip'; });
+          const index = values.findIndex(function (v) { return v.value === opt.value; });
+          if (index >= 0) values.splice(index, 1);
+          else values.push({ value: opt.value, label: opt.label, input: '' });
+        }
+        state.choices.requirements[q.id] = { question: q.question, values: values };
       } else {
-        addBubble(STEPS[0].aiMessage, false);
-        renderOptions(STEPS[0].options);
+        state.choices.requirements[q.id] = {
+          question: q.question, value: opt.value, label: opt.label,
+          input: current?.value === opt.value ? (current.input || '') : ''
+        };
+      }
+      if (q.id === 'category') {
+        state.choices.niche = opt.value;
+        const allDynamic = BOOKING_QUESTIONS.concat(DYNAMIC_QUESTIONS.food, DYNAMIC_QUESTIONS.creative);
+        allDynamic.forEach(function (dynamicQ) { delete state.choices.requirements[dynamicQ.id]; });
+      }
+      renderWizard();
+    }
+
+    function saveWizardInput(q, opt, input) {
+      const saved = state.choices.requirements[q.id];
+      if (q.multi) {
+        const item = saved?.values?.find(function (v) { return v.value === opt.value; });
+        if (item) item.input = input;
+      } else if (saved) {
+        saved.input = input;
       }
     }
 
-    function addBubble(text, isUser) {
-      const wrap = document.createElement('div');
-      wrap.className = 'flex ' + (isUser ? 'justify-end' : 'justify-start') + ' bubble-enter';
-      const bubble = document.createElement('div');
-      bubble.className = isUser
-        ? 'max-w-[80%] bg-accent/20 border border-accent/30 rounded-2xl rounded-tr-sm px-4 py-2.5 text-sm'
-        : 'max-w-[85%] bg-card border border-white/10 rounded-2xl rounded-tl-sm px-4 py-2.5 text-sm';
-      bubble.textContent = text;
-      wrap.appendChild(bubble);
-      chatMessages.appendChild(wrap);
-      chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-
-    function renderOptions(options) {
-      optionsContainer.innerHTML = '';
-      options.forEach(function (opt) {
-        const btn = document.createElement('button');
-        btn.className = 'w-full text-left px-4 py-3.5 rounded-xl bg-card border border-white/10 text-sm font-medium hover:border-accent/40 active:scale-[0.98] transition';
-        btn.textContent = opt.label;
-        btn.addEventListener('click', function () { handleOption(opt.label, opt.value); });
-        optionsContainer.appendChild(btn);
+    function validateWizardQuestion(q) {
+      const saved = state.choices.requirements[q.id];
+      if (!saved || (q.multi && !saved.values?.length)) return 'Please select at least one option.';
+      const selected = q.multi ? saved.values : [saved];
+      const missing = selected.some(function (item) {
+        const raw = q.options.find(function (opt) { return opt[1] === item.value; });
+        return raw?.[2] && !String(item.input || '').trim();
       });
+      return missing ? 'Selected detail ka input fill karna zaroori hai.' : '';
     }
 
-    function setTyping(v) {
-      typingIndicator.classList.toggle('hidden', !v);
+    function wizardNext() {
+      const questions = getWizardQuestions();
+      const q = questions[state.step];
+      const error = validateWizardQuestion(q);
+      if (error) {
+        $('wizard-error').textContent = error;
+        $('wizard-error').classList.remove('hidden');
+        return;
+      }
+      if (state.step === questions.length - 1) {
+        state.choices.vibe = state.choices.requirements.brandVibe?.value || '';
+        state.choices.feature = state.choices.requirements.primaryAction?.value || '';
+        startGeneration();
+        return;
+      }
+      state.step++;
+      renderWizard();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    function handleOption(label, value) {
-      optionsContainer.querySelectorAll('button').forEach(function (b) {
-        b.disabled = true;
-        b.classList.add('opacity-50');
-      });
-      if (state.step === 0) state.choices.niche = value;
-      else if (state.step === 1) state.choices.vibe = value;
-      else if (state.step === 2) state.choices.feature = value;
-
-      addBubble(label, true);
-      optionsContainer.innerHTML = '';
-      setTyping(true);
-
-      setTimeout(function () {
-        setTyping(false);
-        state.step++;
-        if (state.step < STEPS.length) {
-          addBubble(STEPS[state.step].aiMessage, false);
-          renderOptions(STEPS[state.step].options);
-        } else {
-          startGeneration();
-        }
-      }, 1000);
+    function wizardBack() {
+      if (state.step <= 0) return;
+      state.step--;
+      renderWizard();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     async function startGeneration() {
-      addBubble('Perfect! AI is building your real website now... 🚀', false);
-
       // Loading UI — messages cycle while the API call runs
       $('loading-modal').classList.remove('hidden');
       var msgIndex = 0;
@@ -720,6 +892,7 @@
             vibe: state.choices.vibe,
             feature: state.choices.feature,
             prompt: state.choices.prompt,
+            requirements: state.choices.requirements,
           }),
         });
         const data = await res.json();
@@ -736,16 +909,9 @@
       } catch (e) {
         clearInterval(iv);
         $('loading-modal').classList.add('hidden');
-        addBubble('⚠️ ' + (e.message || 'Something went wrong.') + ' Try again?', false);
-        optionsContainer.innerHTML = '';
-        const btn = document.createElement('button');
-        btn.className = 'w-full text-left px-4 py-3.5 rounded-xl bg-card border border-white/10 text-sm font-medium hover:border-accent/40 active:scale-[0.98] transition';
-        btn.textContent = 'Try Again 🔄';
-        btn.addEventListener('click', function () {
-          optionsContainer.innerHTML = '';
-          startGeneration();
-        });
-        optionsContainer.appendChild(btn);
+        $('wizard-error').textContent = '⚠️ ' + (e.message || 'Something went wrong. Please try again.');
+        $('wizard-error').classList.remove('hidden');
+        $('wizard-next').textContent = 'Try Building Again 🔄';
       }
     }
 
@@ -836,6 +1002,8 @@
 
       $('btn-login-close').addEventListener('click', closeLoginModal);
       $('btn-builder-back').addEventListener('click', showHome);
+      $('wizard-back').addEventListener('click', wizardBack);
+      $('wizard-next').addEventListener('click', wizardNext);
       $('btn-preview-home').addEventListener('click', showHome);
       $('btn-build-another').addEventListener('click', function () {
         $('preview-modal').classList.add('hidden');

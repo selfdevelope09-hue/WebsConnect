@@ -9,6 +9,12 @@ const OPENROUTER_MODEL = process.env.OPENROUTER_MODEL || 'google/gemini-2.5-flas
 const ROOT_DOMAIN = process.env.ROOT_DOMAIN || 'websconnect.in';
 
 const NICHE_NAMES = {
+  food: 'Food, Restaurant & Cafe',
+  fashion: 'Fashion, Clothing & Boutique',
+  services: 'Local Services Business',
+  creative: 'Creative Agency or Freelancer',
+  clinic: 'Clinic, Healthcare & Pharmacy',
+  education: 'Coaching, School & Education',
   photography: 'Photography Studio',
   gym: 'Gym & Fitness Center',
   bakery: 'Bakery & Cafe',
@@ -29,33 +35,40 @@ function buildSystemPrompt() {
     '- Include: sticky header with business name, hero section with strong headline + CTA, about/services section, gallery or features grid, testimonials (2-3 realistic), contact section with phone/WhatsApp button, footer.',
     '- Use royalty-free Unsplash image URLs (https://images.unsplash.com/...) relevant to the business.',
     '- All text content in English, tailored to the business. Realistic sample content — no lorem ipsum.',
-    '- If WhatsApp feature requested: floating WhatsApp button (https://wa.me/919999999999).',
-    '- If UPI payments requested: a "Pay via UPI" section with a styled QR placeholder box.',
+    '- Follow every supplied business requirement precisely. Do not ignore contact, audience, hours, color, pricing, trust, or niche-specific details.',
+    '- Never invent a phone number, email, address, UPI ID, certification, rating, client count, or business claim. If not supplied, omit it or use a clearly editable placeholder.',
+    '- If a WhatsApp number is supplied, normalize it for a functional https://wa.me/ link.',
+    '- If UPI is requested, include the supplied UPI ID and a functional upi://pay link. Never fabricate an ID.',
     '- If portfolio requested: a responsive image grid gallery.',
     '- No external JS frameworks. Vanilla JS only if needed.',
     '- Output ONLY the raw HTML document. No markdown fences, no explanation. Start with <!DOCTYPE html>.',
   ].join('\n');
 }
 
-function buildUserPrompt({ niche, vibe, feature, prompt, businessName }) {
-  const vibeText = {
-    dark: 'dark premium theme (dark background, gold/blue accents, luxury feel)',
-    light: 'light minimal theme (white background, clean, lots of whitespace)',
-    colorful: 'colorful bold theme (vibrant gradients, energetic, playful)',
-  }[vibe] || 'modern clean theme';
+function formatRequirements(requirements) {
+  if (!requirements || typeof requirements !== 'object') return '';
+  return Object.values(requirements).map((answer) => {
+    if (!answer || typeof answer !== 'object' || !answer.question) return '';
+    if (Array.isArray(answer.values)) {
+      const values = answer.values.map((item) =>
+        `${item.label || item.value}${item.input ? ` — ${item.input}` : ''}`
+      );
+      return `${answer.question}: ${values.join('; ')}`;
+    }
+    return `${answer.question}: ${answer.label || answer.value}${answer.input ? ` — ${answer.input}` : ''}`;
+  }).filter(Boolean).join('\n');
+}
 
-  const featureText = {
-    whatsapp: 'floating WhatsApp chat button',
-    upi: 'UPI/QR payment section',
-    portfolio: 'image portfolio grid gallery',
-  }[feature] || 'contact form';
-
+function buildUserPrompt({ niche, vibe, feature, prompt, businessName, requirements }) {
+  const detailedRequirements = formatRequirements(requirements);
   return [
     `Business type: ${NICHE_NAMES[niche] || niche || 'local business'}`,
     `Business name: ${businessName || 'create a catchy realistic name'}`,
-    `Visual style: ${vibeText}`,
-    `Must-have feature: ${featureText}`,
+    vibe ? `Visual style key: ${vibe}` : '',
+    feature ? `Primary action key: ${feature}` : '',
     prompt ? `Owner's description: ${prompt}` : '',
+    detailedRequirements ? `\nCOMPLETE DISCOVERY ANSWERS:\n${detailedRequirements}` : '',
+    'Create the navigation, content hierarchy, calls-to-action, sections, and integrations from these answers.',
     'Generate the complete website now.',
   ].filter(Boolean).join('\n');
 }
@@ -126,11 +139,14 @@ function mountGenerateRoutes(router) {
         return res.status(503).json({ error: 'Database unavailable' });
       }
 
-      const { niche, vibe, feature, prompt, businessName } = req.body || {};
+      const { niche, vibe, feature, prompt, businessName, requirements } = req.body || {};
+      if (requirements && (typeof requirements !== 'object' || JSON.stringify(requirements).length > 20000)) {
+        return res.status(400).json({ error: 'Invalid or oversized requirements' });
+      }
 
       const content = await callOpenRouter([
         { role: 'system', content: buildSystemPrompt() },
-        { role: 'user', content: buildUserPrompt({ niche, vibe, feature, prompt, businessName }) },
+        { role: 'user', content: buildUserPrompt({ niche, vibe, feature, prompt, businessName, requirements }) },
       ]);
 
       const html = extractHtml(content);
@@ -155,7 +171,7 @@ function mountGenerateRoutes(router) {
           niche || null,
           vibe || null,
           feature || null,
-          prompt || null,
+          requirements ? JSON.stringify({ prompt: prompt || '', requirements }) : (prompt || null),
           html,
         ]
       );
