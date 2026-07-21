@@ -273,36 +273,22 @@
   <!-- Preview -->
   <div id="preview-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-base/95 backdrop-blur-md p-4 overflow-y-auto">
     <div class="w-full max-w-sm my-auto">
-      <div class="relative mx-auto w-[280px] rounded-[2rem] border-[3px] border-slate-600 bg-slate-900 p-2 shadow-2xl">
+      <div class="relative mx-auto w-[290px] rounded-[2rem] border-[3px] border-slate-600 bg-slate-900 p-2 shadow-2xl">
         <div class="phone-notch"></div>
         <div class="relative rounded-[1.4rem] overflow-hidden bg-white aspect-[9/16]">
-          <div class="h-full flex flex-col text-slate-800 text-[10px]">
-            <div class="bg-slate-900 text-white px-3 py-2 flex justify-between">
-              <span id="preview-business-name" class="font-bold text-[11px]">Your Business</span>
-              <span class="text-[8px] opacity-60">Menu</span>
-            </div>
-            <div class="bg-gradient-to-br from-slate-800 to-slate-600 text-white px-3 py-5 text-center flex-1 flex flex-col justify-center">
-              <p class="text-[13px] font-bold" id="preview-headline">Welcome</p>
-              <p class="text-[8px] mt-1 opacity-70" id="preview-tagline">Built with WebsConnect AI</p>
-              <div class="mt-3 mx-auto w-16 h-5 rounded bg-cyan-400/90 text-[7px] flex items-center justify-center font-semibold text-slate-900">Contact Us</div>
-            </div>
-            <div class="grid grid-cols-3 gap-1 p-2 bg-slate-50">
-              <div class="bg-white rounded p-1.5 text-center shadow-sm"><div class="text-sm">📸</div><p class="text-[6px] font-medium">Gallery</p></div>
-              <div class="bg-white rounded p-1.5 text-center shadow-sm"><div class="text-sm">💬</div><p class="text-[6px] font-medium">Chat</p></div>
-              <div class="bg-white rounded p-1.5 text-center shadow-sm"><div class="text-sm">💳</div><p class="text-[6px] font-medium">Pay</p></div>
-            </div>
-          </div>
+          <iframe id="preview-iframe" src="about:blank" class="w-full h-full border-0" title="Website preview"></iframe>
         </div>
         <div class="w-24 h-1 rounded-full bg-slate-600 mx-auto mt-2"></div>
       </div>
       <div class="mt-5 rounded-2xl border border-brand/25 bg-card p-5 text-center">
         <span class="logo-badge w-10 h-10 mx-auto mb-3"><img src="/logo.png" alt="" /></span>
-        <h3 class="text-base font-bold">Your website draft is ready!</h3>
-        <p class="text-xs text-muted mt-2 leading-relaxed">
-          Preview check kar lo. Real AI generation OpenRouter se next step mein connect hoga — abhi free draft mode.
+        <h3 class="text-base font-bold">🎉 Your website is LIVE!</h3>
+        <p class="text-xs text-muted mt-2 leading-relaxed break-all">
+          <a id="preview-link" href="#" target="_blank" class="text-sky-400 font-semibold underline"></a>
         </p>
-        <button id="btn-preview-home" class="mt-4 w-full py-3.5 rounded-xl font-bold text-sm bg-gradient-to-r from-blue-500 to-blue-700 text-white glow-btn">Done — Back to Home</button>
-        <button id="btn-build-another" class="mt-2 w-full py-2 text-xs text-sky-400 font-medium">Build another website →</button>
+        <a id="btn-open-site" href="#" target="_blank" class="mt-4 block w-full py-3.5 rounded-xl font-bold text-sm bg-gradient-to-r from-blue-500 to-blue-700 text-white glow-btn">Open My Website ↗</a>
+        <button id="btn-preview-home" class="mt-2 w-full py-2.5 text-xs text-muted">Done — Back to Home</button>
+        <button id="btn-build-another" class="w-full py-2 text-xs text-sky-400 font-medium">Build another website →</button>
       </div>
     </div>
   </div>
@@ -638,58 +624,67 @@
     }
 
     async function startGeneration() {
-      addBubble('Perfect! Generating your website now... 🚀', false);
+      addBubble('Perfect! AI is building your real website now... 🚀', false);
 
-      // Persist project if logged in
-      if (isLoggedIn()) {
-        try {
-          await fetch('/api/projects', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: 'Bearer ' + state.token,
-            },
-            body: JSON.stringify({
-              title: 'My ' + (state.choices.niche || 'Website'),
-              niche: state.choices.niche,
-              vibe: state.choices.vibe,
-              feature: state.choices.feature,
-              prompt: state.choices.prompt,
-            }),
-          });
-        } catch (e) {}
-      }
-
+      // Loading UI — messages cycle while the API call runs
       $('loading-modal').classList.remove('hidden');
       var msgIndex = 0;
-      var bar = 0;
-      var step = 100 / LOADING_MESSAGES.length;
+      var bar = 8;
+      $('loading-bar').style.width = bar + '%';
+      $('loading-text').textContent = LOADING_MESSAGES[0];
       var iv = setInterval(function () {
-        msgIndex++;
-        if (msgIndex < LOADING_MESSAGES.length) {
-          $('loading-text').textContent = LOADING_MESSAGES[msgIndex];
-          bar += step;
-          $('loading-bar').style.width = bar + '%';
-        }
-      }, 1600);
+        msgIndex = (msgIndex + 1) % LOADING_MESSAGES.length;
+        $('loading-text').textContent = LOADING_MESSAGES[msgIndex];
+        bar = Math.min(bar + 9, 92);
+        $('loading-bar').style.width = bar + '%';
+      }, 2200);
 
-      setTimeout(function () {
+      try {
+        const res = await fetch('/api/generate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + state.token,
+          },
+          body: JSON.stringify({
+            niche: state.choices.niche,
+            vibe: state.choices.vibe,
+            feature: state.choices.feature,
+            prompt: state.choices.prompt,
+          }),
+        });
+        const data = await res.json();
         clearInterval(iv);
+
+        if (!res.ok) throw new Error(data.error || 'Generation failed');
+
         $('loading-bar').style.width = '100%';
-        $('loading-text').textContent = 'Done! ✨';
+        $('loading-text').textContent = 'Done! Your site is live ✨';
         setTimeout(function () {
           $('loading-modal').classList.add('hidden');
-          showPreview();
+          showPreview(data.url);
         }, 700);
-      }, LOADING_MESSAGES.length * 1600 + 400);
+      } catch (e) {
+        clearInterval(iv);
+        $('loading-modal').classList.add('hidden');
+        addBubble('⚠️ ' + (e.message || 'Something went wrong.') + ' Try again?', false);
+        optionsContainer.innerHTML = '';
+        const btn = document.createElement('button');
+        btn.className = 'w-full text-left px-4 py-3.5 rounded-xl bg-card border border-white/10 text-sm font-medium hover:border-accent/40 active:scale-[0.98] transition';
+        btn.textContent = 'Try Again 🔄';
+        btn.addEventListener('click', function () {
+          optionsContainer.innerHTML = '';
+          startGeneration();
+        });
+        optionsContainer.appendChild(btn);
+      }
     }
 
-    function showPreview() {
-      var names = { photography: 'LensCraft Studio', gym: 'IronPulse Fitness', bakery: 'Crumb & Bean Cafe', salon: 'Glow & Grace Spa', business: 'Your Business', portfolio: 'Studio Portfolio', store: 'Shop Local', blog: 'My Blog' };
-      var tags = { dark: 'Premium. Bold. Unforgettable.', light: 'Clean. Simple. Beautiful.', colorful: 'Vibrant. Energetic. Unique.' };
-      $('preview-business-name').textContent = names[state.choices.niche] || 'Your Business';
-      $('preview-headline').textContent = 'Welcome to ' + (names[state.choices.niche] || 'Your Site');
-      $('preview-tagline').textContent = tags[state.choices.vibe] || 'Built with WebsConnect AI';
+    function showPreview(url) {
+      $('preview-iframe').src = url;
+      $('preview-link').textContent = url.replace('https://', '');
+      $('preview-link').href = url;
+      $('btn-open-site').href = url;
       $('preview-modal').classList.remove('hidden');
       loadProjects();
     }
@@ -721,8 +716,10 @@
             '<div class="flex-1 min-w-0">' +
             '<div class="flex items-center gap-2"><p class="text-xs font-bold truncate">' + escapeHtml(p.title) + '</p>' +
             '<span class="text-[9px] px-1.5 py-0.5 rounded-full ' + (p.status === 'active' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300') + '">' + (p.status === 'active' ? 'Live' : 'Draft') + '</span></div>' +
-            '<p class="text-[10px] text-muted mt-0.5">' + escapeHtml(p.niche || 'Website') + ' · updated recently</p>' +
-            '<div class="mt-1.5 flex gap-2"><button class="text-[10px] text-accent font-semibold">Edit</button><button class="text-[10px] text-muted">Preview</button></div>' +
+            '<p class="text-[10px] text-muted mt-0.5">' + escapeHtml(p.niche || 'Website') + (p.slug ? ' · ' + escapeHtml(p.slug) + '.websconnect.in' : '') + '</p>' +
+            (p.slug && p.status === 'active'
+              ? '<div class="mt-1.5"><a href="https://' + escapeHtml(p.slug) + '.websconnect.in" target="_blank" class="text-[10px] text-accent font-semibold">Open Site ↗</a></div>'
+              : '') +
             '</div>';
           list.appendChild(card);
         });

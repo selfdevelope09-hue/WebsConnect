@@ -32,6 +32,12 @@ services:
         scope: RUN_TIME
         type: SECRET
         value: "websconnect-session-change-me"
+      - key: OPENROUTER_API_KEY
+        scope: RUN_TIME
+        type: SECRET
+        value: ""
+      - key: OPENROUTER_MODEL
+        value: "google/gemini-2.5-flash"
 
 databases:
   - name: websconnect-db
