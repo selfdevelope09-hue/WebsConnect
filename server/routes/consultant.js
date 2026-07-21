@@ -12,21 +12,57 @@ const ROOT_DOMAIN = process.env.ROOT_DOMAIN || 'websconnect.in';
 // recommend a real preset the frontend can launch.
 let CATALOG_LINES = '';
 let VALID_NICHES = new Set();
-try {
-  const { ALL_TEMPLATES } = require('../../scripts/all-templates');
+
+function addCatalogEntry(lines, seen, niche, title, group) {
+  if (!niche || seen.has(niche)) return;
+  seen.add(niche);
+  VALID_NICHES.add(niche);
+  lines.push(`${niche} = ${title || group || niche}${group && group !== title ? ` (${group})` : ''}`);
+}
+
+function loadCatalog() {
   const seen = new Set();
   const lines = [];
-  ALL_TEMPLATES.forEach((t) => {
-    if (seen.has(t.niche)) return;
-    seen.add(t.niche);
-    VALID_NICHES.add(t.niche);
-    lines.push(`${t.niche} = ${t.title || t.category} (${t.category})`);
-  });
+
+  // Preferred: the generated browser data file, which ships in the Docker image.
+  try {
+    const fs = require('fs');
+    const path = require('path');
+    const file = path.join(__dirname, '..', '..', 'public', 'templates-data.js');
+    const src = fs.readFileSync(file, 'utf8');
+    const grab = (key) => {
+      // Each assignment lives on its own line; match greedily to its final "];".
+      const m = src.match(new RegExp('^\\s*window\\.' + key + '\\s*=\\s*(\\[.*\\]);\\s*$', 'm'));
+      return m ? JSON.parse(m[1]) : null;
+    };
+    const cats = grab('WC_CATEGORIES');
+    const tmpls = grab('WC_TEMPLATES');
+    if (Array.isArray(cats)) {
+      // Prefer template list for real category titles; fall back to WC_CATEGORIES groups.
+      if (Array.isArray(tmpls)) {
+        tmpls.forEach((t) => addCatalogEntry(lines, seen, t.niche, t.category, t.category));
+      }
+      cats.forEach((c) => addCatalogEntry(lines, seen, c.value, c.group, c.group));
+    }
+  } catch (e) {
+    console.warn('consultant: templates-data.js load failed —', e.message);
+  }
+
+  // Fallback (dev): the raw template source module.
+  if (!lines.length) {
+    try {
+      const { ALL_TEMPLATES } = require('../../scripts/all-templates');
+      ALL_TEMPLATES.forEach((t) => addCatalogEntry(lines, seen, t.niche, t.title || t.category, t.category));
+    } catch (e) {
+      console.warn('consultant: scripts/all-templates load failed —', e.message);
+    }
+  }
+
   CATALOG_LINES = lines.join('\n');
   console.log(`consultant: loaded ${VALID_NICHES.size} category presets`);
-} catch (e) {
-  console.warn('consultant: could not load category catalog —', e.message);
 }
+
+loadCatalog();
 
 function buildSystemPrompt() {
   return `You are "WebsConnect AI Consultant", an expert local business and website advisor for WebsConnect (websconnect.in) — India's 100% mobile-first AI website builder.
