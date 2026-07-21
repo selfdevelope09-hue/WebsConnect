@@ -68,6 +68,15 @@
       width: 72px; height: 72px; border-radius: 18px;
       margin: 0 auto 14px; box-shadow: 0 8px 32px rgba(0,102,255,.4);
     }
+    .menu-item {
+      display: flex; align-items: center; gap: 14px;
+      width: 100%; text-align: left;
+      padding: 13px 20px; font-size: 14px; font-weight: 500; color: #d7e1ef;
+      transition: background .15s;
+    }
+    .menu-item:active { background: rgba(255,255,255,.06); }
+    .menu-ico { font-size: 17px; width: 24px; text-align: center; }
+    #side-menu.open { transform: translateX(0); }
   </style>
 </head>
 <body class="bg-base text-white font-sans antialiased min-h-screen overflow-x-hidden">
@@ -290,6 +299,52 @@
         <button id="btn-preview-home" class="mt-2 w-full py-2.5 text-xs text-muted">Done — Back to Home</button>
         <button id="btn-build-another" class="w-full py-2 text-xs text-sky-400 font-medium">Build another website →</button>
       </div>
+    </div>
+  </div>
+
+  <!-- Side Menu (hamburger drawer) -->
+  <div id="menu-backdrop" class="hidden fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm"></div>
+  <aside id="side-menu" class="fixed top-0 left-0 bottom-0 z-[61] w-[290px] max-w-[85vw] bg-surface border-r border-white/10 flex flex-col -translate-x-full transition-transform duration-300 ease-out">
+    <div class="p-5 border-b border-white/10">
+      <div class="flex items-center gap-3">
+        <span class="logo-badge w-11 h-11"><img src="/logo.png" alt="WebsConnect" /></span>
+        <div class="min-w-0">
+          <p class="font-bold text-[15px] tracking-tight">Webs<span class="text-brand">Connect</span></p>
+          <p id="menu-user-line" class="text-[11px] text-muted truncate">Guest mode</p>
+        </div>
+      </div>
+    </div>
+    <nav class="flex-1 overflow-y-auto hide-scrollbar py-2">
+      <button class="menu-item" data-page="about"><span class="menu-ico">🏢</span>About</button>
+      <button class="menu-item" data-page="founder"><span class="menu-ico">🚀</span>Founder</button>
+      <button class="menu-item" data-page="blogs"><span class="menu-ico">📝</span>Blogs</button>
+      <div class="my-2 mx-5 border-t border-white/10"></div>
+      <button class="menu-item" data-page="orders"><span class="menu-ico">📦</span>Orders</button>
+      <button class="menu-item" data-page="payments"><span class="menu-ico">💳</span>Payments</button>
+      <div class="my-2 mx-5 border-t border-white/10"></div>
+      <button class="menu-item" data-page="support"><span class="menu-ico">🛟</span>Support</button>
+      <button class="menu-item" data-page="contact"><span class="menu-ico">📞</span>Contact Us</button>
+      <div class="my-2 mx-5 border-t border-white/10"></div>
+      <button class="menu-item" data-page="privacy"><span class="menu-ico">🔒</span>Privacy Policy</button>
+      <button class="menu-item" data-page="disclaimer"><span class="menu-ico">⚠️</span>Disclaimer</button>
+    </nav>
+    <div class="p-4 border-t border-white/10">
+      <button id="btn-logout" class="hidden w-full py-3 rounded-xl text-sm font-semibold text-red-400 bg-red-500/10 border border-red-500/20 active:scale-[0.98] transition">Log Out</button>
+      <button id="btn-menu-login" class="w-full py-3 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-blue-500 to-blue-700 glow-btn active:scale-[0.98] transition">Login with Google</button>
+      <p class="mt-3 text-center text-[10px] text-muted">WebsConnect · Made in India 🇮🇳</p>
+    </div>
+  </aside>
+
+  <!-- Menu content page (full-screen) -->
+  <div id="menu-page" class="hidden fixed inset-0 z-[62] bg-base overflow-y-auto">
+    <div class="max-w-md mx-auto min-h-full flex flex-col">
+      <header class="sticky top-0 z-10 flex items-center gap-3 px-4 py-4 bg-base/95 backdrop-blur border-b border-white/10">
+        <button id="btn-page-back" class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center" aria-label="Back">
+          <svg class="w-5 h-5 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+        </button>
+        <h2 id="menu-page-title" class="font-bold text-base"></h2>
+      </header>
+      <div id="menu-page-content" class="flex-1 px-5 py-6 text-sm text-slate-300 leading-relaxed"></div>
     </div>
   </div>
 
@@ -794,6 +849,79 @@
           }
         });
       });
+
+      // Side menu
+      $('btn-menu').addEventListener('click', openMenu);
+      $('menu-backdrop').addEventListener('click', closeMenu);
+      $('btn-logout').addEventListener('click', logout);
+      $('btn-menu-login').addEventListener('click', function () {
+        closeMenu();
+        openLoginModal();
+      });
+      document.querySelectorAll('.menu-item').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          openMenuPage(btn.dataset.page);
+        });
+      });
+      $('btn-page-back').addEventListener('click', function () {
+        $('menu-page').classList.add('hidden');
+      });
+    }
+
+    // ── Side menu ──────────────────────────────────────────────
+    const MENU_PAGES = {
+      about:      { title: 'About', html: '' },
+      founder:    { title: 'Founder', html: '' },
+      blogs:      { title: 'Blogs', html: '' },
+      orders:     { title: 'Orders', html: '' },
+      payments:   { title: 'Payments', html: '' },
+      support:    { title: 'Support', html: '' },
+      contact:    { title: 'Contact Us', html: '' },
+      privacy:    { title: 'Privacy Policy', html: '' },
+      disclaimer: { title: 'Disclaimer', html: '' },
+    };
+
+    const PAGE_PLACEHOLDER =
+      '<div class="text-center pt-16">' +
+      '<div class="text-4xl mb-4">🚧</div>' +
+      '<p class="font-semibold text-white">Coming soon</p>' +
+      '<p class="text-xs text-muted mt-2">Yeh page jald hi ready hoga.</p>' +
+      '</div>';
+
+    function openMenu() {
+      $('menu-user-line').textContent = isLoggedIn()
+        ? (state.user.name || state.user.email)
+        : 'Guest mode';
+      $('btn-logout').classList.toggle('hidden', !isLoggedIn());
+      $('btn-menu-login').classList.toggle('hidden', isLoggedIn());
+      $('menu-backdrop').classList.remove('hidden');
+      requestAnimationFrame(function () {
+        $('side-menu').classList.add('open');
+      });
+    }
+
+    function closeMenu() {
+      $('side-menu').classList.remove('open');
+      $('menu-backdrop').classList.add('hidden');
+    }
+
+    function openMenuPage(key) {
+      const page = MENU_PAGES[key];
+      if (!page) return;
+      $('menu-page-title').textContent = page.title;
+      $('menu-page-content').innerHTML = page.html || PAGE_PLACEHOLDER;
+      $('menu-page').classList.remove('hidden');
+      closeMenu();
+    }
+
+    function logout() {
+      state.token = null;
+      state.user = null;
+      localStorage.removeItem('wc_token');
+      localStorage.removeItem('wc_user');
+      setLoggedInUI();
+      loadProjects();
+      closeMenu();
     }
 
     function sendPrompt() {
