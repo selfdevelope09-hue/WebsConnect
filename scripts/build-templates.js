@@ -1,438 +1,237 @@
 'use strict';
 
-/**
- * Generates full 3-page demo websites for every template into
- * public/templates/<id>/{index,portfolio,contact}.html
- *
- * Run: node scripts/build-templates.js
- * The output is committed to git and served as static files, so users
- * can browse a real working multi-page demo of each template.
- */
-
 const fs = require('fs');
 const path = require('path');
+const TEMPLATES = require('./template-gallery-data');
 
 const OUT_DIR = path.join(__dirname, '..', 'public', 'templates');
+const PHONE = '+91 98765 43210';
+const TEL = 'tel:+919876543210';
+const WA = 'https://wa.me/919876543210';
+const MAP = 'https://maps.google.com/?q=Nagpur%2C%20Maharashtra';
+const QR = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=upi%3A%2F%2Fpay%3Fpa%3Ddemo%40upi%26pn%3DBusiness';
+const UPI = 'upi://pay?pa=demo@upi&pn=Business';
 
-const DEMO_PHONE = '+91 98765 43210';
-const DEMO_WA = 'https://wa.me/919876543210?text=Hi!%20I%20want%20to%20book%20a%20shoot';
-const DEMO_TEL = 'tel:+919876543210';
-const DEMO_MAIL = 'mailto:hello@example.com';
-
-function img(id, w) {
-  return 'https://images.unsplash.com/' + id + '?q=80&w=' + (w || 900) + '&auto=format&fit=crop';
-}
-
-// ── Image pools per niche ─────────────────────────────────────
-const IMGS = {
-  luxury: ['photo-1519741497674-611481863552', 'photo-1606216794074-735e91aa2c92', 'photo-1583939003579-730e3918a45a', 'photo-1522673607200-164d1b6ce486', 'photo-1520854221256-17451cc331bf', 'photo-1511285560929-80b456fea0bc', 'photo-1591604466107-ec97de577aff', 'photo-1465495976277-4387d4b0b4c6'],
-  golden: ['photo-1529634806980-85c3dd6d34ac', 'photo-1518199266791-5375a83190b7', 'photo-1537633552985-df8429e8048b', 'photo-1516589178581-6cd7833ae3b2', 'photo-1522098543979-ffc7f79a56c4', 'photo-1519225421980-715cb0215aed', 'photo-1520854221256-17451cc331bf', 'photo-1583939003579-730e3918a45a'],
-  minimal: ['photo-1452587925148-ce544e77e70d', 'photo-1471341971476-ae15ff79dd83', 'photo-1500462918059-b1a0cb512f1d', 'photo-1516035069371-29a1b244cc32', 'photo-1493863641943-9b68992a8d07', 'photo-1554080353-a576cf803bda', 'photo-1502920917128-1aa500764cbd', 'photo-1520390138845-fd2d229dd553'],
-  fashion: ['photo-1509631179647-0177331693ae', 'photo-1515886657613-9f3515b0c78f', 'photo-1496747611176-843222e1e57c', 'photo-1483985988355-763728e1935b', 'photo-1524504388940-b1c1722653e1', 'photo-1529139574466-a303027c1d8b', 'photo-1490481651871-ab68de25d43d', 'photo-1469334031218-e382a71b716b'],
-  street: ['photo-1449824913935-59a10b8d2000', 'photo-1477959858617-67f85cf4f1df', 'photo-1519501025264-65ba15a82390', 'photo-1514565131-fce0801e5785', 'photo-1486325212027-8081e485255e', 'photo-1519608487953-e999c86e7455', 'photo-1444723121867-7a241cacace9', 'photo-1480714378408-67cf0d13bc1b'],
-  wedding: ['photo-1606216794074-735e91aa2c92', 'photo-1519741497674-611481863552', 'photo-1591604466107-ec97de577aff', 'photo-1511285560929-80b456fea0bc', 'photo-1522673607200-164d1b6ce486', 'photo-1520854221256-17451cc331bf', 'photo-1465495976277-4387d4b0b4c6', 'photo-1583939003579-730e3918a45a'],
-  nature: ['photo-1441974231531-c6227db76b6e', 'photo-1470071459604-3b5ec3a7fe05', 'photo-1472214103451-9374bd1c798e', 'photo-1552083375-1447ce886485', 'photo-1500534314209-a25ddb2bd429', 'photo-1557050543-4d5f4e07ef46', 'photo-1426604966848-d7adac402bff', 'photo-1475924156734-496f6cac6ec1'],
-  product: ['photo-1523275335684-37898b6baf30', 'photo-1505740420928-5e560c06d30e', 'photo-1526170375885-4d8ecf77b99f', 'photo-1542291026-7eec264c27ff', 'photo-1560343090-f0409e92791a', 'photo-1585386959984-a4155224a1ad', 'photo-1572635196237-14b3f281503f', 'photo-1491553895911-0055eca6402d'],
-  baby: ['photo-1519689680058-324335c77eba', 'photo-1555252333-9f8e92e65df9', 'photo-1476703993599-0035a21b17a9', 'photo-1609220136736-443140cffec6', 'photo-1511895426328-dc8714191300', 'photo-1590649880765-91b1956b8276', 'photo-1544005313-94ddf0286df2', 'photo-1522771930-78848d9293e8'],
-  cinema: ['photo-1485846234645-a62644f84728', 'photo-1478720568477-152d9b164e26', 'photo-1492691527719-9d1e07e534b4', 'photo-1440404653325-ab127d49abc1', 'photo-1489599849927-2ee91cede3ba', 'photo-1518676590629-3dcbd9c5a5c9', 'photo-1517604931442-7e0c8ed2963c', 'photo-1536440136628-849c177e76a1'],
-};
-
-// ── Template configs ──────────────────────────────────────────
-// Each entry: theme tokens + a fully custom hero + layout variants.
-const TEMPLATES = [
-  {
-    id: 'noir-studio', name: 'Noir Studio', navLabel: 'Portfolio',
-    tagline: 'Cinematic luxury wedding & editorial photography',
-    fonts: { link: 'family=Playfair+Display:wght@500;700&family=Inter:wght@300;400;600', head: "'Playfair Display',serif", body: "'Inter',sans-serif" },
-    c: { bg: '#0a0a0a', card: '#161616', accent: '#d4af37', accentInk: '#0a0a0a', ink: '#ffffff', mut: '#9c9c9c', line: 'rgba(212,175,55,.28)' },
-    imgs: IMGS.luxury, galleryLayout: 'masonry', btnStyle: 'sharp',
-    services: [['Luxury Weddings', 'Full-day cinematic coverage with a two-photographer team.'], ['Editorial Portraits', 'Magazine-grade studio portraits with styled lighting.'], ['Destination Shoots', 'Udaipur, Goa, Jaipur — we travel with you.']],
-    quote: ['"Every frame felt like a movie still. Worth every rupee."', '— Priya & Arjun, Mumbai'],
-    hero(t) {
-      return '<section class="relative min-h-[88vh] flex items-end">' +
-        '<img src="' + img(t.imgs[0], 1200) + '" class="absolute inset-0 w-full h-full object-cover opacity-50" alt="hero">' +
-        '<div class="absolute inset-0 bg-gradient-to-t from-bg via-bg/40 to-transparent"></div>' +
-        '<div class="relative px-6 pb-16 max-w-3xl">' +
-        '<p class="text-accent tracking-[.35em] uppercase text-xs mb-4">Est. 2016 · Mumbai</p>' +
-        '<h1 class="font-head text-5xl md:text-6xl leading-tight">Noir Studio</h1>' +
-        '<p class="mt-4 text-mut max-w-md">' + t.tagline + '. Dark, timeless, unforgettable.</p>' +
-        '<div class="mt-8 flex gap-3 flex-wrap">' +
-        '<a href="portfolio.html" class="px-7 py-3.5 bg-accent text-accentInk font-semibold text-sm tracking-wide">VIEW PORTFOLIO</a>' +
-        '<a href="contact.html" class="px-7 py-3.5 border border-accent text-accent font-semibold text-sm tracking-wide">BOOK A DATE</a>' +
-        '</div></div></section>';
-    },
-  },
-  {
-    id: 'golden-hour', name: 'Golden Hour', navLabel: 'Gallery',
-    tagline: 'Romantic pre-wedding & couple stories in warm light',
-    fonts: { link: 'family=Cormorant+Garamond:ital,wght@0,500;0,700;1,500&family=Karla:wght@400;700', head: "'Cormorant Garamond',serif", body: "'Karla',sans-serif" },
-    c: { bg: '#fdf6ec', card: '#f7e8d0', accent: '#c98a2d', accentInk: '#ffffff', ink: '#3d2c17', mut: '#8a6f4d', line: 'rgba(201,138,45,.35)' },
-    imgs: IMGS.golden, galleryLayout: 'filmstrip', btnStyle: 'pill',
-    services: [['Pre-Wedding Films', 'Sunset shoots at handpicked golden-hour locations.'], ['Couple Portraits', 'Candid, dreamy frames that feel like your love story.'], ['Save-the-Date Reels', 'Short cinematic reels ready for Instagram.']],
-    quote: ['"Our pre-wedding shoot looked like a fairy tale. Everyone asks who shot it!"', '— Sneha & Rahul, Pune'],
-    hero(t) {
-      return '<section class="px-6 pt-14 pb-10 text-center">' +
-        '<p class="italic font-head text-2xl text-accent">the light that loves you back</p>' +
-        '<h1 class="font-head text-6xl mt-2">Golden Hour</h1>' +
-        '<p class="mt-3 text-mut max-w-md mx-auto">' + t.tagline + '.</p>' +
-        '<div class="mt-7 flex justify-center gap-3">' +
-        '<a href="portfolio.html" class="px-7 py-3.5 rounded-full bg-accent text-accentInk font-bold text-sm">See the Gallery</a>' +
-        '<a href="contact.html" class="px-7 py-3.5 rounded-full border-2 border-accent text-accent font-bold text-sm">Plan Your Shoot</a>' +
-        '</div>' +
-        '<div class="mt-10 grid grid-cols-3 gap-3 max-w-3xl mx-auto">' +
-        '<img src="' + img(t.imgs[1], 500) + '" class="rounded-t-full h-56 md:h-72 w-full object-cover" alt="">' +
-        '<img src="' + img(t.imgs[0], 500) + '" class="rounded-3xl h-56 md:h-72 w-full object-cover mt-6" alt="">' +
-        '<img src="' + img(t.imgs[2], 500) + '" class="rounded-t-full h-56 md:h-72 w-full object-cover" alt="">' +
-        '</div></section>';
-    },
-  },
-  {
-    id: 'minimal-frame', name: 'Minimal Frame', navLabel: 'Work',
-    tagline: 'Fine-art photography. Nothing else on the page.',
-    fonts: { link: 'family=Inter:wght@300;400;500;700', head: "'Inter',sans-serif", body: "'Inter',sans-serif" },
-    c: { bg: '#ffffff', card: '#f4f4f4', accent: '#111111', accentInk: '#ffffff', ink: '#111111', mut: '#777777', line: 'rgba(0,0,0,.12)' },
-    imgs: IMGS.minimal, galleryLayout: 'masonry', btnStyle: 'sharp',
-    services: [['Fine-Art Prints', 'Museum-grade prints, editions of 10, shipped worldwide.'], ['Personal Portraits', 'One hour. Natural light. No props, no noise.'], ['Space & Architecture', 'Interiors and structures, composed with patience.']],
-    quote: ['"Restraint is his superpower. The photos breathe."', '— Design Trust India'],
-    hero(t) {
-      return '<section class="px-6 pt-16 pb-12 max-w-4xl mx-auto">' +
-        '<h1 class="font-head font-light text-4xl md:text-5xl tracking-tight leading-snug">Photographs that<br><span class="font-bold">say less, mean more.</span></h1>' +
-        '<p class="mt-4 text-mut max-w-sm text-sm leading-relaxed">' + t.tagline + '</p>' +
-        '<div class="mt-8 flex gap-6 text-sm font-medium">' +
-        '<a href="portfolio.html" class="underline underline-offset-8 decoration-2">View Work →</a>' +
-        '<a href="contact.html" class="text-mut hover:text-ink">Enquire</a>' +
-        '</div>' +
-        '<img src="' + img(t.imgs[0], 1200) + '" class="mt-12 w-full h-80 md:h-[430px] object-cover" alt="featured">' +
-        '<p class="mt-2 text-[11px] text-mut tracking-wide">FIG. 01 — SELECTED WORK, 2026</p>' +
-        '</section>';
-    },
-  },
-  {
-    id: 'bold-lens', name: 'Bold Lens', navLabel: 'Portfolio',
-    tagline: 'Fashion, editorial & model portfolios with attitude',
-    fonts: { link: 'family=Archivo+Black&family=Space+Grotesk:wght@400;600', head: "'Archivo Black',sans-serif", body: "'Space Grotesk',sans-serif" },
-    c: { bg: '#12002b', card: '#26094a', accent: '#ff2d78', accentInk: '#ffffff', ink: '#ffffff', mut: '#b79ddb', line: 'rgba(255,45,120,.35)' },
-    imgs: IMGS.fashion, galleryLayout: 'grid', btnStyle: 'pill',
-    services: [['Editorial Campaigns', 'Concept-to-cover shoots for brands and magazines.'], ['Model Portfolios', 'Agency-ready digitals + styled portfolio in one day.'], ['Lookbooks & Reels', 'E-commerce lookbooks and vertical video content.']],
-    quote: ['"The boldest lens in the city. Our campaign went viral."', '— Vogue Street Labels'],
-    hero(t) {
-      return '<section class="relative px-6 pt-14 pb-12 overflow-hidden">' +
-        '<div class="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-accent/30 blur-3xl"></div>' +
-        '<h1 class="font-head text-5xl md:text-7xl leading-[1.02]"><span class="text-transparent bg-clip-text bg-gradient-to-r from-accent to-fuchsia-400">BOLD</span><br>LENS</h1>' +
-        '<p class="mt-4 text-mut max-w-xs">' + t.tagline + '.</p>' +
-        '<div class="mt-7 flex gap-3 flex-wrap">' +
-        '<a href="portfolio.html" class="px-7 py-3.5 rounded-full bg-gradient-to-r from-accent to-fuchsia-500 font-bold text-sm shadow-lg shadow-accent/40">SEE THE HEAT →</a>' +
-        '<a href="contact.html" class="px-7 py-3.5 rounded-full border border-accent/60 text-accent font-bold text-sm">BOOK ME</a>' +
-        '</div>' +
-        '<div class="mt-10 flex gap-3 -mx-6 px-6 overflow-x-auto pb-2">' +
-        t.imgs.slice(0, 4).map(function (im, i) { return '<img src="' + img(im, 480) + '" class="h-64 w-44 object-cover rounded-2xl shrink-0 ' + (i % 2 ? 'mt-6' : '') + ' border border-accent/30" alt="">'; }).join('') +
-        '</div>' +
-        '<div class="mt-8 grid grid-cols-3 gap-3 text-center">' +
-        [['320+', 'Shoots'], ['48', 'Brands'], ['1.2M', 'Reach']].map(function (s) { return '<div class="rounded-2xl bg-card border border-accent/20 py-4"><div class="font-head text-xl text-accent">' + s[0] + '</div><div class="text-[11px] text-mut mt-1">' + s[1] + '</div></div>'; }).join('') +
-        '</div></section>';
-    },
-  },
-  {
-    id: 'urban-street', name: 'Urban Street', navLabel: 'Frames',
-    tagline: 'Raw street & documentary photography from Indian cities',
-    fonts: { link: 'family=Oswald:wght@500;700&family=IBM+Plex+Mono:wght@400;600', head: "'Oswald',sans-serif", body: "'IBM Plex Mono',monospace" },
-    c: { bg: '#101418', card: '#1c232b', accent: '#ff6b35', accentInk: '#101418', ink: '#e8e8e8', mut: '#8b949e', line: 'rgba(255,107,53,.3)' },
-    imgs: IMGS.street, galleryLayout: 'filmstrip', btnStyle: 'sharp',
-    services: [['City Photo-Walks', 'Documenting streets, markets and people at dawn.'], ['Event Documentary', 'Unscripted coverage of gigs, protests and festivals.'], ['Zines & Prints', 'Limited-run photo zines from every series.']],
-    quote: ['"Gritty, honest, alive. This is what the city actually looks like."', '— The Metro Journal'],
-    hero(t) {
-      return '<section class="relative min-h-[80vh] flex items-center">' +
-        '<img src="' + img(t.imgs[0], 1200) + '" class="absolute inset-0 w-full h-full object-cover opacity-40 grayscale" alt="">' +
-        '<div class="relative px-6">' +
-        '<p class="text-accent text-xs tracking-widest">// SHOT ON THE STREETS SINCE 2018</p>' +
-        '<h1 class="font-head uppercase text-6xl md:text-8xl leading-none mt-3">URBAN<br><span class="text-accent">STREET</span></h1>' +
-        '<p class="mt-4 text-mut text-sm max-w-sm">' + t.tagline + '.</p>' +
-        '<div class="mt-8 flex gap-3">' +
-        '<a href="portfolio.html" class="px-6 py-3 bg-accent text-accentInk font-bold text-sm uppercase">View frames</a>' +
-        '<a href="contact.html" class="px-6 py-3 border border-ink/40 font-bold text-sm uppercase">Hire me</a>' +
-        '</div></div></section>';
-    },
-  },
-  {
-    id: 'wedding-bliss', name: 'Wedding Bliss', navLabel: 'Weddings',
-    tagline: 'Traditional & modern Indian wedding photography',
-    fonts: { link: 'family=Great+Vibes&family=Lora:ital,wght@0,500;0,600;1,500&family=Mulish:wght@400;700', head: "'Lora',serif", body: "'Mulish',sans-serif" },
-    c: { bg: '#fff7f8', card: '#fce9ee', accent: '#d96c82', accentInk: '#ffffff', ink: '#4a2c33', mut: '#96707a', line: 'rgba(217,108,130,.35)' },
-    imgs: IMGS.wedding, galleryLayout: 'grid', btnStyle: 'pill',
-    services: [['Wedding Day', 'Haldi to vidaai — every ritual, every tear, every laugh.'], ['Pre-Wedding', 'Styled couple shoots at palaces, beaches and cafes.'], ['Engagement & Mehendi', 'Intimate function coverage with candid teams.']],
-    quote: ['"They captured our haldi like a festival of colour. Family keeps rewatching!"', '— Ananya & Vikram, Nagpur'],
-    hero(t) {
-      return '<section class="px-6 pt-12 pb-10 text-center">' +
-        '<p style="font-family:\'Great Vibes\',cursive" class="text-4xl text-accent">forever begins here</p>' +
-        '<h1 class="font-head text-5xl mt-2">Wedding Bliss</h1>' +
-        '<p class="mt-3 text-mut max-w-md mx-auto text-sm">' + t.tagline + '.</p>' +
-        '<div class="relative mt-8 max-w-md mx-auto">' +
-        '<img src="' + img(t.imgs[0], 900) + '" class="rounded-[2.5rem] h-96 w-full object-cover shadow-xl" alt="">' +
-        '<div class="absolute -bottom-5 left-1/2 -translate-x-1/2 bg-card border border-accent/30 rounded-full px-5 py-2.5 text-xs font-bold text-accent shadow">500+ weddings captured 💍</div>' +
-        '</div>' +
-        '<div class="mt-12 flex justify-center gap-3">' +
-        '<a href="portfolio.html" class="px-7 py-3.5 rounded-full bg-accent text-accentInk font-bold text-sm shadow-lg shadow-accent/30">Real Weddings</a>' +
-        '<a href="contact.html" class="px-7 py-3.5 rounded-full bg-card text-accent border border-accent/40 font-bold text-sm">Check Your Date</a>' +
-        '</div></section>';
-    },
-  },
-  {
-    id: 'nature-focus', name: 'Nature Focus', navLabel: 'Expeditions',
-    tagline: 'Wildlife & landscape photography from the wild side of India',
-    fonts: { link: 'family=Fraunces:wght@500;700&family=Nunito+Sans:wght@400;700', head: "'Fraunces',serif", body: "'Nunito Sans',sans-serif" },
-    c: { bg: '#f3f7f2', card: '#e2ede0', accent: '#2e6b3f', accentInk: '#ffffff', ink: '#1d3324', mut: '#5c7362', line: 'rgba(46,107,63,.3)' },
-    imgs: IMGS.nature, galleryLayout: 'masonry', btnStyle: 'pill',
-    services: [['Wildlife Expeditions', 'Tadoba, Kanha, Ranthambore — join a photo safari.'], ['Landscape Series', 'Himalayan and Western Ghats long-exposure work.'], ['Fine-Art Prints', 'Archival prints that fund forest conservation.']],
-    quote: ['"His tiger series belongs in National Geographic."', '— Wild India Collective'],
-    hero(t) {
-      return '<section class="relative min-h-[82vh] flex items-center justify-center text-center">' +
-        '<img src="' + img(t.imgs[0], 1200) + '" class="absolute inset-0 w-full h-full object-cover" alt="">' +
-        '<div class="absolute inset-0 bg-black/45"></div>' +
-        '<div class="relative px-6 text-white">' +
-        '<p class="tracking-[.3em] uppercase text-xs opacity-90">Into the wild</p>' +
-        '<h1 class="font-head text-5xl md:text-6xl mt-3">Nature Focus</h1>' +
-        '<p class="mt-3 max-w-md mx-auto opacity-90 text-sm">' + t.tagline + '.</p>' +
-        '<div class="mt-8 flex justify-center gap-3 flex-wrap">' +
-        '<a href="portfolio.html" class="px-7 py-3.5 rounded-full bg-accent text-accentInk font-bold text-sm">Explore Expeditions</a>' +
-        '<a href="contact.html" class="px-7 py-3.5 rounded-full bg-white/15 backdrop-blur border border-white/40 font-bold text-sm">Join a Safari</a>' +
-        '</div></div></section>';
-    },
-  },
-  {
-    id: 'studio-pro', name: 'Studio Pro', navLabel: 'Services',
-    tagline: 'Commercial product & brand photography that sells',
-    fonts: { link: 'family=Manrope:wght@500;700;800', head: "'Manrope',sans-serif", body: "'Manrope',sans-serif" },
-    c: { bg: '#f5f8ff', card: '#e4ecff', accent: '#1d4ed8', accentInk: '#ffffff', ink: '#101a33', mut: '#5a6b8c', line: 'rgba(29,78,216,.25)' },
-    imgs: IMGS.product, galleryLayout: 'grid', btnStyle: 'soft',
-    services: [['Product & E-commerce', 'White-background + lifestyle packs for marketplaces.'], ['Corporate Headshots', 'On-site team headshots, colour-managed and retouched.'], ['Brand Campaigns', 'Art-directed campaign shoots with full usage rights.']],
-    quote: ['"Conversion on our listings jumped 32% after the reshoot."', '— Head of Growth, KartLeap'],
-    hero(t) {
-      return '<section class="px-6 pt-14 pb-12 max-w-5xl mx-auto">' +
-        '<div class="inline-flex items-center gap-2 rounded-full bg-card px-4 py-1.5 text-xs font-bold text-accent">⚡ Trusted by 48+ brands</div>' +
-        '<h1 class="font-head font-extrabold text-4xl md:text-5xl mt-5 leading-tight">Photos that make<br>products <span class="text-accent">fly off shelves.</span></h1>' +
-        '<p class="mt-4 text-mut max-w-md">' + t.tagline + '. Brief on Monday, assets by Friday.</p>' +
-        '<div class="mt-7 flex gap-3 flex-wrap">' +
-        '<a href="contact.html" class="px-7 py-3.5 rounded-xl bg-accent text-accentInk font-bold text-sm shadow-lg shadow-accent/30">Get a Quote →</a>' +
-        '<a href="portfolio.html" class="px-7 py-3.5 rounded-xl bg-card text-accent font-bold text-sm">View Services</a>' +
-        '</div>' +
-        '<div class="mt-10 grid grid-cols-2 md:grid-cols-4 gap-3">' +
-        t.imgs.slice(0, 4).map(function (im) { return '<img src="' + img(im, 480) + '" class="rounded-2xl h-40 w-full object-cover bg-white shadow-sm" alt="">'; }).join('') +
-        '</div>' +
-        '<div class="mt-8 rounded-2xl bg-card p-4 flex flex-wrap gap-x-6 gap-y-2 justify-center text-xs font-bold text-mut">' +
-        ['BRIEF', '→', 'SHOOT', '→', 'EDIT', '→', 'DELIVER IN 5 DAYS'].map(function (x) { return '<span class="' + (x === '→' ? 'text-accent' : '') + '">' + x + '</span>'; }).join('') +
-        '</div></section>';
-    },
-  },
-  {
-    id: 'little-moments', name: 'Little Moments', navLabel: 'Sessions',
-    tagline: 'Newborn, baby & family photography — soft, safe, full of love',
-    fonts: { link: 'family=Quicksand:wght@500;700&family=Baloo+2:wght@600;700', head: "'Baloo 2',cursive", body: "'Quicksand',sans-serif" },
-    c: { bg: '#fffdf5', card: '#fdeedd', accent: '#f4a259', accentInk: '#54402c', ink: '#54402c', mut: '#a08363', line: 'rgba(244,162,89,.4)' },
-    imgs: IMGS.baby, galleryLayout: 'grid', btnStyle: 'pill',
-    services: [['Newborn (0–30 days)', 'Safety-trained posing in a warm home studio.'], ['Milestones & Cake Smash', '6-month sitters and messy first-birthday fun.'], ['Maternity & Family', 'Outdoor golden-hour family sessions.']],
-    quote: ['"So patient with our little one. The photos melt our hearts every day."', '— Aisha & Rohan, Nagpur'],
-    hero(t) {
-      return '<section class="px-6 pt-12 pb-10 text-center">' +
-        '<div class="text-4xl">🧸</div>' +
-        '<h1 class="font-head text-5xl mt-2">Little Moments</h1>' +
-        '<p class="mt-3 text-mut max-w-sm mx-auto text-sm">' + t.tagline + '.</p>' +
-        '<div class="mt-8 grid grid-cols-2 gap-3 max-w-sm mx-auto">' +
-        '<img src="' + img(t.imgs[0], 500) + '" class="rounded-[2rem] h-52 w-full object-cover" alt="">' +
-        '<img src="' + img(t.imgs[1], 500) + '" class="rounded-[2rem] h-52 w-full object-cover mt-6" alt="">' +
-        '</div>' +
-        '<div class="mt-9 flex justify-center gap-3">' +
-        '<a href="portfolio.html" class="px-7 py-3.5 rounded-full bg-accent text-accentInk font-bold text-sm shadow-lg shadow-accent/40">See Sessions 🍼</a>' +
-        '<a href="contact.html" class="px-7 py-3.5 rounded-full border-2 border-accent text-accent font-bold text-sm">Book a Slot</a>' +
-        '</div>' +
-        '<p class="mt-6 text-[11px] text-mut">✓ Safety-trained · ✓ Home-studio comfort · ✓ Parent-approved props</p>' +
-        '</section>';
-    },
-  },
-  {
-    id: 'cinematic-reel', name: 'Cinematic Reel', navLabel: 'Films',
-    tagline: 'Wedding films & cinematography with blockbuster energy',
-    fonts: { link: 'family=Bebas+Neue&family=Sora:wght@400;600', head: "'Bebas Neue',sans-serif", body: "'Sora',sans-serif" },
-    c: { bg: '#0d0d0f', card: '#1b1b20', accent: '#e50914', accentInk: '#ffffff', ink: '#f5f5f5', mut: '#9a9aa3', line: 'rgba(229,9,20,.35)' },
-    imgs: IMGS.cinema, galleryLayout: 'filmstrip', btnStyle: 'sharp',
-    services: [['Wedding Feature Films', '15–20 min cinematic films with licensed music.'], ['Teasers & Reels', '60-second trailers delivered within 48 hours.'], ['Corporate & Brand Films', 'Ad films, founder stories and event aftermovies.']],
-    quote: ['"Our wedding film had a title card, a plot and an interval. Goosebumps."', '— The Kapoor Family'],
-    hero(t) {
-      return '<section class="relative min-h-[85vh] flex items-center justify-center text-center overflow-hidden">' +
-        '<img src="' + img(t.imgs[0], 1200) + '" class="absolute inset-0 w-full h-full object-cover opacity-35" alt="">' +
-        '<div class="absolute inset-x-0 top-0 h-10 bg-black"></div><div class="absolute inset-x-0 bottom-0 h-10 bg-black"></div>' +
-        '<div class="relative px-6">' +
-        '<p class="text-mut text-xs tracking-[.4em] uppercase">A WebsConnect Studios Production</p>' +
-        '<h1 class="font-head text-7xl md:text-8xl tracking-wide mt-4 text-accent drop-shadow-[0_0_25px_rgba(229,9,20,.5)]">CINEMATIC REEL</h1>' +
-        '<p class="mt-3 text-mut text-sm max-w-md mx-auto">' + t.tagline + '.</p>' +
-        '<div class="mt-8 flex justify-center gap-3">' +
-        '<a href="portfolio.html" class="px-8 py-3.5 bg-accent font-bold text-sm tracking-widest">▶ WATCH FILMS</a>' +
-        '<a href="contact.html" class="px-8 py-3.5 border border-ink/40 font-bold text-sm tracking-widest">BOOK NOW</a>' +
-        '</div></div></section>';
-    },
-  },
+const FONT_PAIRS = [
+  ['Playfair Display', 'Inter'], ['DM Serif Display', 'Nunito Sans'], ['Bebas Neue', 'Manrope'],
+  ['Fraunces', 'Work Sans'], ['Sora', 'Inter'], ['Merriweather', 'Lato'], ['Oswald', 'Source Sans 3'],
+  ['Cormorant Garamond', 'Montserrat'], ['Archivo Black', 'Roboto'], ['Libre Baskerville', 'Karla'],
 ];
 
-// ── Shared page builders ──────────────────────────────────────
+const IMAGE_IDS = {
+  food: ['photo-1555507036-ab1f4038808a', 'photo-1578985545062-69928b1d9587', 'photo-1551024506-0bccd828d307'],
+  salon: ['photo-1560066984-138dadb4c035', 'photo-1522337360788-8b13dee7a37e', 'photo-1562322140-8baeececf3df'],
+  fashion: ['photo-1445205170230-053b83016050', 'photo-1483985988355-763728e1935b', 'photo-1496747611176-843222e1e57c'],
+  services: ['photo-1581578731548-c64695cc6952', 'photo-1621905252507-b35492cc74b4', 'photo-1505798577917-a65157d3320a'],
+  photography: ['photo-1519741497674-611481863552', 'photo-1452587925148-ce544e77e70d', 'photo-1516035069371-29a1b244cc32'],
+  clinic: ['photo-1538108149393-fbbd81895907', 'photo-1629909613654-28e377c37b09', 'photo-1576091160399-112ba8d25d1d'],
+  education: ['photo-1523240795612-9a054b0db644', 'photo-1509062522246-3755977927d7', 'photo-1524178232363-1fb2b075b655'],
+  auto: ['photo-1507136566006-cfc505b114fc', 'photo-1487754180451-c456f719a1fc', 'photo-1607860108855-64acf2078ed9'],
+  movers: ['photo-1600518464441-9306b23ba1ff', 'photo-1586528116311-ad8dd3c8310d', 'photo-1601584115197-04ecc0da31d7'],
+  legal: ['photo-1450101499163-c8848c66ca85', 'photo-1521791055366-0d553872125f', 'photo-1589829545856-d10d557cf95f'],
+  interior: ['photo-1600566753086-00f18fb6b3ea', 'photo-1616486338812-3dadae4b4ace', 'photo-1600210492486-724fe5c67fb0'],
+  venue: ['photo-1507504031003-b417219a0fde', 'photo-1519167758481-83f550bb49b3', 'photo-1464366400600-7168b8af9bc3'],
+  petcare: ['photo-1450778869180-41d0601e046e', 'photo-1583337130417-3346a1be7dee', 'photo-1548199973-03cce0bbc87b'],
+  tailor: ['photo-1558618666-fcd25c85cd64', 'photo-1598033129183-c4f50c736f10', 'photo-1617127365659-c47fa864d8bc'],
+  agri: ['photo-1500382017468-9049fed747ef', 'photo-1464226184884-fa280b87c399', 'photo-1523348837708-15d4a09cfac2'],
+  hardware: ['photo-1504148455328-c376907d081c', 'photo-1581244277943-fe4a9c777189', 'photo-1530124566582-a618bc2615dc'],
+  coworking: ['photo-1497366811353-6870744d04b2', 'photo-1497366754035-f200968a6e72', 'photo-1497215728101-856f4ea42174'],
+  printing: ['photo-1562654501-a0ccc0fc3fb1', 'photo-1586075010923-2dd4570fb338', 'photo-1568871391149-449702439177'],
+  gadgets: ['photo-1581092921461-eab62e97a780', 'photo-1517336714731-489689fd1ca8', 'photo-1593642532400-2682810df593'],
+  driving: ['photo-1449965408869-eaa3f722e40d', 'photo-1503736334956-4c8f8e92946d', 'photo-1493238792000-8113da705763'],
+  cleaning: ['photo-1581578731548-c64695cc6952', 'photo-1527515637462-cff94eecc1ac', 'photo-1585421514738-01798e348b17'],
+  mobileshop: ['photo-1511707171634-5f897ff02aa9', 'photo-1523206489230-c012c64b2b48', 'photo-1598327105666-5b89351aff97'],
+  solar: ['photo-1508514177221-188b1cf16e9d', 'photo-1497435334941-8c899ee9e8e9', 'photo-1509391366360-2e959784a276'],
+  gifts: ['photo-1549465220-1a8b9238cd48', 'photo-1513885535751-8b9238bd345a', 'photo-1602173574767-37ac01994b2a'],
+  tutor: ['photo-1546410531-bb4caa6b424d', 'photo-1503676260728-1c00da094a0b', 'photo-1524178232363-1fb2b075b655'],
+  sports: ['photo-1526232761682-d26e03ac148e', 'photo-1540747913346-19e32dc3e97e', 'photo-1579952363873-27f3bade9f55'],
+  tattoo: ['photo-1598371839696-5c5bb00bdc28', 'photo-1568515045052-f9a854d70bfd', 'photo-1611501275019-9b5cda994e8d'],
+  babystore: ['photo-1515488042361-ee00e0ddd4e4', 'photo-1596461404969-9ae70f2830c1', 'photo-1519689680058-324335c77eba'],
+  warehouse: ['photo-1553413077-190dd305871c', 'photo-1586528116311-ad8dd3c8310d', 'photo-1565793298595-6a879b1d9492'],
+  tyre: ['photo-1578844251758-2f71da64c96f', 'photo-1486262715619-67b85e0b08d3', 'photo-1492144534655-ae79c964c9d7'],
+};
 
-function btnCls(t, filled) {
-  const shape = t.btnStyle === 'pill' ? 'rounded-full' : t.btnStyle === 'soft' ? 'rounded-xl' : '';
-  return filled
-    ? 'px-6 py-3 ' + shape + ' bg-accent text-accentInk font-bold text-sm'
-    : 'px-6 py-3 ' + shape + ' border border-accent text-accent font-bold text-sm';
+const CONTENT = {
+  food: ['Freshly baked happiness, every day', ['Signature Cakes', 'Flaky Pastries', 'Celebration Hampers'], ['Pure Ingredients', 'Fresh Daily', 'Custom Designs'], ['Cakes', 'Pastries', 'Savories'], ['Chocolate Truffle|₹699', 'Butter Croissant|₹120', 'Paneer Puff|₹90']],
+  salon: ['Transform your look today', ['Bridal Glow', 'Hair Spa', 'Nail Art'], ['Expert Stylists', 'Hygienic Studio', 'Flexible Slots'], ['Hair', 'Skin', 'Nails'], ['Precision Haircut|₹499', 'Hydra Facial|₹1,499', 'Gel Nail Art|₹899']],
+  fashion: ['Style made for your moment', ['Festive Edit', 'Modern Classics', 'Accessories'], ['Custom Fitting', 'Premium Fabrics', 'Easy Support'], ['Ethnic', 'Western', 'Accessories'], ['Silk Celebration Saree|₹3,499', 'Evening Co-ord Set|₹2,299', 'Statement Clutch|₹999']],
+  services: ['Trusted repairs, right at your door', ['AC Service', 'Plumbing', 'Electrical'], ['Verified Team', 'Upfront Rates', 'Service Support'], ['Repair', 'Installation', 'Maintenance'], ['AC Jet Wash|₹699', 'Tap Replacement|₹299', 'Switchboard Repair|₹399']],
+  photography: ['Stories that live beyond the moment', ['Weddings', 'Portraits', 'Commercial'], ['Cinematic Frames', 'Curated Edits', 'Clear Packages'], ['Weddings', 'Portraits', 'Commercial'], ['Intimate Wedding Story|From ₹35,000', 'Editorial Portrait Session|From ₹7,500', 'Brand Campaign|Quote on request']],
+  clinic: ['Thoughtful care for every family', ['Preventive Care', 'Advanced Treatment', 'Follow-up Support'], ['Modern Facility', 'Sterilized Equipment', 'Easy Appointments'], ['Consultation', 'Dental', 'Wellness'], ['General Consultation|₹500', 'Dental Cleaning|From ₹999', 'Preventive Health Review|₹799']],
+  education: ['Learn with clarity. Achieve with confidence.', ['Foundation Batch', 'Entrance Prep', 'Skill Courses'], ['Small Batches', 'Practice Tests', 'Personal Mentoring'], ['Foundation', 'Entrance', 'Skills'], ['Class 8–10 Foundation|₹1,999/mo', 'Entrance Test Prep|₹3,499/mo', 'Communication Skills|₹1,499/mo']],
+  auto: ['Bring back the showroom shine', ['Express Wash', 'Interior Detail', 'Ceramic Care'], ['Quality Products', 'Skilled Detailers', 'Slot-Based Service'], ['Silver', 'Gold', 'Platinum'], ['Express Wash|₹599', 'Deep Interior Detail|₹2,499', 'Ceramic Protection|From ₹9,999']],
+  movers: ['Safe, organized relocation from door to door', ['Home Shifting', 'Office Moves', 'Vehicle Transport'], ['Trained Crew', 'Quality Packing', 'On-Time Planning'], ['Local', 'Intercity', 'Storage'], ['Local 1BHK Move|From ₹4,999', 'Intercity 2BHK Move|Estimate required', 'Monthly Storage|From ₹1,499']],
+  legal: ['Compliance and tax support made simple', ['GST Registration', 'ITR Filing', 'Company Setup'], ['Confidential Process', 'Clear Documentation', 'Professional Guidance'], ['Business Setup', 'Tax', 'Legal'], ['GST Registration Support|₹1,499', 'Individual ITR Filing|₹999', 'Private Limited Setup|From ₹7,999']],
+  interior: ['Turn your space into a place you love', ['Full Home Design', 'Modular Kitchen', 'Commercial Interiors'], ['Quality Materials', 'Thoughtful Planning', 'Transparent Budgets'], ['Modern', 'Classic', 'Industrial'], ['Modern Living Room|From ₹2.5L', 'Modular Kitchen|From ₹1.8L', 'Office Transformation|Custom quote']],
+  venue: ['Celebrate your biggest moments in grand style', ['Wedding Celebrations', 'Corporate Events', 'Private Parties'], ['Elegant Spaces', 'Curated Catering', 'Event Support'], ['Decor', 'Catering', 'Venue Tour'], ['Royal Wedding Package|From ₹2.5L', 'Corporate Day Event|From ₹95,000', 'Celebration Dinner|From ₹1,200/plate']],
+  petcare: ['Gentle care for happy, healthy pets', ['Grooming Spa', 'Vet Consultation', 'Pet Boarding'], ['Stress-Free Handling', 'Clean Facilities', 'Pet-First Care'], ['Grooming', 'Vet Care', 'Boarding'], ['Bath & Dry|From ₹599', 'Full Grooming|From ₹999', 'Vet Consultation|₹500']],
+  tailor: ['Bespoke fits, finished by hand', ['Suits & Blazers', 'Ethnic Wear', 'Alterations'], ['Precise Fitting', 'Fabric Guidance', 'Doorstep Measurement'], ['Menswear', 'Womenswear', 'Uniforms'], ['Shirt Stitching|₹699', 'Designer Blouse|From ₹1,299', 'Two-Piece Suit|From ₹5,999']],
+  agri: ['Reliable farm inputs for a stronger harvest', ['Hybrid Seeds', 'Crop Nutrition', 'Farm Tools'], ['Genuine Products', 'Seasonal Guidance', 'Bulk Support'], ['Seeds', 'Nutrition', 'Equipment'], ['Hybrid Vegetable Seeds|₹450/pack', 'Organic Soil Booster|₹799/bag', 'Battery Sprayer|₹2,499']],
+  hardware: ['Everything your project needs, under one roof', ['Plumbing', 'Electricals', 'Sanitaryware'], ['Original Products', 'Bulk Rates', 'Site Delivery Support'], ['Plumbing', 'Electrical', 'Sanitaryware'], ['CPVC Pipe Bundle|Quote on request', 'Modular Switch Set|From ₹499', 'Countertop Basin|From ₹2,999']],
+  coworking: ['A better place to focus, meet and grow', ['Flexi Desks', 'Private Cabins', 'Meeting Rooms'], ['Fast Wi-Fi', 'Power Backup', 'Ergonomic Setup'], ['Flexi', 'Cabin', 'Meeting'], ['Day Pass|₹399/day', 'Dedicated Desk|₹5,999/mo', 'Meeting Room|₹699/hour']],
+  printing: ['Sharp print. Strong impact.', ['Business Stationery', 'Signage', 'Custom Merchandise'], ['High-Resolution Output', 'Fast Proofing', 'Bulk Pricing'], ['Stationery', 'Signage', 'Gifts'], ['Premium Visiting Cards|₹1,299/1000', 'Star Flex Banner|₹35/sq.ft', 'Custom Printed Mug|₹299']],
+  gadgets: ['Fast, careful repairs for the tech you rely on', ['Screen Repair', 'Battery Service', 'Laptop Care'], ['Data-Safe Process', 'Clear Estimates', 'Tested Parts'], ['Mobile', 'Laptop', 'Refurbished'], ['Phone Screen Replacement|From ₹1,499', 'Battery Replacement|From ₹999', 'Laptop Service|₹799']],
+  driving: ['Learn to drive with calm, practical coaching', ['Beginner Course', 'Refresher Course', 'RTO Assistance'], ['Dual-Control Cars', 'Flexible Slots', 'Structured Lessons'], ['Beginner', 'Refresher', 'RTO'], ['Beginner 15-Day Course|₹5,999', 'Refresher 7-Day Course|₹3,499', 'RTO Documentation Support|Quote']],
+  cleaning: ['A cleaner, healthier space starts here', ['Deep Cleaning', 'Sofa Care', 'Pest Control'], ['Family-Safe Products', 'Verified Team', 'Professional Equipment'], ['Home', 'Pest', 'Upholstery'], ['1BHK Deep Cleaning|₹2,499', 'Cockroach Treatment|From ₹999', 'Sofa Shampooing|₹399/seat']],
+  mobileshop: ['Smart accessories and mobile services, in one stop', ['Premium Covers', 'Audio & Charging', 'SIM & DTH'], ['Tested Products', 'Latest Models', 'Quick Fitting'], ['Covers', 'Audio', 'Services'], ['Armor Phone Case|₹499', 'Wireless Earbuds|₹1,299', 'Tempered Glass Fitting|₹199']],
+  solar: ['Power your future with rooftop solar', ['On-Grid Systems', 'Battery Backup', 'Commercial Solar'], ['Site-Based Design', 'Net-Metering Support', 'Performance Guidance'], ['On-Grid', 'Off-Grid', 'Commercial'], ['3kW Home System|Estimate after survey', '5kW Hybrid System|Custom quote', 'Commercial Rooftop|Site assessment']],
+  gifts: ['Make every gift personal', ['Photo Gifts', 'Corporate Awards', 'Celebration Hampers'], ['Custom Designs', 'Proof Before Print', 'Careful Packing'], ['Personalized', 'Trophies', 'Hampers'], ['Magic Photo Mug|₹399', 'Crystal Trophy|From ₹699', 'Celebration Hamper|From ₹999']],
+  tutor: ['Build fluency, confidence and real-world skill', ['Spoken English', 'Foreign Languages', 'IELTS Prep'], ['Personal Attention', 'Flexible Batches', 'Practical Sessions'], ['English', 'Foreign', 'Test Prep'], ['Spoken English Foundation|₹2,499', 'German A1|₹5,999', 'IELTS Preparation|₹7,499']],
+  sports: ['Train harder. Play longer. Book your ground.', ['Sports Academy', 'Turf Rental', 'Weekend Leagues'], ['Experienced Coaches', 'Quality Facilities', 'Flexible Bookings'], ['Academy', 'Turf', 'Events'], ['Junior Cricket Academy|₹2,499/mo', 'Football Turf|₹1,200/hour', 'Corporate Tournament|Custom quote']],
+  tattoo: ['Original art, made part of you', ['Custom Tattoos', 'Fine-Line Work', 'Piercing'], ['Sterile Setup', 'Single-Use Needles', 'Aftercare Guidance'], ['Minimal', 'Blackwork', 'Color'], ['Minimal Tattoo|From ₹1,499', 'Custom Blackwork|Design quote', 'Professional Piercing|From ₹699']],
+  babystore: ['Gentle essentials for every little milestone', ['Newborn Care', 'Learning Toys', 'Maternity'], ['Parent-Friendly Guidance', 'Age-Appropriate Picks', 'Safety-Focused Range'], ['Newborn', 'Toys', 'Maternity'], ['Newborn Essentials Kit|₹1,499', 'Wooden Learning Toy|₹699', 'Maternity Support Pillow|₹1,199']],
+  warehouse: ['Secure, scalable storage for growing businesses', ['Dry Storage', 'Cold Storage', 'Inventory Handling'], ['Monitored Facility', 'Organized Handling', 'Flexible Space'], ['Dry', 'Cold', 'Handling'], ['Dry Storage Bay|From ₹18/sq.ft', 'Temperature-Controlled Space|Custom rate', 'Pick & Pack Service|Per order']],
+  tyre: ['Grip, balance and confidence for every drive', ['Tyre Replacement', 'Wheel Alignment', 'Battery Care'], ['Precision Equipment', 'Multi-Brand Options', 'Fast Fitment'], ['Tyres', 'Alignment', 'Battery'], ['Wheel Alignment|₹599', 'Wheel Balancing|₹399', 'Battery Check & Fitment|Free with purchase']],
+};
+
+function image(niche, index, width) {
+  const ids = IMAGE_IDS[niche] || IMAGE_IDS.services;
+  return `https://images.unsplash.com/${ids[index % ids.length]}?auto=format&fit=crop&q=82&w=${width || 1000}`;
+}
+
+function esc(value) {
+  return String(value).replace(/[&<>"']/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+}
+
+function waText(text) {
+  return `${WA}?text=${encodeURIComponent(text)}`;
+}
+
+function theme(t, index) {
+  const fonts = FONT_PAIRS[index % FONT_PAIRS.length];
+  return {
+    ...t,
+    head: fonts[0],
+    body: fonts[1],
+    content: CONTENT[t.niche],
+    images: IMAGE_IDS[t.niche],
+    radius: index % 3 === 0 ? '0' : index % 3 === 1 ? '1.25rem' : '.6rem',
+  };
+}
+
+function button(t, href, label, outline) {
+  return `<a href="${href}" class="inline-flex items-center justify-center px-6 py-3 font-bold transition hover:-translate-y-0.5 ${outline ? 'border-2' : ''}" style="border-radius:${t.radius};${outline ? `border-color:${t.colors.accent};color:${t.colors.accent}` : `background:${t.colors.accent};color:${t.colors.bg}`}">${label}</a>`;
+}
+
+function ecosystem(t) {
+  if (!['venue', 'sports'].includes(t.niche)) return '';
+  return `<section class="px-5 py-5 text-center" style="background:${t.colors.accent};color:${t.colors.bg}"><p class="text-sm font-bold">Part of the StadiumConnect ecosystem for sports venues and mega-event bookings · <a class="underline" href="https://stadiumconnect.in" target="_blank" rel="noopener">Visit StadiumConnect →</a></p></section>`;
 }
 
 function shell(t, title, active, body) {
-  const nav = [
-    ['index.html', 'Home', 'home'],
-    ['portfolio.html', t.navLabel, 'portfolio'],
-    ['contact.html', 'Contact', 'contact'],
-  ].map(function (n) {
-    const on = n[2] === active;
-    return '<a href="' + n[0] + '" class="text-sm font-semibold ' + (on ? 'text-accent border-b-2 border-accent pb-0.5' : 'opacity-75 hover:opacity-100') + '">' + n[1] + '</a>';
-  }).join('<span class="w-4"></span>');
-
-  return '<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width, initial-scale=1.0">\n<title>' + title + ' — ' + t.name + '</title>\n' +
-    '<link href="https://fonts.googleapis.com/css2?' + t.fonts.link + '&display=swap" rel="stylesheet">\n' +
-    '<script src="https://cdn.tailwindcss.com"><\/script>\n' +
-    '<script>tailwind.config={theme:{extend:{colors:{bg:"' + t.c.bg + '",card:"' + t.c.card + '",accent:"' + t.c.accent + '",accentInk:"' + t.c.accentInk + '",ink:"' + t.c.ink + '",mut:"' + t.c.mut + '"},fontFamily:{head:[' + JSON.stringify(t.fonts.head.replace(/'/g, '')) + '],body:[' + JSON.stringify(t.fonts.body.replace(/'/g, '')) + ']}}}}<\/script>\n' +
-    '<style>body{font-family:' + t.fonts.body + '}.font-head{font-family:' + t.fonts.head + '}html{scroll-behavior:smooth}</style>\n' +
-    '</head>\n<body class="bg-bg text-ink antialiased">\n' +
-    '<header class="sticky top-0 z-40 backdrop-blur bg-bg/85" style="border-bottom:1px solid ' + t.c.line + '">' +
-    '<div class="max-w-5xl mx-auto flex items-center justify-between px-5 py-3.5">' +
-    '<a href="index.html" class="font-head text-lg text-accent">' + t.name + '</a>' +
-    '<nav class="flex items-center">' + nav + '</nav>' +
-    '</div></header>\n' +
-    body +
-    '\n<footer class="mt-4 px-6 py-10 text-center" style="border-top:1px solid ' + t.c.line + '">' +
-    '<p class="font-head text-lg text-accent">' + t.name + '</p>' +
-    '<p class="text-xs text-mut mt-1">' + t.tagline + '</p>' +
-    '<div class="mt-4 flex justify-center gap-5 text-xs font-semibold">' +
-    '<a href="index.html" class="hover:text-accent">Home</a><a href="portfolio.html" class="hover:text-accent">' + t.navLabel + '</a><a href="contact.html" class="hover:text-accent">Contact</a>' +
-    '</div>' +
-    '<p class="mt-5 text-[10px] text-mut opacity-70">Demo template · Built with <a class="underline" href="https://websconnect.in" target="_blank" rel="noopener">WebsConnect</a></p>' +
-    '</footer>\n' +
-    '<a href="' + DEMO_WA + '" target="_blank" rel="noopener" class="fixed bottom-5 right-5 z-50 w-13 h-13 px-4 py-3 rounded-full bg-[#25D366] text-white font-bold text-sm shadow-xl">WhatsApp 💬</a>\n' +
-    '</body>\n</html>';
+  const secondLabel = t.page2 === 'ratecard' ? 'Rate Card' : t.page2[0].toUpperCase() + t.page2.slice(1);
+  const links = [['index.html', 'Home', 'home'], [`${t.page2}.html`, secondLabel, 'second'], ['contact.html', 'Contact', 'contact']];
+  const nav = links.map(([href, label, key]) => `<a href="${href}" class="text-xs sm:text-sm font-bold ${active === key ? 'border-b-2 pb-1' : 'opacity-70 hover:opacity-100'}" style="${active === key ? `border-color:${t.colors.accent};color:${t.colors.accent}` : ''}">${label}</a>`).join('');
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>${esc(title)} — ${esc(t.name)}</title>
+  <meta name="description" content="${esc(t.desc)}">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=${t.head.replace(/ /g, '+')}:wght@600;700&family=${t.body.replace(/ /g, '+')}:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"><\/script>
+  <style>:root{--bg:${t.colors.bg};--card:${t.colors.card};--accent:${t.colors.accent};--text:${t.colors.text}}html{scroll-behavior:smooth}body{font-family:'${t.body}',sans-serif;background:var(--bg);color:var(--text)}h1,h2,h3,.display{font-family:'${t.head}',serif}.card{background:var(--card);border-radius:${t.radius};box-shadow:0 14px 40px rgba(15,23,42,.08)}input,select,textarea{color:#172033}</style>
+</head>
+<body>
+  <header class="sticky top-0 z-50 border-b backdrop-blur-xl" style="background:${t.colors.bg}eF;border-color:${t.colors.accent}33">
+    <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3"><a href="index.html" class="display text-lg font-bold" style="color:${t.colors.accent}">${t.emoji} ${esc(t.name)}</a><nav class="flex gap-4 sm:gap-7">${nav}</nav></div>
+  </header>
+  ${body}
+  <footer class="border-t px-5 py-10 text-center" style="border-color:${t.colors.accent}33"><p class="display text-xl font-bold">${esc(t.name)}</p><div class="mt-3 flex justify-center gap-5 text-sm">${links.map(([href, label]) => `<a href="${href}">${label}</a>`).join('')}</div><p class="mt-4 text-xs opacity-60">Demo website by WebsConnect · Nagpur, Maharashtra</p></footer>
+  <a href="${waText(`Hi ${t.name}, I would like more information.`)}" target="_blank" rel="noopener" class="fixed bottom-4 right-4 z-50 rounded-full bg-[#25D366] px-5 py-3 text-sm font-bold text-white shadow-xl">WhatsApp 💬</a>
+</body></html>`;
 }
 
 function homePage(t) {
-  const services = '<section class="px-6 py-12 max-w-5xl mx-auto"><h2 class="font-head text-3xl text-center">What We Do</h2>' +
-    '<div class="mt-8 grid md:grid-cols-3 gap-4">' +
-    t.services.map(function (s, i) {
-      return '<div class="bg-card p-6 ' + (t.btnStyle === 'sharp' ? '' : 'rounded-2xl') + '" style="border:1px solid ' + t.c.line + '">' +
-        '<div class="text-accent font-head text-lg">0' + (i + 1) + '</div>' +
-        '<h3 class="font-bold mt-2">' + s[0] + '</h3>' +
-        '<p class="text-sm text-mut mt-2 leading-relaxed">' + s[1] + '</p></div>';
-    }).join('') +
-    '</div><div class="text-center mt-8"><a href="portfolio.html" class="' + btnCls(t, true) + '">Explore ' + t.navLabel + ' →</a></div></section>';
-
-  const strip = '<section class="px-6 py-10"><div class="max-w-5xl mx-auto"><h2 class="font-head text-3xl text-center">Recent Work</h2>' +
-    '<div class="mt-7 grid grid-cols-2 md:grid-cols-4 gap-3">' +
-    t.imgs.slice(2, 6).map(function (im) { return '<a href="portfolio.html"><img src="' + img(im, 480) + '" class="h-44 w-full object-cover ' + (t.btnStyle === 'sharp' ? '' : 'rounded-2xl') + ' hover:opacity-85 transition" alt="work"></a>'; }).join('') +
-    '</div></div></section>';
-
-  const quote = '<section class="px-6 py-12"><div class="max-w-2xl mx-auto text-center">' +
-    '<div class="font-head text-5xl text-accent leading-none">“</div>' +
-    '<p class="font-head text-xl leading-relaxed">' + t.quote[0] + '</p>' +
-    '<p class="mt-3 text-xs text-mut font-semibold">' + t.quote[1] + '</p></div></section>';
-
-  const cta = '<section class="px-6 pb-12"><div class="max-w-3xl mx-auto bg-card text-center px-6 py-10 ' + (t.btnStyle === 'sharp' ? '' : 'rounded-3xl') + '" style="border:1px solid ' + t.c.line + '">' +
-    '<h2 class="font-head text-2xl">Dates fill fast. Lock yours today.</h2>' +
-    '<p class="text-sm text-mut mt-2">Tell us your date and vision — we reply within a few hours.</p>' +
-    '<div class="mt-6 flex justify-center gap-3 flex-wrap">' +
-    '<a href="contact.html" class="' + btnCls(t, true) + '">Book Now</a>' +
-    '<a href="' + DEMO_WA + '" target="_blank" rel="noopener" class="' + btnCls(t, false) + '">WhatsApp Us</a>' +
-    '</div></div></section>';
-
-  return shell(t, 'Home', 'home', t.hero(t) + services + strip + quote + cta);
+  const [headline, cards, trust] = t.content;
+  const cardsHtml = cards.map((name, i) => `<article class="card overflow-hidden"><img src="${image(t.niche, i + 1, 650)}" alt="${esc(name)}" class="h-44 w-full object-cover"><div class="p-5"><p class="text-xs font-bold uppercase tracking-widest" style="color:${t.colors.accent}">0${i + 1}</p><h3 class="mt-2 text-xl font-bold">${esc(name)}</h3><p class="mt-2 text-sm opacity-70">Thoughtfully designed service with clear guidance and easy WhatsApp assistance.</p></div></article>`).join('');
+  return shell(t, 'Home', 'home', `
+    <main>
+      <section class="relative min-h-[76vh] overflow-hidden px-5 py-20 flex items-center">
+        <img src="${image(t.niche, 0, 1600)}" alt="${esc(t.category)}" class="absolute inset-0 h-full w-full object-cover">
+        <div class="absolute inset-0 bg-black/55"></div>
+        <div class="relative mx-auto w-full max-w-6xl text-white"><p class="text-xs font-bold uppercase tracking-[.3em]">${esc(t.category)} · Nagpur</p><h1 class="mt-4 max-w-3xl text-5xl font-bold leading-tight md:text-7xl">${esc(headline)}</h1><p class="mt-5 max-w-xl text-base text-white/80 md:text-lg">${esc(t.desc)}</p><div class="mt-8 flex flex-wrap gap-3">${button(t, `${t.page2}.html`, `Explore ${t.page2 === 'ratecard' ? 'Rate Card' : t.page2}`, false)}${button(t, 'contact.html', 'Book / Enquire', true)}</div></div>
+      </section>
+      ${ecosystem(t)}
+      <section class="px-5 py-8"><div class="mx-auto grid max-w-6xl grid-cols-1 gap-3 sm:grid-cols-3">${trust.map(x => `<div class="card p-4 text-center text-sm font-bold">✓ ${esc(x)}</div>`).join('')}</div></section>
+      <section class="px-5 py-14"><div class="mx-auto max-w-6xl"><div class="max-w-2xl"><p class="text-xs font-bold uppercase tracking-widest" style="color:${t.colors.accent}">What we offer</p><h2 class="mt-2 text-4xl font-bold">Made around what customers need most</h2></div><div class="mt-8 grid gap-5 md:grid-cols-3">${cardsHtml}</div><div class="mt-8">${button(t, `${t.page2}.html`, `View full ${t.page2}`, false)}</div></div></section>
+      <section class="px-5 pb-16"><div class="card mx-auto max-w-5xl p-8 text-center md:p-12"><p class="text-sm font-bold" style="color:${t.colors.accent}">QUICK CONTACT</p><h2 class="mt-2 text-3xl font-bold">Ready when you are</h2><p class="mt-3 opacity-70">Call ${PHONE} · Open Monday–Saturday, 9:00 AM–7:00 PM · Nagpur, Maharashtra</p><div class="mt-6 flex flex-wrap justify-center gap-3">${button(t, TEL, 'Call Now', false)}${button(t, waText(`Hi ${t.name}, I would like to enquire.`), 'WhatsApp Us', true)}</div></div></section>
+    </main>`);
 }
 
-function galleryHtml(t) {
-  const rounded = t.btnStyle === 'sharp' ? '' : 'rounded-2xl';
-  if (t.galleryLayout === 'masonry') {
-    return '<div class="columns-2 md:columns-3 gap-3 [&>img]:mb-3">' +
-      t.imgs.map(function (im, i) { return '<img src="' + img(im, 600) + '" class="w-full object-cover ' + rounded + '" style="height:' + (i % 3 === 0 ? 300 : i % 3 === 1 ? 210 : 250) + 'px" alt="work">'; }).join('') +
-      '</div>';
-  }
-  if (t.galleryLayout === 'filmstrip') {
-    return [t.imgs.slice(0, 4), t.imgs.slice(4, 8)].map(function (row, r) {
-      return '<p class="text-xs font-bold text-accent tracking-widest uppercase mb-2 ' + (r ? 'mt-8' : '') + '">Series ' + (r + 1) + '</p>' +
-        '<div class="flex gap-3 overflow-x-auto pb-3 -mx-6 px-6">' +
-        row.map(function (im) { return '<img src="' + img(im, 600) + '" class="h-60 w-72 shrink-0 object-cover ' + rounded + '" alt="work">'; }).join('') +
-        '</div>';
-    }).join('');
-  }
-  // uniform grid
-  return '<div class="grid grid-cols-2 md:grid-cols-3 gap-3">' +
-    t.imgs.map(function (im) { return '<img src="' + img(im, 600) + '" class="h-52 md:h-64 w-full object-cover ' + rounded + ' hover:opacity-85 transition" alt="work">'; }).join('') +
-    '</div>';
+function secondPage(t) {
+  const categories = t.content[3];
+  const items = t.content[4].map((entry, i) => {
+    const [name, price] = entry.split('|');
+    return { name, price, category: categories[i % categories.length] };
+  });
+  const filters = ['All', ...categories].map((cat, i) => `<button type="button" data-filter="${esc(cat)}" class="filter px-4 py-2 text-sm font-bold ${i ? 'opacity-70' : ''}" style="border-radius:999px;${i ? `background:${t.colors.card}` : `background:${t.colors.accent};color:${t.colors.bg}`}">${esc(cat)}</button>`).join('');
+  const itemCards = items.concat(items.map((x, i) => ({ ...x, name: `${x.name} ${i % 2 ? 'Plus' : 'Classic'}` }))).map((item, i) => `<article class="product card overflow-hidden" data-category="${esc(item.category)}"><img src="${image(t.niche, i + 1, 700)}" alt="${esc(item.name)}" class="h-52 w-full object-cover"><div class="p-5"><p class="text-xs font-bold uppercase tracking-wider" style="color:${t.colors.accent}">${esc(item.category)}</p><h3 class="mt-2 text-xl font-bold">${esc(item.name)}</h3><p class="mt-2 text-sm opacity-65">Quality options, practical guidance and transparent assistance.</p><div class="mt-5 flex items-center justify-between gap-3"><strong>${esc(item.price)}</strong><a href="${waText(`Hi ${t.name}, I am interested in ${item.name}.`)}" target="_blank" rel="noopener" class="rounded-full px-4 py-2 text-xs font-bold" style="background:${t.colors.accent};color:${t.colors.bg}">Ask on WhatsApp</a></div></div></article>`).join('');
+  const special = {
+    photography: ['Package pricing', 'Choose Essential, Signature or Premium coverage, then request availability.', 'Open any image to discuss a similar shoot.'],
+    interior: ['Instant cost estimator', 'Select your home size for a planning range.', '1BHK: ₹4–7L · 2BHK: ₹7–12L · 3BHK: ₹11–18L (estimates)'],
+    solar: ['Savings estimator', 'A site survey confirms system size and payback.', '₹2,000–₹5,000 bill: consider 3kW · ₹5,000+: consider 5kW (estimates)'],
+    movers: ['How shifting works', 'Packing → Loading → Safe Transit → Unpacking', 'Final rates depend on distance, floor access and volume.'],
+  }[t.niche] || ['How it works', 'Choose an option → Send your requirement → Confirm on WhatsApp', 'Every quote is confirmed before work begins.'];
+  return shell(t, t.page2, 'second', `
+    <main class="px-5 py-14"><section class="mx-auto max-w-6xl"><p class="text-xs font-bold uppercase tracking-[.25em]" style="color:${t.colors.accent}">${esc(t.category)}</p><h1 class="mt-2 text-5xl font-bold">${esc(t.page2 === 'ratecard' ? 'Rate Card' : t.page2[0].toUpperCase() + t.page2.slice(1))}</h1><p class="mt-4 max-w-2xl opacity-70">Explore detailed options, transparent sample pricing and direct assistance from ${esc(t.name)}.</p><div class="mt-7 flex flex-wrap gap-2">${filters}</div></section>
+      <section class="mx-auto mt-9 grid max-w-6xl gap-5 sm:grid-cols-2 lg:grid-cols-3" id="products">${itemCards}</section>
+      <section class="card mx-auto mt-14 max-w-6xl p-7 md:p-10"><h2 class="text-3xl font-bold">${special[0]}</h2><p class="mt-3 opacity-70">${special[1]}</p><p class="mt-4 font-bold" style="color:${t.colors.accent}">${special[2]}</p><div class="mt-6">${button(t, 'contact.html', 'Continue to booking', false)}</div></section>
+    </main>
+    <script>
+      document.querySelectorAll('.filter').forEach(function(button){button.addEventListener('click',function(){var selected=button.dataset.filter;document.querySelectorAll('.product').forEach(function(card){card.style.display=selected==='All'||card.dataset.category===selected?'block':'none'});document.querySelectorAll('.filter').forEach(function(x){x.style.opacity='.65'});button.style.opacity='1'})});
+    <\/script>`);
 }
 
-function portfolioPage(t) {
-  const chips = ['All', 'Featured', 'Recent', 'Client Work'].map(function (c, i) {
-    return '<span class="px-4 py-1.5 text-xs font-bold ' + (t.btnStyle === 'sharp' ? '' : 'rounded-full') + ' ' + (i === 0 ? 'bg-accent text-accentInk' : 'bg-card text-mut') + '">' + c + '</span>';
-  }).join('');
-
-  const body = '<section class="px-6 pt-12 pb-6 text-center max-w-3xl mx-auto">' +
-    '<h1 class="font-head text-4xl">' + t.navLabel + '</h1>' +
-    '<p class="mt-3 text-mut text-sm">' + t.tagline + '. Every project below is real client work.</p>' +
-    '<div class="mt-6 flex justify-center gap-2 flex-wrap">' + chips + '</div></section>' +
-    '<section class="px-6 pb-10 max-w-5xl mx-auto">' + galleryHtml(t) + '</section>' +
-    '<section class="px-6 pb-14 text-center">' +
-    '<h2 class="font-head text-2xl">Liked what you saw?</h2>' +
-    '<p class="text-sm text-mut mt-2">Let\u2019s create something like this for you.</p>' +
-    '<div class="mt-5 flex justify-center gap-3"><a href="contact.html" class="' + btnCls(t, true) + '">Get in Touch →</a><a href="index.html" class="' + btnCls(t, false) + '">Back to Home</a></div>' +
-    '</section>';
-
-  return shell(t, t.navLabel, 'portfolio', body);
+function formFields(t) {
+  const fields = {
+    salon: [['date', 'Preferred date'], ['select', 'Service', 'Hair service|Skin service|Nail service'], ['select', 'Time slot', 'Morning|Afternoon|Evening']],
+    clinic: [['date', 'Preferred date'], ['select', 'Preferred slot', 'Morning|Evening'], ['text', 'Issue or treatment']],
+    movers: [['text', 'Moving from'], ['text', 'Moving to'], ['date', 'Shifting date']],
+    venue: [['select', 'Event type', 'Wedding|Birthday|Corporate'], ['number', 'Expected guests'], ['date', 'Preferred date']],
+    sports: [['select', 'Booking type', 'Academy admission|Turf rental|Tournament'], ['date', 'Preferred date'], ['select', 'Preferred slot', 'Morning|Afternoon|Evening']],
+    tattoo: [['select', 'Service', 'Custom tattoo|Cover-up|Piercing'], ['text', 'Style and placement'], ['date', 'Consultation date']],
+    babystore: [['text', 'Child age / maternity stage'], ['text', 'Product needed'], ['text', 'Budget range']],
+    warehouse: [['select', 'Storage type', 'Dry storage|Cold storage|Inventory handling'], ['text', 'Space or pallet requirement'], ['date', 'Required from']],
+    tyre: [['text', 'Vehicle model'], ['select', 'Service', 'Tyre replacement|Alignment|Balancing|Battery'], ['date', 'Preferred date']],
+    solar: [['number', 'Monthly electricity bill'], ['number', 'Roof area (sq.ft)'], ['select', 'Connection type', 'Residential|Commercial']],
+  };
+  return fields[t.niche] || [['text', 'Service or product needed'], ['date', 'Preferred date'], ['text', 'Area / location']];
 }
 
 function contactPage(t) {
-  const rounded = t.btnStyle === 'sharp' ? '' : 'rounded-2xl';
-  const cards = [
-    ['📞', 'Call Us', DEMO_PHONE, DEMO_TEL],
-    ['💬', 'WhatsApp', 'Chat instantly', DEMO_WA],
-    ['✉️', 'Email', 'hello@example.com', DEMO_MAIL],
-    ['📍', 'Studio', 'Nagpur, Maharashtra', 'https://maps.google.com/?q=Nagpur'],
-  ].map(function (c) {
-    return '<a href="' + c[3] + '" ' + (c[3].startsWith('http') ? 'target="_blank" rel="noopener"' : '') + ' class="bg-card p-5 ' + rounded + ' block hover:opacity-90 transition" style="border:1px solid ' + t.c.line + '">' +
-      '<div class="text-2xl">' + c[0] + '</div><div class="font-bold mt-2 text-sm">' + c[1] + '</div><div class="text-xs text-mut mt-1">' + c[2] + '</div></a>';
+  const inputs = formFields(t).map(([type, label, options], index) => {
+    if (type === 'select') return `<label class="block text-sm font-bold">${label}<select name="field${index}" required class="mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3"><option value="">Choose one</option>${options.split('|').map(x => `<option>${esc(x)}</option>`).join('')}</select></label>`;
+    return `<label class="block text-sm font-bold">${label}<input name="field${index}" type="${type}" required placeholder="${esc(label)}" class="mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3"></label>`;
   }).join('');
-
-  const form = '<form onsubmit="event.preventDefault();var n=this.n.value,m=this.m.value;window.open(\'https://wa.me/919876543210?text=\'+encodeURIComponent(\'Hi, I am \'+n+\'. \'+m),\'_blank\')" class="bg-card p-6 ' + rounded + '" style="border:1px solid ' + t.c.line + '">' +
-    '<h2 class="font-head text-xl">Send an Enquiry</h2>' +
-    '<input name="n" required placeholder="Your name" class="mt-4 w-full px-4 py-3 text-sm bg-bg ' + rounded + ' outline-none" style="border:1px solid ' + t.c.line + '">' +
-    '<input name="m" required placeholder="Event date & what you need" class="mt-3 w-full px-4 py-3 text-sm bg-bg ' + rounded + ' outline-none" style="border:1px solid ' + t.c.line + '">' +
-    '<button type="submit" class="mt-4 w-full py-3.5 ' + (t.btnStyle === 'pill' ? 'rounded-full' : t.btnStyle === 'soft' ? 'rounded-xl' : '') + ' bg-accent text-accentInk font-bold text-sm">Send on WhatsApp →</button>' +
-    '<p class="mt-3 text-[10px] text-mut text-center">Opens WhatsApp with your message pre-filled.</p></form>';
-
-  const hours = '<div class="bg-card p-6 ' + rounded + '" style="border:1px solid ' + t.c.line + '">' +
-    '<h2 class="font-head text-xl">Studio Hours</h2>' +
-    '<div class="mt-4 space-y-2 text-sm">' +
-    [['Mon – Fri', '10:00 AM – 8:00 PM'], ['Saturday', '10:00 AM – 6:00 PM'], ['Sunday', 'Shoots only (by booking)']].map(function (h) {
-      return '<div class="flex justify-between"><span class="text-mut">' + h[0] + '</span><span class="font-semibold">' + h[1] + '</span></div>';
-    }).join('') +
-    '</div></div>';
-
-  const body = '<section class="px-6 pt-12 pb-8 text-center">' +
-    '<h1 class="font-head text-4xl">Let\u2019s Talk</h1>' +
-    '<p class="mt-3 text-mut text-sm max-w-md mx-auto">Bookings, pricing, dates — reach us any way you like. We usually reply within 2 hours.</p></section>' +
-    '<section class="px-6 pb-8 max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-3">' + cards + '</section>' +
-    '<section class="px-6 pb-12 max-w-4xl mx-auto grid md:grid-cols-2 gap-4">' + form + hours + '</section>' +
-    '<section class="px-6 pb-14 text-center"><a href="portfolio.html" class="' + btnCls(t, false) + '">← See our ' + t.navLabel.toLowerCase() + ' first</a></section>';
-
-  return shell(t, 'Contact', 'contact', body);
+  return shell(t, 'Contact', 'contact', `
+    <main class="px-5 py-14"><section class="mx-auto max-w-6xl text-center"><p class="text-xs font-bold uppercase tracking-[.25em]" style="color:${t.colors.accent}">Contact & booking</p><h1 class="mt-2 text-5xl font-bold">Let’s plan the next step</h1><p class="mx-auto mt-4 max-w-2xl opacity-70">Use the form for a pre-filled WhatsApp request, or reach ${esc(t.name)} directly.</p></section>
+      <section class="mx-auto mt-10 grid max-w-6xl gap-4 sm:grid-cols-3"><a class="card p-6" href="${TEL}"><span class="text-2xl">📞</span><h2 class="mt-3 text-lg font-bold">Call us</h2><p class="mt-1 text-sm opacity-70">${PHONE}</p></a><a class="card p-6" href="${waText(`Hi ${t.name}`)}" target="_blank" rel="noopener"><span class="text-2xl">💬</span><h2 class="mt-3 text-lg font-bold">WhatsApp</h2><p class="mt-1 text-sm opacity-70">Quick questions and bookings</p></a><a class="card p-6" href="${MAP}" target="_blank" rel="noopener"><span class="text-2xl">📍</span><h2 class="mt-3 text-lg font-bold">Visit us</h2><p class="mt-1 text-sm opacity-70">Nagpur, Maharashtra · Open in Maps</p></a></section>
+      <section class="mx-auto mt-8 grid max-w-6xl gap-6 lg:grid-cols-[1.3fr_.7fr]"><form id="booking-form" class="card space-y-5 p-6 md:p-8"><h2 class="text-2xl font-bold">Send an enquiry</h2><label class="block text-sm font-bold">Your name<input name="name" required placeholder="Your name" class="mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3"></label>${inputs}<label class="block text-sm font-bold">Notes<textarea name="notes" rows="3" placeholder="Anything else we should know?" class="mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3"></textarea></label><button class="w-full px-6 py-3 font-bold" style="border-radius:${t.radius};background:${t.colors.accent};color:${t.colors.bg}" type="submit">Send on WhatsApp →</button></form>
+        <aside class="space-y-5"><div class="card p-6"><h2 class="text-2xl font-bold">Direct payment</h2><p class="mt-2 text-sm opacity-70">Scan the demo UPI QR or open your UPI app.</p><img src="${QR}" alt="Demo UPI payment QR code" class="mx-auto mt-5 h-[220px] w-[220px] rounded-xl bg-white p-2"><a href="${UPI}" class="mt-4 block text-center font-bold underline" style="color:${t.colors.accent}">Pay demo@upi</a></div><div class="card p-6"><h2 class="text-xl font-bold">What customers value</h2><div class="mt-4 space-y-3 text-sm">${t.content[2].map(x => `<p>★★★★★ <strong>${esc(x)}</strong></p>`).join('')}</div><a class="mt-5 block text-sm font-bold underline" href="${MAP}" target="_blank" rel="noopener">Open in Google Maps →</a></div></aside>
+      </section>
+    </main>
+    <script>
+      document.getElementById('booking-form').addEventListener('submit',function(event){event.preventDefault();var data=new FormData(event.currentTarget),lines=['Hi ${esc(t.name)}, I would like to enquire:'];data.forEach(function(value,key){if(value)lines.push(key+': '+value)});window.open('${WA}?text='+encodeURIComponent(lines.join('\\n')),'_blank','noopener')});
+    <\/script>`);
 }
 
-// ── Build ─────────────────────────────────────────────────────
-let count = 0;
-TEMPLATES.forEach(function (t) {
+fs.mkdirSync(OUT_DIR, { recursive: true });
+for (const entry of fs.readdirSync(OUT_DIR, { withFileTypes: true })) {
+  if (entry.isDirectory()) fs.rmSync(path.join(OUT_DIR, entry.name), { recursive: true, force: true });
+}
+
+let pages = 0;
+TEMPLATES.forEach((raw, index) => {
+  const t = theme(raw, index);
   const dir = path.join(OUT_DIR, t.id);
   fs.mkdirSync(dir, { recursive: true });
   fs.writeFileSync(path.join(dir, 'index.html'), homePage(t));
-  fs.writeFileSync(path.join(dir, 'portfolio.html'), portfolioPage(t));
+  fs.writeFileSync(path.join(dir, `${t.page2}.html`), secondPage(t));
   fs.writeFileSync(path.join(dir, 'contact.html'), contactPage(t));
-  count += 3;
-  console.log('✓ ' + t.id + ' (3 pages)');
+  pages += 3;
+  console.log(`✓ ${t.id}: index.html, ${t.page2}.html, contact.html`);
 });
-console.log('\nDone: ' + count + ' pages written to public/templates/');
+
+console.log(`\nDone: ${TEMPLATES.length} templates × 3 pages = ${pages} pages written to public/templates/`);

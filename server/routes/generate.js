@@ -41,6 +41,11 @@ const NICHE_NAMES = {
   solar: 'Solar Panel Dealer & Renewable Energy',
   gifts: 'Gift Shop, Custom Printing & Trophies',
   tutor: 'Private Tutor & Language Classes',
+  sports: 'Sports Academy & Turf Rental',
+  tattoo: 'Tattoo Studio & Piercing',
+  babystore: 'Baby Care, Toys & Maternity Store',
+  warehouse: 'Cold Storage, Warehousing & Logistics',
+  tyre: 'Tyre Shop, Wheel Alignment & Battery Spares',
 };
 
 // ── Category page blueprints ──────────────────────────────────
@@ -473,6 +478,89 @@ PAGE 3 — SUCCESS STORIES & DEMO REGISTRATION (===PAGE:contact===):
 - Institute map link + course fee advance UPI QR (only if supplied).`,
 };
 
+const SPORTS_BLUEPRINT = {
+  second: 'packages',
+  text: `PAGE 1 — HOME (===PAGE:index===):
+- Hero: night-lit box cricket/football turf photo, headline like "Book Premium FIFA-Grade Turf for Cricket & Football", CTAs: "Check Slot Availability" → /contact and "Book Turf on WhatsApp" (wa.me).
+- Ecosystem strip: link large tournaments and local leagues to StadiumConnect at https://stadiumconnect.in (target=_blank).
+- Amenities grid: Floodlights | Free Equipment | Parking & Changing Rooms | Refreshment Cafe (adapt).
+PAGE 2 — PRICING & PACKAGES (===PAGE:packages===):
+- Hourly rate cards: Morning (6 AM-4 PM) vs Peak Evening (4 PM-12 AM) pricing per hour.
+- Coaching academy options: monthly kids coaching packages (Cricket, Football, Badminton) with age groups.
+- Tournament organization: full-day booking rates, trophies, referee support.
+PAGE 3 — RULES, REVIEWS & BOOKING (===PAGE:contact===):
+- Rules & shoes checklist: footwear guidelines and cancellation rules.
+- Customer reviews from local sports teams.
+- Slot booking form: sport select, date (input type=date), time slot select — submit opens WhatsApp with booking pre-filled.
+- Map link + advance token UPI QR (only if UPI ID supplied; use qrserver.com technique).`,
+};
+
+const TATTOO_BLUEPRINT = {
+  second: 'gallery',
+  text: `PAGE 1 — HOME (===PAGE:index===):
+- Hero: artist tattooing photo, headline like "Custom Safe, Hygienic & Permanent Tattoos", CTAs: "Book Consultation" → /contact and "Explore Portfolio" → /gallery.
+- Trust badges: Single-Use Autoclaved Needles | Imported Organic Inks | Certified Artists (certs only if supplied).
+- Stats: use ONLY supplied numbers; otherwise qualitative badges.
+PAGE 2 — FLASH GALLERY & PRICING (===PAGE:gallery===):
+- Style category tabs: [Minimalist] [Realism] [Portrait] [Religious/Mandala] [Cover-Up] — must filter with vanilla JS.
+- High-res finished tattoo gallery grid.
+- Price estimator guide: starting prices for small/medium/full-sleeve (use supplied pricing style).
+PAGE 3 — ARTIST, AFTERCARE & BOOKING (===PAGE:contact===):
+- Lead artist bio: experience and design philosophy (awards only if supplied).
+- Aftercare guide: step-by-step healing instructions.
+- Consultation form: placement area select, estimated size, notes — submit opens WhatsApp; add "Send Reference Image on WhatsApp" button.
+- Studio map + token UPI QR (only if supplied).`,
+};
+
+const BABYSTORE_BLUEPRINT = {
+  second: 'catalog',
+  text: `PAGE 1 — HOME (===PAGE:index===):
+- Hero: cute baby/clothes/toys photo, headline like "Safe, Organic & Premium Baby Clothes, Toys & Strollers", CTAs: "Shop on WhatsApp" (wa.me) and "View Catalog" → /catalog.
+- Quick shopping categories: Newborn Apparel, Educational Toys, Strollers & Prams, Maternity Wear.
+- Trust badges: BPA-Free & Non-Toxic | Hypoallergenic Fabrics | Same-Day Home Delivery (adapt; only claim what is supplied).
+PAGE 2 — CATALOG & HAMPERS (===PAGE:catalog===):
+- Product catalog grid with prices and "Buy on WhatsApp" buttons that pre-fill product names.
+- Newborn gift boxes & baby shower hampers section.
+PAGE 3 — STORE, REVIEWS & INQUIRY (===PAGE:contact===):
+- Store interior tour photos.
+- Parent testimonials.
+- Custom inquiry / gift registry form — submit opens WhatsApp with item list.
+- Shop map + UPI QR (only if supplied).`,
+};
+
+const WAREHOUSE_BLUEPRINT = {
+  second: 'rates',
+  text: `PAGE 1 — HOME (===PAGE:index===):
+- Hero: modern warehouse interior, headline like "Secure, Temperature-Controlled Cold Storage & Warehousing", CTAs: "Get Commercial Quote" → /contact and "Check Storage Availability" → /rates.
+- Key features: 24/7 CCTV & Security | Temperature Monitoring | Loading Ramp | Forklift Support.
+- Capacity stats: use ONLY supplied area/capacity numbers; otherwise qualitative badges.
+PAGE 2 — STORAGE TYPES & RATES (===PAGE:rates===):
+- Storage categories: Cold Storage (pharma/fruits/dairy), Dry Warehousing (e-commerce/FMCG), Micro-Warehousing for short-term needs.
+- Flexible pricing: per sq.ft/month vs per tonne/day (use supplied pricing style; mark as estimates).
+PAGE 3 — CERTS, CLIENTS & BOOKING (===PAGE:contact===):
+- Certifications section (FSSAI/ISO/Fire Safety ONLY if supplied).
+- Client logos/names of distributors (only if supplied).
+- Space booking inquiry: required area, storage type, duration, material type — submit opens WhatsApp commercial proposal request.
+- Warehouse map + advance token UPI QR (only if supplied).`,
+};
+
+const TYRE_BLUEPRINT = {
+  second: 'services',
+  text: `PAGE 1 — HOME (===PAGE:index===):
+- Hero: tyre showroom photo, headline like "Authorized Tyre Dealer, 3D Wheel Alignment & Battery Replacement", CTAs: "Check Tyre Price" → /services and "Call Roadside Assistance" (tel: or wa.me).
+- Brand partners strip: MRF, CEAT, Apollo, Michelin, Bridgestone, Exide, Amaron (use supplied brands as text badges).
+- Emergency banner: flat tyre / dead battery mobile van support with Call/WhatsApp CTA.
+PAGE 2 — TYRE FINDER & RATES (===PAGE:services===):
+- Interactive tyre finder: search/filter by vehicle model or tyre size with vanilla JS.
+- Service rate card: 3D Wheel Alignment & Balancing, Nitrogen Filling, Battery Testing & Replacement.
+- Warranty registration assistance section.
+PAGE 3 — WORKSHOP, REVIEWS & BOOKING (===PAGE:contact===):
+- Workshop equipment photos (alignment machines, tools).
+- Customer reviews from vehicle owners.
+- Service booking form: vehicle number, tyre size/brand or service, preferred slot — submit opens WhatsApp confirmation.
+- Shop map + UPI QR (only if supplied).`,
+};
+
 const CATEGORY_BLUEPRINTS = {
   food: FOOD_BLUEPRINT,
   bakery: FOOD_BLUEPRINT,
@@ -504,6 +592,11 @@ const CATEGORY_BLUEPRINTS = {
   solar: SOLAR_BLUEPRINT,
   gifts: GIFTS_BLUEPRINT,
   tutor: TUTOR_BLUEPRINT,
+  sports: SPORTS_BLUEPRINT,
+  tattoo: TATTOO_BLUEPRINT,
+  babystore: BABYSTORE_BLUEPRINT,
+  warehouse: WAREHOUSE_BLUEPRINT,
+  tyre: TYRE_BLUEPRINT,
 };
 
 function buildSystemPrompt() {

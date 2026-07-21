@@ -248,13 +248,13 @@
     <div class="px-4 mt-4">
       <div class="flex items-center gap-2 bg-card border border-white/10 rounded-2xl px-3.5 py-1 focus-within:border-accent/40 transition">
         <svg class="w-4 h-4 text-slate-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path stroke-linecap="round" d="M20 20l-3.5-3.5"/></svg>
-        <input id="template-search" type="text" placeholder="Search templates — e.g. photo, wedding, minimal..."
+        <input id="template-search" type="text" placeholder="Search templates — bakery, salon, turf, solar..."
           class="flex-1 bg-transparent text-sm outline-none placeholder:text-slate-500 py-2.5" autocomplete="off" />
         <button id="template-search-clear" class="hidden w-7 h-7 shrink-0 rounded-full bg-white/5 border border-white/10 flex items-center justify-center" aria-label="Clear search">
           <svg class="w-3.5 h-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M6 6l12 12M18 6L6 18"/></svg>
         </button>
       </div>
-      <p id="template-search-empty" class="hidden mt-4 text-center text-xs text-muted">No templates match your search. Try “photo”, “wedding” or “minimal”.</p>
+      <p id="template-search-empty" class="hidden mt-4 text-center text-xs text-muted">No templates match your search. Try “bakery”, “salon”, “turf” or “solar”.</p>
     </div>
     <div id="templates-list" class="px-4 mt-4 space-y-4"></div>
   </div>
@@ -290,14 +290,14 @@
       </header>
       <div class="flex-1 px-4 py-5">
         <div id="template-modal-preview"></div>
-        <p class="mt-4 text-xs text-muted leading-relaxed">Fill in your details — AI will apply them to this template and build your personal website. Only Studio Name is required, everything else is optional.</p>
+        <p class="mt-4 text-xs text-muted leading-relaxed">Fill in your details — AI will apply them to this template and build your website. Only Business Name is required; everything else is optional.</p>
         <div class="mt-4 space-y-3">
           <div>
-            <label class="text-[11px] font-semibold text-slate-300">Studio / Business Name <span class="text-red-400">*</span></label>
-            <input id="tf-studio" type="text" placeholder="e.g. LensCraft Studio" class="tf-input" />
+            <label class="text-[11px] font-semibold text-slate-300">Business Name <span class="text-red-400">*</span></label>
+            <input id="tf-studio" type="text" placeholder="e.g. SweetCraft" class="tf-input" />
           </div>
           <div>
-            <label class="text-[11px] font-semibold text-slate-300">Photographer Name</label>
+            <label class="text-[11px] font-semibold text-slate-300">Owner / Contact Person</label>
             <input id="tf-photographer" type="text" placeholder="e.g. Rahul Sharma" class="tf-input" />
           </div>
           <div class="grid grid-cols-2 gap-3">
@@ -573,6 +573,11 @@
           ['☀️ Solar Panels & Renewable Energy', 'solar'],
           ['🎁 Gift Shop, Custom Prints & Trophies', 'gifts'],
           ['🗣️ Private Tutor & Language Classes', 'tutor'],
+          ['🏋️ Sports Academy & Turf Rental', 'sports'],
+          ['🎨 Tattoo Studio & Piercing', 'tattoo'],
+          ['🍼 Baby Care, Toys & Maternity', 'babystore'],
+          ['📦 Cold Storage & Warehousing', 'warehouse'],
+          ['🛞 Tyre Shop, Alignment & Battery', 'tyre'],
           ['✍️ Write Custom Category', 'custom', 'text', 'Enter your business category']
         ]
       },
@@ -680,7 +685,13 @@
       ],
       salon: 'booking', gym: 'booking', clinic: 'booking', auto: 'booking', legal: 'booking',
       interior: 'booking', petcare: 'booking', tailor: 'booking', coworking: 'booking', driving: 'booking',
-      cleaning: 'booking', tutor: 'booking',
+      cleaning: 'booking', tutor: 'booking', sports: 'booking', tattoo: 'booking', tyre: 'booking',
+      babystore: [
+        { id: 'babyFocus', question: 'What is your main product focus?', options: [['Newborn Apparel & Essentials', 'apparel'], ['Toys & Learning Products', 'toys'], ['Strollers, Cribs & Gear', 'gear'], ['Maternity Wear', 'maternity'], ['Everything (Complete Baby Store)', 'all'], ['Custom Focus', 'custom', 'text', 'Describe your main products']] }
+      ],
+      warehouse: [
+        { id: 'storageType', question: 'What storage do you offer?', options: [['Cold Storage Only', 'cold'], ['Dry Warehousing Only', 'dry'], ['Cold + Dry Both', 'both'], ['Micro / Short-Term Storage', 'micro'], ['Custom Storage Mix', 'custom', 'text', 'Describe your storage types']] }
+      ],
       mobileshop: [
         { id: 'shopServices', question: 'What do you offer besides accessories?', options: [['SIM Cards & Porting', 'sim'], ['DTH & Recharge Services', 'dth'], ['Repairs & Screen Replacement', 'repairs'], ['Accessories Only', 'accessories-only'], ['Custom Services', 'custom', 'text', 'Describe your services']] }
       ],
@@ -722,78 +733,38 @@
       { id: 'pricingDisplay', question: 'How should prices appear on the website?', options: [['Show Exact Price List','exact-prices'],['Show “Starting From ₹XX”','starting-from'],['Hide Prices (Quote on Request)','quote-request'],['Custom Price Format','custom','text','Describe your price format']] }
     ];
 
-    // ── Photography templates ──────────────────────────────────
+    // ── Category templates ─────────────────────────────────────
     const TEMPLATES = [
-      {
-        id: 'noir-studio', name: 'Noir Studio', emoji: '🖤',
-        tags: ['Dark & Moody', 'Luxury', 'Wedding'],
-        desc: 'Cinematic black & gold luxury portfolio — for high-end wedding and editorial photographers.',
-        colors: { bg: '#0a0a0a', card: '#1a1a1a', accent: '#d4af37', text: '#ffffff' },
-        spec: 'Ultra-dark monochrome luxury photography portfolio. Near-black #0A0A0A background, white typography, warm gold #D4AF37 accents on buttons and section titles. Elegant serif display headings (Playfair Display), light sans-serif body. Full-screen dark hero with studio name in large serif type, sticky transparent header, masonry portfolio grid with hover zoom, services in dark cards with thin gold borders, testimonials with oversized quote marks, WhatsApp CTA. Mood: cinematic, editorial, high-end wedding and portrait studio.'
-      },
-      {
-        id: 'golden-hour', name: 'Golden Hour', emoji: '🌅',
-        tags: ['Warm', 'Romantic', 'Pre-wedding'],
-        desc: 'Soft cream and amber tones — perfect for romantic pre-wedding and couple shoots.',
-        colors: { bg: '#fdf6ec', card: '#f7e8d0', accent: '#c98a2d', text: '#3d2c17' },
-        spec: 'Warm romantic photography website. Cream #FDF6EC background, deep amber #C98A2D accents, dark brown text. Serif headings with italic romantic sub-taglines. Soft rounded cards, hero with warm gradient overlay on a golden-hour couple photo, love-story style about section, horizontal scrolling gallery, package cards with soft shadows, Instagram feed strip, WhatsApp booking button. Mood: golden hour, dreamy, romantic pre-wedding specialist.'
-      },
-      {
-        id: 'minimal-frame', name: 'Minimal Frame', emoji: '⬜',
-        tags: ['Minimal', 'Clean', 'Portfolio'],
-        desc: 'Pure white gallery-style minimal design — your photos are the hero, zero distractions.',
-        colors: { bg: '#ffffff', card: '#f4f4f4', accent: '#111111', text: '#111111' },
-        spec: 'Ultra-minimal white photography portfolio like an art gallery. Pure white background, black text, generous whitespace, thin sans-serif typography (Inter/Helvetica), no decorative colors. Small understated header, large edge-to-edge photo grid (2-column masonry), photo captions on hover, simple about line, minimal contact footer with email and phone as plain text links. Mood: sophisticated fine-art photographer, let the photos speak.'
-      },
-      {
-        id: 'bold-lens', name: 'Bold Lens', emoji: '💜',
-        tags: ['Fashion', 'Vibrant', 'Editorial'],
-        desc: 'Neon purple-pink gradients — for fashion, model portfolios and creative shoots.',
-        colors: { bg: '#12002b', card: '#26094a', accent: '#ff2d78', text: '#ffffff' },
-        spec: 'Bold fashion photography website. Deep purple #12002B background with neon pink #FF2D78 and violet gradient accents, glassmorphism cards, oversized display typography with gradient text effects, diagonal section dividers, full-bleed fashion hero image, animated hover effects on portfolio tiles, bold stats strip (shoots done, brands worked with), Instagram reel embeds section, neon CTA buttons. Mood: edgy, high-fashion, editorial magazine energy.'
-      },
-      {
-        id: 'urban-street', name: 'Urban Street', emoji: '🏙️',
-        tags: ['Street', 'Gritty', 'Documentary'],
-        desc: 'Dark urban texture with orange pop — for street and documentary photographers.',
-        colors: { bg: '#101418', card: '#1c232b', accent: '#ff6b35', text: '#e8e8e8' },
-        spec: 'Urban street photography portfolio. Charcoal #101418 background, burnt orange #FF6B35 accents, condensed bold uppercase headings, monospace detail text, grain/noise texture feel, full-width city hero shot with bold overlay title, filmstrip-style horizontal gallery, photo-journal blog section, about section with photographer portrait, simple contact strip. Mood: raw, documentary, street culture.'
-      },
-      {
-        id: 'wedding-bliss', name: 'Wedding Bliss', emoji: '💍',
-        tags: ['Wedding', 'Pastel', 'Elegant'],
-        desc: 'Ivory-rose pastel elegance — for traditional Indian wedding photography studios.',
-        colors: { bg: '#fff7f8', card: '#fce9ee', accent: '#d96c82', text: '#4a2c33' },
-        spec: 'Elegant Indian wedding photography website. Ivory #FFF7F8 background, rose #D96C82 accents, soft pastel florals feel, script font for romantic taglines with serif headings, hero with soft-focus wedding photo and overlay, services (Wedding, Pre-wedding, Engagement, Haldi/Mehendi coverage) in soft rounded cards, real wedding stories gallery section, testimonials from couples, packages section, prominent WhatsApp and call booking buttons. Mood: romantic, traditional-modern Indian weddings.'
-      },
-      {
-        id: 'nature-focus', name: 'Nature Focus', emoji: '🌿',
-        tags: ['Wildlife', 'Landscape', 'Earthy'],
-        desc: 'Earthy green natural tones — for wildlife and landscape photographers.',
-        colors: { bg: '#f3f7f2', card: '#e2ede0', accent: '#2e6b3f', text: '#1d3324' },
-        spec: 'Nature and wildlife photography portfolio. Soft sage #F3F7F2 background, forest green #2E6B3F accents, organic rounded shapes, hero with breathtaking landscape photo and centered title, category tabs (Wildlife, Landscape, Macro, Birds), large immersive photo grid, expedition/behind-the-scenes story section, print shop teaser section, contact form. Mood: calm, natural, National Geographic inspired.'
-      },
-      {
-        id: 'studio-pro', name: 'Studio Pro', emoji: '💼',
-        tags: ['Commercial', 'Product', 'Corporate'],
-        desc: 'Clean corporate blue — for product, e-commerce and brand photography studios.',
-        colors: { bg: '#f5f8ff', card: '#e4ecff', accent: '#1d4ed8', text: '#101a33' },
-        spec: 'Professional commercial photography studio website. Light #F5F8FF background, corporate blue #1D4ED8 accents, crisp modern sans-serif, structured grid layout, hero with studio product shot and clear value proposition, client logo strip, services (Product, E-commerce, Corporate headshots, Brand campaigns) with pricing-from labels, process timeline (Brief → Shoot → Edit → Deliver), portfolio case-study cards, strong quote-request CTA form. Mood: reliable, B2B, agency-grade professional.'
-      },
-      {
-        id: 'little-moments', name: 'Little Moments', emoji: '👶',
-        tags: ['Baby', 'Family', 'Soft'],
-        desc: 'Warm soft peach tones — for newborn, baby and family photographers.',
-        colors: { bg: '#fffdf5', card: '#fdeedd', accent: '#f4a259', text: '#54402c' },
-        spec: 'Newborn and family photography website. Warm cream #FFFDF5 background, soft peach #F4A259 accents, rounded friendly typography, gentle pastel illustrations/dots, hero with adorable baby photo and soft headline, sessions offered (Newborn, Baby milestones, Maternity, Family) as cute rounded cards with icons, safety-first trust section, gallery with rounded corners, parent testimonials, easy WhatsApp booking. Mood: warm, safe, family-friendly.'
-      },
-      {
-        id: 'cinematic-reel', name: 'Cinematic Reel', emoji: '🎬',
-        tags: ['Videography', 'Films', 'Dramatic'],
-        desc: 'Netflix-style dark red drama — for wedding films and cinematography.',
-        colors: { bg: '#0d0d0f', card: '#1b1b20', accent: '#e50914', text: '#f5f5f5' },
-        spec: 'Cinematic wedding films and videography website. Near-black #0D0D0F background, cinematic red #E50914 accents, widescreen 16:9 video-frame styled sections, bold condensed headings, hero styled like a movie poster with film title treatment of the studio name, showreel section with embedded video placeholders, film categories (Wedding films, Pre-wedding teasers, Corporate films), letterboxed gallery, awards/features strip, dramatic CTA. Mood: blockbuster movie, dramatic storytelling.'
-      }
+      {id:'sweetcraft',name:'SweetCraft',emoji:'🍩',niche:'food',category:'Food & Bakery',page2:'menu',tags:['Food','Bakery','Menu'],desc:'A warm bakery storefront with bestsellers, a filterable menu, custom orders and direct WhatsApp ordering.',colors:{bg:'#fff8ed',card:'#ffffff',accent:'#e85d2a',text:'#3b2118'},keywords:'food bakery cafe restaurant cake menu sweets pastry custom order',spec:'Warm artisanal bakery; hero and bestsellers, trust badges, filterable menu with prices, custom cake CTA, story, reviews, map, booking and payment.'},
+      {id:'glamourcut',name:'GlamourCut',emoji:'💈',niche:'salon',category:'Salon & Beauty',page2:'services',tags:['Salon','Beauty','Booking'],desc:'A polished beauty studio site with packages, transformation gallery and appointment booking.',colors:{bg:'#fff5f8',card:'#ffffff',accent:'#c0266d',text:'#43152b'},keywords:'salon spa hair beauty nails bridal makeover appointment services',spec:'Editorial beauty studio; premium hero, popular packages, trust strip, service rate tabs, transformations, experts, reviews and appointment form.'},
+      {id:'voguevibe',name:'VogueVibe',emoji:'👗',niche:'fashion',category:'Fashion & Boutique',page2:'collection',tags:['Fashion','Boutique','Collection'],desc:'A bold boutique lookbook with new arrivals, filters, size guidance and WhatsApp purchases.',colors:{bg:'#f7f3ee',card:'#ffffff',accent:'#7c2d45',text:'#25171c'},keywords:'fashion clothing boutique saree lehenga dress collection lookbook',spec:'Magazine-style boutique; lookbook hero, collection cards, arrivals, filterable product showcase, fitting guide, designer story and store booking.'},
+      {id:'quickfix',name:'QuickFix',emoji:'🛠️',niche:'services',category:'Home Services',page2:'services',tags:['Repairs','Home Service','Rates'],desc:'A high-conversion local repair site with instant estimates, transparent rates and technician booking.',colors:{bg:'#f3f7fb',card:'#ffffff',accent:'#0b6e99',text:'#102f3d'},keywords:'plumber electrician ac repair technician local home services rates',spec:'Clean utility design; urgent call hero, core services, trust badges, estimator, rate card, process, completed work and address-based booking.'},
+      {id:'lensstory',name:'LensStory',emoji:'📸',niche:'photography',category:'Photography',page2:'portfolio',tags:['Photography','Portfolio','Weddings'],desc:'A rich cinematic photography portfolio with curated work, packages and availability enquiries.',colors:{bg:'#101010',card:'#1c1c1c',accent:'#d6ad60',text:'#faf7f0'},keywords:'photography photographer wedding portrait camera portfolio gallery studio',spec:'Flagship cinematic photo template; immersive hero, masonry selected work, portfolio lightbox and filters, packages, artist story, testimonials and inquiry.'},
+      {id:'carepulse',name:'CarePulse',emoji:'🩺',niche:'clinic',category:'Clinic & Healthcare',page2:'treatments',tags:['Clinic','Doctor','Treatments'],desc:'A reassuring clinic website with specialties, treatment details, doctor profile and slot booking.',colors:{bg:'#effaf8',card:'#ffffff',accent:'#087f73',text:'#153b38'},keywords:'clinic doctor healthcare dental medical pharmacy treatment appointment',spec:'Calm clinical style; trust-led hero, specialties and timings, treatment grid, hygiene guidance, doctor profile, patient reviews and slot booking.'},
+      {id:'edupro',name:'EduPro',emoji:'🎓',niche:'education',category:'Education & Coaching',page2:'courses',tags:['Education','Courses','Admissions'],desc:'A focused coaching website with course filters, teaching promise, faculty and free demo registration.',colors:{bg:'#f2f6ff',card:'#ffffff',accent:'#3157c8',text:'#172554'},keywords:'education coaching school classes courses admission students tutor exam',spec:'Results-focused academic design; student hero, teaching promise, batch banner, course filters and fees, faculty, campus, reviews and demo form.'},
+      {id:'autoshine',name:'AutoShine',emoji:'🚘',niche:'auto',category:'Auto Care',page2:'packages',tags:['Auto','Detailing','Packages'],desc:'A dark glossy auto detailing site with package comparison, transformations and pickup booking.',colors:{bg:'#101722',card:'#1b2635',accent:'#38bdf8',text:'#f1f5f9'},keywords:'auto car garage wash detailing ceramic coating repair packages',spec:'Glossy performance aesthetic; car hero, service badges, top packages, comparison table, before-after gallery, add-ons, reviews and pickup form.'},
+      {id:'shiftease',name:'ShiftEase',emoji:'🚚',niche:'movers',category:'Movers & Logistics',page2:'rates',tags:['Movers','Logistics','Rates'],desc:'A dependable relocation website with estimated rates, process, safety guidance and quote requests.',colors:{bg:'#fff8e8',card:'#ffffff',accent:'#d97706',text:'#422006'},keywords:'packers movers relocation transport logistics shifting storage rates',spec:'Reliable logistics design; relocation hero, services and trust, estimated rates, four-step process, safety, testimonials and detailed moving quote.'},
+      {id:'taxpro',name:'TaxPro',emoji:'⚖️',niche:'legal',category:'Legal & Tax',page2:'services',tags:['Legal','Tax','Consulting'],desc:'A professional compliance site with service pricing, required documents and consultation booking.',colors:{bg:'#f5f4ef',card:'#ffffff',accent:'#8a6a2f',text:'#27231c'},keywords:'legal lawyer ca tax gst itr compliance registration consultancy services',spec:'Authoritative professional style; consultation hero, trust and services, service accordions, document checklists, partner profile, reviews and consultation form.'},
+      {id:'designspace',name:'DesignSpace',emoji:'🏠',niche:'interior',category:'Interior Design',page2:'portfolio',tags:['Interiors','Design','Portfolio'],desc:'An architectural portfolio with style filters, project gallery, cost estimator and consultation booking.',colors:{bg:'#f4f0e9',card:'#ffffff',accent:'#8b5e3c',text:'#33251d'},keywords:'interior architecture home design modular kitchen portfolio contractor',spec:'Refined architectural minimalism; room hero, design services, style-filtered portfolio, budget estimator, designer story, reviews and consultation.'},
+      {id:'royalpavilion',name:'RoyalPavilion',emoji:'🏰',niche:'venue',category:'Venue & Events',page2:'packages',tags:['Venue','Wedding','Packages'],desc:'An elegant venue showcase with decor, catering packages, date enquiry and StadiumConnect integration.',colors:{bg:'#fff9ed',card:'#ffffff',accent:'#9b6b16',text:'#3b2a11'},keywords:'venue banquet wedding hall lawn catering decor event packages stadiumconnect',spec:'Regal event style; venue hero, StadiumConnect strip, capacity highlights, decor and catering packages, tour, policies, reviews and date enquiry.'},
+      {id:'pawsnclaws',name:'PawsNClaws',emoji:'🐾',niche:'petcare',category:'Pet Care',page2:'services',tags:['Pets','Grooming','Vet'],desc:'A friendly pet care site with grooming packages, vaccination information and pet slot booking.',colors:{bg:'#f4fbf5',card:'#ffffff',accent:'#2f855a',text:'#193c2a'},keywords:'pet dog cat grooming vet clinic boarding vaccination services',spec:'Playful pet-friendly design; pet hero, care services and trust, grooming packages, OPD chart, hostel facilities, happy pets and booking.'},
+      {id:'masterstitch',name:'MasterStitch',emoji:'🧵',niche:'tailor',category:'Tailoring',page2:'ratecard',tags:['Tailor','Bespoke','Rate Card'],desc:'A bespoke tailoring site with transparent rates, measurement guide and doorstep fitting requests.',colors:{bg:'#faf5ef',card:'#ffffff',accent:'#8f3f2f',text:'#3f241e'},keywords:'tailor tailoring stitch bespoke suit blouse sherwani ratecard boutique',spec:'Heritage bespoke style; fabric hero, tailoring services, stitching rates, home measurement guide, fabric showcase, master story and pickup form.'},
+      {id:'kisanseva',name:'KisanSeva',emoji:'🌾',niche:'agri',category:'Agriculture',page2:'catalog',tags:['Agriculture','Seeds','Catalog'],desc:'A practical agriculture storefront with seasonal products, catalog filters, rentals and bulk enquiries.',colors:{bg:'#f4f8e9',card:'#ffffff',accent:'#4d7c0f',text:'#26360e'},keywords:'agriculture farming seeds fertilizer nursery equipment catalog kisan',spec:'Earthy farm utility design; crop hero, trust and seasonal highlights, filtered catalog, dosage and rentals, advisory, farmer reviews and bulk order.'},
+      {id:'buildpro',name:'BuildPro',emoji:'🔩',niche:'hardware',category:'Hardware & Building',page2:'catalog',tags:['Hardware','Building','Catalog'],desc:'A contractor-ready hardware catalog with product filters, bulk-rate enquiries and material-list quotes.',colors:{bg:'#f3f4f6',card:'#ffffff',accent:'#dc5a1f',text:'#292524'},keywords:'hardware electrical sanitaryware plumbing building material catalog contractor',spec:'Industrial retail design; product-range hero, partner strip, categories, filtered catalog and bulk rates, contractor banner, showroom and material quote.'},
+      {id:'workhub',name:'WorkHub',emoji:'💻',niche:'coworking',category:'Co-working',page2:'plans',tags:['Coworking','Office','Plans'],desc:'A contemporary workspace site with amenity highlights, membership plans, photo tour and seat booking.',colors:{bg:'#f3f7ff',card:'#ffffff',accent:'#4f46e5',text:'#20204a'},keywords:'coworking shared office workspace study room desk cabin plans wifi',spec:'Bright startup workspace; day-pass hero, amenities and pricing snapshot, detailed plans, workspace tour, community, member reviews and reservation.'},
+      {id:'printexpress',name:'PrintExpress',emoji:'🖨️',niche:'printing',category:'Printing & Signage',page2:'rates',tags:['Printing','Signage','Rates'],desc:'A vibrant print-shop site with product rates, artwork guidance, work showcase and quick ordering.',colors:{bg:'#fff6fb',card:'#ffffff',accent:'#d61f69',text:'#40152a'},keywords:'printing signage packaging business cards banners custom print rates',spec:'Vibrant CMYK-inspired style; press hero, popular offerings and USPs, rate cards, file guidelines, printed portfolio, reviews and print order.'},
+      {id:'gadgetcare',name:'GadgetCare',emoji:'🔧',niche:'gadgets',category:'Gadget Repair',page2:'rates',tags:['Electronics','Repair','Rates'],desc:'A technical gadget repair site with estimate cards, refurbished devices and doorstep pickup.',colors:{bg:'#101827',card:'#1e293b',accent:'#22d3ee',text:'#e6faff'},keywords:'gadget electronics mobile laptop repair refurbished screen battery rates',spec:'Modern tech lab; repair hero, trust and brand expertise, estimated rates, refurbished showcase, process, lab gallery, reviews and pickup booking.'},
+      {id:'drivesafe',name:'DriveSafe',emoji:'🚗',niche:'driving',category:'Driving School',page2:'courses',tags:['Driving','Courses','RTO'],desc:'A clear driving school site with course comparisons, RTO support and admission slot booking.',colors:{bg:'#f0f8ff',card:'#ffffff',accent:'#1476b8',text:'#12354c'},keywords:'driving school car instructor license rto courses learner',spec:'Road-ready educational style; instructor hero, USPs, course comparisons and RTO services, credentials, success stories and admission form.'},
+      {id:'cleanshield',name:'CleanShield',emoji:'✨',niche:'cleaning',category:'Cleaning & Pest Control',page2:'packages',tags:['Cleaning','Pest Control','Packages'],desc:'A fresh service site with home-size packages, safety practices, verified staff and booking.',colors:{bg:'#effcfb',card:'#ffffff',accent:'#0f9f91',text:'#12433e'},keywords:'cleaning housekeeping pest control deep clean sofa bathroom packages',spec:'Fresh hygienic design; clean-home hero, trust and services, BHK packages, pest treatments, equipment safety, verification, reviews and slot booking.'},
+      {id:'cellworld',name:'CellWorld',emoji:'📱',niche:'mobileshop',category:'Mobile Shop',page2:'catalog',tags:['Mobile','Accessories','Catalog'],desc:'A lively mobile accessories store with hot deals, filterable catalog and quick order form.',colors:{bg:'#f6f3ff',card:'#ffffff',accent:'#7138d0',text:'#2e1a52'},keywords:'mobile shop phone accessories sim dth covers earbuds catalog',spec:'Energetic gadget retail; deals hero, quick utility actions, filtered accessories catalog, service rates, store gallery, reviews and phone-specific order.'},
+      {id:'sunpower',name:'SunPower',emoji:'☀️',niche:'solar',category:'Solar Energy',page2:'systems',tags:['Solar','Energy','Systems'],desc:'A clean-energy site with solar system options, savings estimator and free site survey.',colors:{bg:'#fffbea',card:'#ffffff',accent:'#e59b10',text:'#443211'},keywords:'solar panel renewable energy rooftop subsidy system savings survey',spec:'Optimistic clean-energy style; rooftop hero, system highlights, on-grid/off-grid cards, savings calculator, ROI timeline, approvals, reviews and survey.'},
+      {id:'giftcraft',name:'GiftCraft',emoji:'🎁',niche:'gifts',category:'Custom Gifts',page2:'catalog',tags:['Gifts','Personalized','Catalog'],desc:'A cheerful personalized gift store with occasion links, catalog filters and custom order requests.',colors:{bg:'#fff4f3',card:'#ffffff',accent:'#ef476f',text:'#542032'},keywords:'gift custom personalized mug trophy frame hamper catalog birthday',spec:'Cheerful celebration style; gift hero, occasion links, filtered personalized catalog, customization guide, finished gallery, testimonials and custom order.'},
+      {id:'lingualearn',name:'LinguaLearn',emoji:'🗣️',niche:'tutor',category:'Tutor & Languages',page2:'courses',tags:['Languages','Tutor','Courses'],desc:'A friendly language academy with course levels, batch schedule and free demo registration.',colors:{bg:'#f0f7ff',card:'#ffffff',accent:'#2563b9',text:'#172d4d'},keywords:'tutor language english german french ielts classes courses',spec:'Approachable learning design; language hero, personal-attention USPs, course levels and fees, timetable, trainer profiles, success stories and demo registration.'},
+      {id:'turfnation',name:'TurfNation',emoji:'🏋️',niche:'sports',category:'Sports & Turf',page2:'packages',tags:['Sports','Academy','Turf'],desc:'An energetic sports academy and turf booking site with coaching packages and StadiumConnect integration.',colors:{bg:'#081c15',card:'#12372a',accent:'#74c69d',text:'#f0fff7'},keywords:'sports academy turf rental cricket football coaching packages stadiumconnect',spec:'Floodlit athletic style; action hero, StadiumConnect ecosystem, facilities and coaching trust, academy and turf packages, schedule, coaches, reviews and booking.'},
+      {id:'inkcraft',name:'InkCraft',emoji:'🎨',niche:'tattoo',category:'Tattoo & Piercing',page2:'gallery',tags:['Tattoo','Piercing','Gallery'],desc:'A dramatic tattoo studio site with style filters, artist portfolios, hygiene proof and consultation booking.',colors:{bg:'#111111',card:'#202020',accent:'#ef4444',text:'#f8f8f8'},keywords:'tattoo piercing ink artist studio gallery consultation hygiene',spec:'Dark expressive studio; artwork hero, style highlights and hygiene trust, filterable gallery and pricing guidance, artists, aftercare, reviews and consultation.'},
+      {id:'tinytots',name:'TinyTots',emoji:'🍼',niche:'babystore',category:'Baby & Maternity',page2:'catalog',tags:['Baby','Toys','Maternity'],desc:'A soft baby-care shop with age filters, essentials catalog, parent trust and product enquiries.',colors:{bg:'#fffaf0',card:'#ffffff',accent:'#e58f65',text:'#594035'},keywords:'baby care toys maternity newborn kids products catalog store',spec:'Soft playful retail; baby essentials hero, age categories and trust, filterable catalog with safety notes, parent guide, store story, reviews and product enquiry.'},
+      {id:'spacelock',name:'SpaceLock',emoji:'📦',niche:'warehouse',category:'Storage & Warehousing',page2:'rates',tags:['Warehouse','Storage','Rates'],desc:'A secure warehousing site with storage rates, facility details and space requirement enquiries.',colors:{bg:'#eef3f7',card:'#ffffff',accent:'#315b74',text:'#183142'},keywords:'warehouse cold storage warehousing inventory logistics space rates',spec:'Structured industrial design; secure-storage hero, facility trust and solutions, capacity rate cards, process and safety, infrastructure, client reviews and requirement form.'},
+      {id:'tyrepoint',name:'TyrePoint',emoji:'🛞',niche:'tyre',category:'Tyres & Batteries',page2:'services',tags:['Tyres','Alignment','Battery'],desc:'A road-ready tyre shop with service rates, fitment guidance and appointment booking.',colors:{bg:'#16191d',card:'#242930',accent:'#f59e0b',text:'#f8fafc'},keywords:'tyre tire wheel alignment balancing battery puncture services shop',spec:'Rugged automotive style; roadside hero, brands and service trust, tyre and alignment rate cards, fitment guide, workshop, reviews and vehicle booking.'}
     ];
 
     const LOADING_MESSAGES = [
@@ -1011,7 +982,7 @@
       return '<img src="' + src + '" loading="lazy" alt="" style="display:block;object-fit:cover;' + style + '" />';
     }
 
-    function templateMockHtml(t) {
+    function legacyPhotographyMockHtml(t) {
       const c = t.colors;
       let inner = '';
       switch (t.id) {
@@ -1175,9 +1146,31 @@
       return '<div class="tpl-mock" style="background:' + c.bg + '">' + inner + '</div>';
     }
 
+    function templateMockHtml(t) {
+      const c = t.colors;
+      const pageLabel = t.page2 === 'ratecard' ? 'RATE CARD' : t.page2.toUpperCase();
+      const cards = t.tags.slice(0, 3).map(function (tag, index) {
+        return '<div style="flex:1;min-width:0;padding:8px 5px;border-radius:7px;background:' + c.card + ';border:1px solid ' + c.accent + '35;text-align:center">' +
+          '<div style="width:18px;height:18px;margin:0 auto 5px;border-radius:6px;background:' + c.accent + (index === 1 ? '55' : '25') + '"></div>' +
+          '<p style="font-size:6px;font-weight:800;color:' + c.text + ';white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + tag.toUpperCase() + '</p></div>';
+      }).join('');
+      return '<div class="tpl-mock" style="background:' + c.bg + ';color:' + c.text + '">' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;border-bottom:1px solid ' + c.accent + '30">' +
+          '<strong style="font-size:8px;color:' + c.accent + '">' + t.emoji + ' ' + t.name + '</strong>' +
+          '<span style="font-size:5px;opacity:.7">HOME&nbsp;&nbsp;' + pageLabel + '&nbsp;&nbsp;CONTACT</span>' +
+        '</div>' +
+        '<div style="padding:15px 12px;background:linear-gradient(135deg,' + c.bg + ',' + c.card + ')">' +
+          '<p style="font-size:6px;font-weight:800;letter-spacing:.16em;color:' + c.accent + '">' + t.category.toUpperCase() + '</p>' +
+          '<p style="margin-top:4px;max-width:150px;font-size:13px;line-height:1.15;font-weight:900;color:' + c.text + '">' + t.name + ' — built for your customers</p>' +
+          '<span style="display:inline-block;margin-top:8px;padding:4px 10px;border-radius:999px;background:' + c.accent + ';color:' + c.bg + ';font-size:6px;font-weight:800">EXPLORE ' + pageLabel + ' →</span>' +
+        '</div>' +
+        '<div style="display:flex;gap:5px;padding:7px 9px 9px">' + cards + '</div>' +
+      '</div>';
+    }
+
     function templateMatches(t, query) {
       if (!query) return true;
-      const haystack = (t.name + ' ' + t.tags.join(' ') + ' ' + t.desc + ' ' + t.spec + ' photography photo camera studio website template').toLowerCase();
+      const haystack = [t.name, t.keywords, t.category, t.niche, t.tags.join(' '), t.desc, t.spec, 'website template'].join(' ').toLowerCase();
       return query.toLowerCase().trim().split(/\s+/).every(function (word) {
         return haystack.indexOf(word) !== -1;
       });
@@ -1269,7 +1262,7 @@
       if (!t) return;
       const studio = $('tf-studio').value.trim();
       if (!studio) {
-        $('template-error').textContent = 'Studio / Business name is required.';
+        $('template-error').textContent = 'Business name is required.';
         $('template-error').classList.remove('hidden');
         $('tf-studio').focus();
         return;
@@ -1289,7 +1282,7 @@
       $('template-error').classList.add('hidden');
 
       const fields = [
-        ['Photographer name', $('tf-photographer').value],
+        ['Owner / contact person', $('tf-photographer').value],
         ['WhatsApp number', $('tf-whatsapp').value],
         ['Call number', $('tf-phone').value],
         ['Email', $('tf-email').value],
@@ -1299,7 +1292,7 @@
       ];
       const requirements = {
         template: { question: 'Selected design template', label: t.name, input: t.spec },
-        studioName: { question: 'Studio / Business name', label: studio },
+        studioName: { question: 'Business name', label: studio },
       };
       fields.forEach(function (f, i) {
         const val = String(f[1] || '').trim();
@@ -1307,9 +1300,9 @@
       });
 
       state.choices = {
-        niche: 'photography',
+        niche: t.niche,
         vibe: t.id,
-        feature: 'portfolio',
+        feature: t.page2,
         businessName: studio,
         prompt: $('tf-extra').value.trim(),
         requirements: requirements,
