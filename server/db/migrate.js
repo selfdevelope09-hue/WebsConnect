@@ -43,6 +43,29 @@ CREATE TABLE IF NOT EXISTS plan_purchases (
 
 CREATE INDEX IF NOT EXISTS idx_plan_purchases_user ON plan_purchases (user_id);
 
+CREATE TABLE IF NOT EXISTS razorpay_orders (
+  id                    UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  razorpay_order_id     TEXT UNIQUE NOT NULL,
+  razorpay_payment_id   TEXT UNIQUE,
+  user_id               UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  plan                  VARCHAR(20) NOT NULL,
+  amount_paise          INTEGER NOT NULL,
+  currency              VARCHAR(3) NOT NULL DEFAULT 'INR',
+  status                VARCHAR(20) NOT NULL DEFAULT 'created',
+  receipt               TEXT UNIQUE NOT NULL,
+  created_at            TIMESTAMPTZ DEFAULT NOW(),
+  paid_at               TIMESTAMPTZ,
+  updated_at            TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_razorpay_orders_user ON razorpay_orders (user_id);
+CREATE INDEX IF NOT EXISTS idx_razorpay_orders_status ON razorpay_orders (status);
+
+ALTER TABLE plan_purchases ADD COLUMN IF NOT EXISTS razorpay_order_id TEXT;
+ALTER TABLE plan_purchases ADD COLUMN IF NOT EXISTS razorpay_payment_id TEXT;
+CREATE UNIQUE INDEX IF NOT EXISTS idx_plan_purchases_razorpay_order
+  ON plan_purchases (razorpay_order_id) WHERE razorpay_order_id IS NOT NULL;
+
 CREATE TABLE IF NOT EXISTS projects (
   id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id     UUID REFERENCES users(id) ON DELETE CASCADE,

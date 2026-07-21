@@ -12,6 +12,7 @@
   <meta property="og:title" content="WebsConnect AI — Website Builder" />
   <meta property="og:description" content="No Laptop. No Code. Just Chat & Go Live in 60 Seconds." />
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   <script>
     tailwind.config = {
       theme: {
@@ -540,7 +541,7 @@
 
         <p id="upgrade-error" class="hidden mt-3 text-xs text-red-400 text-center"></p>
         <button id="btn-upgrade-confirm" class="mt-5 w-full py-3.5 rounded-2xl font-bold text-sm bg-gradient-to-r from-violet-500 to-blue-600 text-white glow-btn active:scale-[.98] transition" disabled>Select a plan above</button>
-        <p class="mt-3 text-center text-[10px] text-muted mb-4">Plan activates instantly. Cancel anytime — no hidden charges.</p>
+        <p class="mt-3 text-center text-[10px] text-muted mb-4">🔒 Secure Razorpay checkout · UPI, cards &amp; netbanking · Plan activates instantly.</p>
       </div>
     </div>
   </div>
@@ -685,6 +686,34 @@
           </button>
         </div>
         <p class="mt-1.5 text-center text-[9px] text-muted">AI advice can make mistakes — always review before going live.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== AI CHAT SITE EDITOR (Cursor-style) ===================== -->
+  <div id="ai-editor-overlay" class="hidden fixed inset-0 z-[58] bg-base flex flex-col">
+    <header class="shrink-0 flex items-center gap-2 px-3 py-2.5 bg-surface/95 backdrop-blur border-b border-white/10">
+      <button id="ai-editor-back" class="w-9 h-9 shrink-0 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center" aria-label="Close AI editor">
+        <svg class="w-4 h-4 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+      </button>
+      <div class="flex-1 min-w-0">
+        <p id="ai-editor-title" class="text-xs font-bold truncate">AI Editor</p>
+        <p class="text-[9px] text-violet-300">🤖 Chat me batao kya badalna hai — AI turant change karega</p>
+      </div>
+      <a id="ai-editor-open-site" href="#" target="_blank" class="shrink-0 px-3 py-2 rounded-xl text-[10px] font-bold bg-white/5 border border-white/15 text-sky-300">Open ↗</a>
+    </header>
+    <iframe id="ai-editor-frame" class="flex-1 w-full bg-white" title="Live website"></iframe>
+    <div class="shrink-0 bg-surface/95 backdrop-blur border-t border-white/10 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
+      <div id="ai-editor-messages" class="max-h-44 overflow-y-auto hide-scrollbar px-3 pt-2.5 space-y-2"></div>
+      <div class="px-3 pt-2">
+        <div id="ai-editor-quick" class="flex gap-2 overflow-x-auto hide-scrollbar pb-2"></div>
+        <div class="flex items-end gap-2 bg-card border border-white/10 rounded-2xl px-3 py-1.5 focus-within:border-violet-400/40 transition">
+          <textarea id="ai-editor-input" rows="1" placeholder="e.g. Hero heading bada karo aur menu page pe cake ka price 450 karo" class="flex-1 bg-transparent text-sm outline-none placeholder:text-slate-500 py-2 resize-none max-h-24"></textarea>
+          <button id="ai-editor-send" class="w-10 h-10 shrink-0 rounded-full bg-gradient-to-br from-violet-500 to-blue-600 flex items-center justify-center active:scale-95 transition" aria-label="Send edit">
+            <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+        <p class="mt-1 text-center text-[8px] text-muted">Changes live site pe turant apply hote hain · Free AI edits</p>
       </div>
     </div>
   </div>
@@ -869,6 +898,7 @@
           <a id="preview-link" href="#" target="_blank" class="text-sky-400 font-semibold underline"></a>
         </p>
         <a id="btn-open-site" href="#" target="_blank" class="mt-4 block w-full py-3.5 rounded-xl font-bold text-sm bg-gradient-to-r from-blue-500 to-blue-700 text-white glow-btn">Open My Website ↗</a>
+        <button id="btn-preview-ai-edit" class="mt-2 w-full py-3 rounded-xl font-bold text-xs bg-violet-500/15 border border-violet-400/30 text-violet-300">🤖 Edit with AI Chat — "yeh badlo, woh badlo"</button>
         <button id="btn-share-whatsapp" class="mt-2 w-full py-3 rounded-xl font-bold text-xs bg-emerald-500/15 border border-emerald-400/30 text-emerald-300 flex items-center justify-center gap-2">
           <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.95 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.61.14-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.5 0 1.47 1.07 2.9 1.22 3.1.15.2 2.1 3.2 5.1 4.49.71.3 1.27.49 1.7.63.72.23 1.37.2 1.88.12.58-.09 1.76-.72 2-1.42.25-.7.25-1.3.18-1.42-.08-.13-.28-.2-.58-.35z"/><path d="M12 2a10 10 0 00-8.6 15.06L2 22l5.08-1.33A10 10 0 1012 2zm0 18.2c-1.5 0-2.97-.4-4.26-1.15l-.3-.18-3.02.8.8-2.94-.2-.3A8.2 8.2 0 1112 20.2z"/></svg>
           Share link on WhatsApp
@@ -1318,6 +1348,10 @@
         startConsultantBuild(action.payload);
       } else if (action.type === 'publish') {
         doManualPublish(action.payload);
+      } else if (action.type === 'upgrade') {
+        openUpgradeModal();
+        state.selectedPlan = action.payload && action.payload.plan;
+        updatePlanCards();
       } else if (action.type === 'template') {
         openTemplateForm(action.payload);
       }
@@ -1738,6 +1772,124 @@
       });
     }
 
+    // ── AI Chat Site Editor (Cursor-style) ─────────────────────
+    const AI_EDIT_QUICK = [
+      'Hero heading aur catchy banao',
+      'Colors thode brighter karo',
+      'Ek testimonials section add karo',
+      'Contact page pe timing badlo',
+    ];
+
+    function openAiEditor(slug, title) {
+      state.aiEditor = { slug: slug, title: title, history: [], busy: false };
+      const url = 'https://' + slug + '.websconnect.in';
+      $('ai-editor-title').textContent = '🤖 ' + (title || slug);
+      $('ai-editor-open-site').href = url;
+      $('ai-editor-frame').src = url + '?v=' + Date.now();
+      $('ai-editor-messages').innerHTML = '';
+      addAiEditorBubble('assistant', 'Namaste! 👋 Main aapki live website ka AI editor hoon.\nBatao kya badalna hai — koi bhi page, koi bhi cheez. Example: "Home page ka heading badlo" ya "Menu me paneer roll 120 rupees add karo".');
+      renderAiEditorQuick();
+      hideAllScreens();
+      $('ai-editor-overlay').classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeAiEditor() {
+      $('ai-editor-overlay').classList.add('hidden');
+      $('ai-editor-frame').src = 'about:blank';
+      document.body.style.overflow = '';
+      state.aiEditor = null;
+      showProjects();
+    }
+
+    function renderAiEditorQuick() {
+      const wrap = $('ai-editor-quick');
+      wrap.innerHTML = '';
+      if (state.aiEditor.history.length) { wrap.classList.add('hidden'); return; }
+      wrap.classList.remove('hidden');
+      AI_EDIT_QUICK.forEach(function (q) {
+        const b = document.createElement('button');
+        b.className = 'shrink-0 px-3 py-1.5 rounded-full text-[10px] font-medium bg-white/5 border border-white/10 text-slate-300 active:scale-95 transition';
+        b.textContent = q;
+        b.addEventListener('click', function () {
+          $('ai-editor-input').value = q;
+          sendAiEdit();
+        });
+        wrap.appendChild(b);
+      });
+    }
+
+    function addAiEditorBubble(role, text) {
+      const box = $('ai-editor-messages');
+      const row = document.createElement('div');
+      const isUser = role === 'user';
+      row.className = 'flex ' + (isUser ? 'justify-end' : 'justify-start');
+      const bubble = document.createElement('div');
+      bubble.className = isUser
+        ? 'max-w-[82%] rounded-2xl rounded-br-md bg-gradient-to-br from-blue-500 to-blue-700 text-white px-3 py-2 text-xs leading-relaxed whitespace-pre-wrap'
+        : 'max-w-[85%] rounded-2xl rounded-bl-md bg-card border border-white/10 text-slate-100 px-3 py-2 text-xs leading-relaxed whitespace-pre-wrap';
+      bubble.textContent = text;
+      row.appendChild(bubble);
+      box.appendChild(row);
+      box.scrollTop = box.scrollHeight;
+    }
+
+    function addAiEditorTyping(label) {
+      const box = $('ai-editor-messages');
+      const row = document.createElement('div');
+      row.id = 'ai-editor-typing';
+      row.className = 'flex justify-start';
+      row.innerHTML = '<div class="rounded-2xl rounded-bl-md bg-card border border-white/10 px-3 py-2 flex items-center gap-2"><span class="typing-dot w-1.5 h-1.5 rounded-full bg-violet-400"></span><span class="typing-dot w-1.5 h-1.5 rounded-full bg-violet-400"></span><span class="typing-dot w-1.5 h-1.5 rounded-full bg-violet-400"></span><span class="text-[10px] text-muted">' + (label || 'AI changes kar raha hai…') + '</span></div>';
+      box.appendChild(row);
+      box.scrollTop = box.scrollHeight;
+    }
+
+    async function sendAiEdit() {
+      const input = $('ai-editor-input');
+      const text = input.value.trim();
+      if (!text || !state.aiEditor || state.aiEditor.busy) return;
+      input.value = '';
+      input.style.height = 'auto';
+      state.aiEditor.busy = true;
+      $('ai-editor-send').disabled = true;
+      addAiEditorBubble('user', text);
+      renderAiEditorQuick();
+      addAiEditorTyping();
+      try {
+        const res = await fetch('/api/site-edit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + state.token },
+          body: JSON.stringify({
+            slug: state.aiEditor.slug,
+            instruction: text,
+            history: state.aiEditor.history,
+          }),
+        });
+        const data = await res.json();
+        const typing = document.getElementById('ai-editor-typing');
+        if (typing) typing.remove();
+        if (!res.ok) throw new Error(data.error || 'Edit failed');
+
+        addAiEditorBubble('assistant', data.reply || 'Done! ✅');
+        state.aiEditor.history.push({ role: 'user', content: text });
+        state.aiEditor.history.push({ role: 'assistant', content: data.reply || '' });
+        if (state.aiEditor.history.length > 8) state.aiEditor.history = state.aiEditor.history.slice(-8);
+
+        if (data.changed && data.changed.length) {
+          // Reload the live preview to show the applied changes
+          $('ai-editor-frame').src = 'https://' + state.aiEditor.slug + '.websconnect.in?v=' + Date.now();
+        }
+      } catch (e) {
+        const typing = document.getElementById('ai-editor-typing');
+        if (typing) typing.remove();
+        addAiEditorBubble('assistant', '⚠️ ' + (e.message || 'Kuch galat ho gaya. Dobara try karo.'));
+      } finally {
+        state.aiEditor.busy = false;
+        $('ai-editor-send').disabled = false;
+        input.focus();
+      }
+    }
+
     // ── Manual Template Editor (No-AI Free Builder) ────────────
     function wcToast(msg) {
       let el = document.getElementById('wc-toast');
@@ -2078,6 +2230,7 @@
       } catch (e) {
         $('loading-modal').classList.add('hidden');
         if (e.code === 'QUOTA_EXCEEDED') {
+          state.afterPaymentAction = { type: 'publish', payload: payload };
           openUpgradeModal();
           $('upgrade-error').textContent = e.message;
           $('upgrade-error').classList.remove('hidden');
@@ -2819,6 +2972,7 @@
         clearInterval(iv);
         $('loading-modal').classList.add('hidden');
         if (e.code === 'QUOTA_EXCEEDED') {
+          state.afterPaymentAction = { type: 'generate' };
           openUpgradeModal();
           $('upgrade-error').textContent = e.message;
           $('upgrade-error').classList.remove('hidden');
@@ -3026,17 +3180,22 @@
         card.appendChild(row);
         if (live && p.slug) {
           const row2 = document.createElement('div');
-          row2.className = 'px-2.5 pb-2.5 grid grid-cols-2 gap-1.5';
+          row2.className = 'px-2.5 pb-2.5 grid grid-cols-3 gap-1.5';
+          const aiEdit = document.createElement('button');
+          aiEdit.className = 'py-1.5 rounded-lg text-[9px] font-bold bg-violet-500/15 border border-violet-400/30 text-violet-300';
+          aiEdit.textContent = '🤖 AI Edit';
+          aiEdit.addEventListener('click', function () { openAiEditor(p.slug, p.title); });
           const dl = document.createElement('button');
           dl.className = 'py-1.5 rounded-lg text-[9px] font-bold bg-white/5 border border-white/15 text-slate-200';
-          dl.textContent = '⬇️ Download ZIP';
+          dl.textContent = '⬇️ ZIP';
           dl.addEventListener('click', function () { downloadProjectZip(p.slug, dl); });
           const share = document.createElement('button');
           share.className = 'py-1.5 rounded-lg text-[9px] font-bold bg-emerald-500/15 border border-emerald-400/30 text-emerald-300';
-          share.textContent = '💬 WhatsApp';
+          share.textContent = '💬 Share';
           share.addEventListener('click', function () {
             shareSiteOnWhatsApp('https://' + p.slug + '.websconnect.in');
           });
+          row2.appendChild(aiEdit);
           row2.appendChild(dl);
           row2.appendChild(share);
           card.appendChild(row2);
@@ -3152,31 +3311,114 @@
     async function confirmUpgrade() {
       if (!state.selectedPlan) return;
       if (!isLoggedIn()) {
+        const plan = state.selectedPlan;
         $('upgrade-modal').classList.add('hidden');
-        state.pendingAction = null;
+        state.pendingAction = { type: 'upgrade', payload: { plan: plan } };
         openLoginModal();
         return;
       }
+      if (typeof window.Razorpay !== 'function') {
+        $('upgrade-error').textContent = 'Secure checkout could not load. Check your internet and try again.';
+        $('upgrade-error').classList.remove('hidden');
+        return;
+      }
+
       const btn = $('btn-upgrade-confirm');
+      const selectedPlan = state.selectedPlan;
       btn.disabled = true;
-      btn.textContent = 'Activating…';
+      btn.textContent = 'Creating secure order…';
+      $('upgrade-error').classList.add('hidden');
       try {
-        const res = await fetch('/api/plan/upgrade', {
+        const res = await fetch('/api/create-order', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + state.token },
-          body: JSON.stringify({ plan: state.selectedPlan }),
+          body: JSON.stringify({ plan: selectedPlan }),
         });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Upgrade failed');
-        state.plan = data.plan;
-        updatePlanUI();
-        btn.textContent = '🎉 Plan Activated!';
-        setTimeout(function () {
-          $('upgrade-modal').classList.add('hidden');
-          showAccount();
-        }, 900);
+        const order = await res.json();
+        if (!res.ok) throw new Error(order.error || 'Could not start checkout');
+
+        const checkout = new window.Razorpay({
+          key: order.keyId,
+          amount: order.amount,
+          currency: order.currency,
+          name: 'WebsConnect',
+          description: order.plan.name + ' Website Plan',
+          order_id: order.id,
+          prefill: {
+            name: state.user && state.user.name || '',
+            email: state.user && state.user.email || '',
+          },
+          notes: { plan: selectedPlan },
+          theme: { color: '#2563EB' },
+          modal: {
+            ondismiss: function () {
+              btn.disabled = false;
+              updatePlanCards();
+            },
+          },
+          handler: async function (response) {
+            $('upgrade-modal').classList.add('hidden');
+            $('loading-modal').classList.remove('hidden');
+            $('loading-bar').style.width = '55%';
+            $('loading-text').textContent = 'Payment successful! Verifying securely…';
+            try {
+              const verifyRes = await fetch('/api/verify-payment', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: 'Bearer ' + state.token,
+                },
+                body: JSON.stringify({
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_signature: response.razorpay_signature,
+                }),
+              });
+              const verified = await verifyRes.json();
+              if (!verifyRes.ok || !verified.success) {
+                throw new Error(verified.error || 'Payment verification failed');
+              }
+
+              state.plan = verified.plan;
+              updatePlanUI();
+              $('loading-bar').style.width = '100%';
+              $('loading-text').textContent = 'Plan activated! Continuing your website…';
+              const next = state.afterPaymentAction;
+              state.afterPaymentAction = null;
+              setTimeout(function () {
+                $('loading-modal').classList.add('hidden');
+                if (next && next.type === 'publish') {
+                  doManualPublish(next.payload);
+                } else if (next && next.type === 'generate') {
+                  startGeneration();
+                } else {
+                  showProjects();
+                }
+              }, 650);
+            } catch (verifyError) {
+              $('loading-modal').classList.add('hidden');
+              $('upgrade-error').textContent =
+                (verifyError.message || 'Verification failed') +
+                '. If money was deducted, the webhook will activate your plan automatically. Check Account shortly.';
+              $('upgrade-error').classList.remove('hidden');
+              $('upgrade-modal').classList.remove('hidden');
+              btn.disabled = false;
+              updatePlanCards();
+            }
+          },
+        });
+
+        checkout.on('payment.failed', function (response) {
+          const reason = response.error && (response.error.description || response.error.reason);
+          $('upgrade-error').textContent = reason || 'Payment failed or was cancelled. Please try again.';
+          $('upgrade-error').classList.remove('hidden');
+          btn.disabled = false;
+          updatePlanCards();
+        });
+        checkout.open();
+        btn.textContent = 'Complete payment in Razorpay…';
       } catch (e) {
-        $('upgrade-error').textContent = e.message || 'Upgrade failed. Please try again.';
+        $('upgrade-error').textContent = e.message || 'Could not start payment. Please try again.';
         $('upgrade-error').classList.remove('hidden');
         btn.disabled = false;
         updatePlanCards();
@@ -3406,6 +3648,25 @@
       $('btn-preview-home').addEventListener('click', showHome);
       $('btn-share-whatsapp').addEventListener('click', function () {
         if (state.lastPublishedUrl) shareSiteOnWhatsApp(state.lastPublishedUrl);
+      });
+      $('btn-preview-ai-edit').addEventListener('click', function () {
+        if (!state.lastPublishedUrl) return;
+        const slug = state.lastPublishedUrl.replace('https://', '').split('.')[0];
+        openAiEditor(slug, slug);
+      });
+
+      // AI Chat Site Editor
+      $('ai-editor-back').addEventListener('click', closeAiEditor);
+      $('ai-editor-send').addEventListener('click', sendAiEdit);
+      $('ai-editor-input').addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          sendAiEdit();
+        }
+      });
+      $('ai-editor-input').addEventListener('input', function () {
+        this.style.height = 'auto';
+        this.style.height = Math.min(this.scrollHeight, 96) + 'px';
       });
       $('btn-build-another').addEventListener('click', function () {
         $('preview-modal').classList.add('hidden');

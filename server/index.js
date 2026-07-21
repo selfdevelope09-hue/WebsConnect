@@ -8,6 +8,8 @@ const { mountGenerateRoutes } = require('./routes/generate');
 const { mountConsultantRoutes } = require('./routes/consultant');
 const { mountExportRoutes } = require('./routes/export');
 const { mountPublishRoutes } = require('./routes/publish');
+const { mountEditRoutes } = require('./routes/edit');
+const { mountPaymentRoutes, razorpayWebhookHandler } = require('./routes/payments');
 const { migrate } = require('./db/migrate');
 
 const app = express();
@@ -15,6 +17,15 @@ const PORT = process.env.PORT || 3000;
 const ROOT_DOMAIN = process.env.ROOT_DOMAIN || 'websconnect.in';
 
 app.set('trust proxy', true);
+
+// Razorpay signature verification requires the exact raw request bytes.
+// Keep these routes before express.json().
+app.post(
+  ['/api/razorpay-webhook', '/razorpay-webhook'],
+  express.raw({ type: 'application/json', limit: '512kb' }),
+  razorpayWebhookHandler
+);
+
 app.use(express.json({ limit: '4mb' }));
 
 app.use(subdomainRouter({ rootDomain: ROOT_DOMAIN }));
@@ -30,6 +41,8 @@ mountGenerateRoutes(apiRouter);
 mountConsultantRoutes(apiRouter);
 mountExportRoutes(apiRouter);
 mountPublishRoutes(apiRouter);
+mountEditRoutes(apiRouter);
+mountPaymentRoutes(apiRouter);
 
 app.use((req, res, next) => {
   if (parseSubdomain(req.hostname, ROOT_DOMAIN) === 'api') {

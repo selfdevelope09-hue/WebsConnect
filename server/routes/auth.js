@@ -200,33 +200,10 @@ function mountAuthRoutes(router) {
     });
   });
 
-  // Activate a plan (payment confirmation happens over WhatsApp/UPI for now)
+  // Legacy simulated activation is intentionally disabled. Plans are unlocked
+  // only after Razorpay signature verification in routes/payments.js.
   router.post('/plan/upgrade', authMiddleware, async (req, res) => {
-    const pool = getPool();
-    if (!pool) return res.status(503).json({ error: 'Database unavailable' });
-    const planId = String(req.body?.plan || '');
-    const plan = PLANS[planId];
-    if (!plan || planId === 'free') {
-      return res.status(400).json({ error: 'Invalid plan. Choose monthly or yearly.' });
-    }
-    const expires = new Date(Date.now() + plan.days * 86400000);
-    await pool.query(
-      `UPDATE users SET plan = $1, plan_expires = $2, updated_at = NOW() WHERE id = $3`,
-      [planId, expires, req.userId]
-    );
-    await pool.query(
-      `INSERT INTO plan_purchases (user_id, plan, amount, expires_at) VALUES ($1, $2, $3, $4)`,
-      [req.userId, planId, plan.price, expires]
-    );
-    const info = await getUserPlanInfo(pool, req.userId);
-    res.json({
-      ok: true,
-      plan: {
-        id: info.plan, name: info.planName, quota: info.quota,
-        used: info.used, remaining: info.remaining,
-        daysLeft: info.daysLeft, expiresAt: info.expiresAt,
-      },
-    });
+    res.status(410).json({ error: 'Use Razorpay checkout to activate a plan.' });
   });
 
   // Billing history (plan purchases)

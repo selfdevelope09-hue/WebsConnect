@@ -789,9 +789,10 @@ function activeGenerator() {
     apiKey: GROQ_API_KEY,
     model: GROQ_GENERATOR_MODEL,
     url: 'https://api.groq.com/openai/v1/chat/completions',
-    // Llama 3.3 70B on Groq supports less output than the paid OpenRouter
-    // generator, but this budget is sufficient for three concise HTML pages.
-    maxTokens: 24000,
+    // Groq free tier enforces 12k tokens/minute per org (input + max_tokens
+    // both count), so the output budget must stay well under that.
+    maxTokens: 8000,
+    compact: true,
   };
 }
 
@@ -900,8 +901,12 @@ function mountGenerateRoutes(router) {
         chosenSlug = wanted;
       }
 
+      let systemPrompt = buildSystemPrompt();
+      if (generator.compact) {
+        systemPrompt += '\nIMPORTANT: Output budget is limited. Keep all three pages compact and efficient — clean structure, essential sections only, no redundant markup. Total output must stay under 7000 tokens.';
+      }
       const content = await callWebsiteGenerator([
-        { role: 'system', content: buildSystemPrompt() },
+        { role: 'system', content: systemPrompt },
         { role: 'user', content: buildUserPrompt({ niche, vibe, feature, prompt, businessName, requirements, consultantBrief }) },
       ]);
 
@@ -957,4 +962,6 @@ module.exports = {
   makeSlugBase,
   NICHE_NAMES,
   activeGenerator,
+  extractPages,
+  extractHtml,
 };

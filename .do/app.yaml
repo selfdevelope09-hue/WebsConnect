@@ -38,12 +38,28 @@ services:
         value: ""
       - key: OPENROUTER_MODEL
         value: "google/gemini-2.5-flash"
+      - key: WEBSITE_GENERATOR_PROVIDER
+        value: "groq"
       - key: GROQ_API_KEY
         scope: RUN_TIME
         type: SECRET
         value: ""
       - key: GROQ_MODEL
         value: "llama-3.3-70b-versatile"
+      - key: GROQ_GENERATOR_MODEL
+        value: "llama-3.3-70b-versatile"
+      - key: RAZORPAY_KEY_ID
+        scope: RUN_TIME
+        type: SECRET
+        value: ""
+      - key: RAZORPAY_KEY_SECRET
+        scope: RUN_TIME
+        type: SECRET
+        value: ""
+      - key: RAZORPAY_WEBHOOK_SECRET
+        scope: RUN_TIME
+        type: SECRET
+        value: ""
 
 databases:
   - name: websconnect-db
