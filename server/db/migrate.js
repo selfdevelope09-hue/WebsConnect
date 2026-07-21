@@ -29,6 +29,20 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE INDEX IF NOT EXISTS idx_users_guest ON users (guest_id);
 
+ALTER TABLE users ADD COLUMN IF NOT EXISTS plan VARCHAR(20) DEFAULT 'free';
+ALTER TABLE users ADD COLUMN IF NOT EXISTS plan_expires TIMESTAMPTZ;
+
+CREATE TABLE IF NOT EXISTS plan_purchases (
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id     UUID REFERENCES users(id) ON DELETE CASCADE,
+  plan        VARCHAR(20) NOT NULL,
+  amount      INTEGER NOT NULL,
+  expires_at  TIMESTAMPTZ NOT NULL,
+  created_at  TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_plan_purchases_user ON plan_purchases (user_id);
+
 CREATE TABLE IF NOT EXISTS projects (
   id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id     UUID REFERENCES users(id) ON DELETE CASCADE,

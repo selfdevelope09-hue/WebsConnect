@@ -39,6 +39,47 @@ function authMiddleware(req, res, next) {
   next();
 }
 
+const PLANS = {
+  free:    { name: 'Free',    price: 0,    quota: 2,   days: 0 },
+  monthly: { name: 'Monthly', price: 499,  quota: 10,  days: 30 },
+  yearly:  { name: 'Yearly',  price: 1999, quota: 100, days: 365 },
+};
+
+/** Resolve the user's effective plan (falls back to free when expired). */
+function effectivePlan(user) {
+  const plan = user.plan || 'free';
+  if (plan === 'free' || !PLANS[plan]) return 'free';
+  if (user.plan_expires && new Date(user.plan_expires).getTime() < Date.now()) return 'free';
+  return plan;
+}
+
+async function getUserPlanInfo(pool, userId) {
+  const { rows } = await pool.query(
+    `SELECT u.id, u.email, u.name, u.avatar_url, u.plan, u.plan_expires,
+            (SELECT COUNT(*) FROM projects p WHERE p.user_id = u.id AND p.status = 'active') AS site_count
+     FROM users u WHERE u.id = $1`,
+    [userId]
+  );
+  if (!rows[0]) return null;
+  const u = rows[0];
+  const plan = effectivePlan(u);
+  const quota = PLANS[plan].quota;
+  const used = Number(u.site_count) || 0;
+  const daysLeft = plan !== 'free' && u.plan_expires
+    ? Math.max(0, Math.ceil((new Date(u.plan_expires).getTime() - Date.now()) / 86400000))
+    : 0;
+  return {
+    user: u,
+    plan,
+    planName: PLANS[plan].name,
+    quota,
+    used,
+    remaining: Math.max(0, quota - used),
+    daysLeft,
+    expiresAt: plan !== 'free' ? u.plan_expires : null,
+  };
+}
+
 function mountAuthRoutes(router) {
   router.get('/config', (_req, res) => {
     res.json({
@@ -127,24 +168,87 @@ function mountAuthRoutes(router) {
   router.get('/auth/me', authMiddleware, async (req, res) => {
     const pool = getPool();
     if (!pool) return res.status(503).json({ error: 'Database unavailable' });
-    const { rows } = await pool.query(
-      `SELECT id, email, name, avatar_url FROM users WHERE id = $1`,
-      [req.userId]
-    );
-    if (!rows[0]) return res.status(401).json({ error: 'User not found' });
-    const u = rows[0];
+    const info = await getUserPlanInfo(pool, req.userId);
+    if (!info) return res.status(401).json({ error: 'User not found' });
+    const u = info.user;
     res.json({
       user: { id: u.id, email: u.email, name: u.name, avatarUrl: u.avatar_url },
+      plan: {
+        id: info.plan, name: info.planName, quota: info.quota,
+        used: info.used, remaining: info.remaining,
+        daysLeft: info.daysLeft, expiresAt: info.expiresAt,
+      },
     });
+  });
+
+  // Plan catalog + current plan status
+  router.get('/plan', authMiddleware, async (req, res) => {
+    const pool = getPool();
+    if (!pool) return res.status(503).json({ error: 'Database unavailable' });
+    const info = await getUserPlanInfo(pool, req.userId);
+    if (!info) return res.status(401).json({ error: 'User not found' });
+    res.json({
+      current: {
+        id: info.plan, name: info.planName, quota: info.quota,
+        used: info.used, remaining: info.remaining,
+        daysLeft: info.daysLeft, expiresAt: info.expiresAt,
+      },
+      plans: [
+        { id: 'monthly', name: 'Monthly', price: 499, quota: 10, days: 30 },
+        { id: 'yearly', name: 'Yearly', price: 1999, quota: 100, days: 365 },
+      ],
+    });
+  });
+
+  // Activate a plan (payment confirmation happens over WhatsApp/UPI for now)
+  router.post('/plan/upgrade', authMiddleware, async (req, res) => {
+    const pool = getPool();
+    if (!pool) return res.status(503).json({ error: 'Database unavailable' });
+    const planId = String(req.body?.plan || '');
+    const plan = PLANS[planId];
+    if (!plan || planId === 'free') {
+      return res.status(400).json({ error: 'Invalid plan. Choose monthly or yearly.' });
+    }
+    const expires = new Date(Date.now() + plan.days * 86400000);
+    await pool.query(
+      `UPDATE users SET plan = $1, plan_expires = $2, updated_at = NOW() WHERE id = $3`,
+      [planId, expires, req.userId]
+    );
+    await pool.query(
+      `INSERT INTO plan_purchases (user_id, plan, amount, expires_at) VALUES ($1, $2, $3, $4)`,
+      [req.userId, planId, plan.price, expires]
+    );
+    const info = await getUserPlanInfo(pool, req.userId);
+    res.json({
+      ok: true,
+      plan: {
+        id: info.plan, name: info.planName, quota: info.quota,
+        used: info.used, remaining: info.remaining,
+        daysLeft: info.daysLeft, expiresAt: info.expiresAt,
+      },
+    });
+  });
+
+  // Billing history (plan purchases)
+  router.get('/plan/history', authMiddleware, async (req, res) => {
+    const pool = getPool();
+    if (!pool) return res.json({ purchases: [] });
+    const { rows } = await pool.query(
+      `SELECT plan, amount, expires_at, created_at
+       FROM plan_purchases WHERE user_id = $1
+       ORDER BY created_at DESC LIMIT 50`,
+      [req.userId]
+    );
+    res.json({ purchases: rows });
   });
 
   router.get('/projects', authMiddleware, async (req, res) => {
     const pool = getPool();
     if (!pool) return res.json({ projects: [] });
     const { rows } = await pool.query(
-      `SELECT id, title, slug, niche, status, updated_at
+      `SELECT id, title, slug, niche, status, updated_at, created_at
        FROM projects WHERE user_id = $1
-       ORDER BY updated_at DESC LIMIT 20`,
+       ORDER BY updated_at DESC LIMIT 100`,
       [req.userId]
     );
     res.json({ projects: rows });
@@ -171,4 +275,4 @@ function mountAuthRoutes(router) {
   });
 }
 
-module.exports = { mountAuthRoutes, authMiddleware, verifyToken };
+module.exports = { mountAuthRoutes, authMiddleware, verifyToken, getUserPlanInfo, PLANS };

@@ -239,13 +239,26 @@
       <button id="btn-templates-back" class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center" aria-label="Back">
         <svg class="w-5 h-5 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
       </button>
-      <div>
-        <p class="text-[10px] font-semibold uppercase tracking-wider text-sky-300">Template Gallery</p>
-        <h1 class="text-lg font-extrabold leading-tight">Website Templates</h1>
+      <div class="flex-1 min-w-0">
+        <h1 class="text-lg font-extrabold leading-tight">Templates ✨</h1>
+        <p class="text-[11px] text-muted">Choose a template and launch your dream website in minutes.</p>
       </div>
+      <button id="btn-templates-upgrade" class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold bg-gradient-to-r from-violet-500 to-blue-600 text-white">⭐ Upgrade</button>
     </header>
-    <p class="px-4 text-xs text-muted">Pick a template → add your details → AI builds your website with your name, phone and style.</p>
-    <div class="px-4 mt-4">
+
+    <!-- Pro templates banner -->
+    <div class="px-4 mt-2">
+      <div class="rounded-2xl border border-violet-400/25 bg-gradient-to-r from-violet-600/20 to-blue-600/15 p-3.5 flex items-center gap-3">
+        <span class="w-10 h-10 shrink-0 rounded-xl bg-violet-500/20 border border-violet-400/30 flex items-center justify-center text-lg">💎</span>
+        <div class="flex-1 min-w-0">
+          <p class="text-xs font-bold text-white">Pro Templates</p>
+          <p class="text-[10px] text-muted">Build more websites with Monthly &amp; Yearly plans.</p>
+        </div>
+        <button class="btn-open-upgrade shrink-0 px-3 py-2 rounded-xl text-[10px] font-bold bg-gradient-to-r from-violet-500 to-blue-600 text-white">Upgrade Now</button>
+      </div>
+    </div>
+
+    <div class="px-4 mt-3">
       <div class="flex items-center gap-2 bg-card border border-white/10 rounded-2xl px-3.5 py-1 focus-within:border-accent/40 transition">
         <svg class="w-4 h-4 text-slate-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path stroke-linecap="round" d="M20 20l-3.5-3.5"/></svg>
         <input id="template-search" type="text" placeholder="Search templates — bakery, salon, turf, solar..."
@@ -254,9 +267,278 @@
           <svg class="w-3.5 h-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M6 6l12 12M18 6L6 18"/></svg>
         </button>
       </div>
-      <p id="template-search-empty" class="hidden mt-4 text-center text-xs text-muted">No templates match your search. Try “bakery”, “salon”, “turf” or “solar”.</p>
     </div>
-    <div id="templates-list" class="px-4 mt-4 space-y-4"></div>
+
+    <!-- Category filter chips -->
+    <div id="template-chips" class="mt-3 flex gap-2 overflow-x-auto hide-scrollbar px-4 pb-1"></div>
+
+    <!-- Feature badges -->
+    <div class="mt-3 grid grid-cols-2 gap-2 px-4">
+      <div class="rounded-xl bg-card border border-white/10 px-3 py-2 flex items-center gap-2"><span class="text-sm">📱</span><p class="text-[10px] font-semibold text-slate-300">100% Mobile-First</p></div>
+      <div class="rounded-xl bg-card border border-white/10 px-3 py-2 flex items-center gap-2"><span class="text-sm">⚡</span><p class="text-[10px] font-semibold text-slate-300">Fast &amp; Lightweight</p></div>
+      <div class="rounded-xl bg-card border border-white/10 px-3 py-2 flex items-center gap-2"><span class="text-sm">🔍</span><p class="text-[10px] font-semibold text-slate-300">SEO Optimized</p></div>
+      <div class="rounded-xl bg-card border border-white/10 px-3 py-2 flex items-center gap-2"><span class="text-sm">🎨</span><p class="text-[10px] font-semibold text-slate-300">Fully Customizable</p></div>
+    </div>
+
+    <!-- Trending -->
+    <div id="templates-trending-wrap">
+      <div class="px-4 mt-5 flex items-center justify-between">
+        <h2 class="font-bold text-sm">🔥 Trending Templates</h2>
+        <button id="btn-trending-viewall" class="text-[11px] text-accent font-medium">View all →</button>
+      </div>
+      <div id="templates-trending" class="mt-3 flex gap-3 overflow-x-auto hide-scrollbar px-4 pb-1"></div>
+    </div>
+
+    <!-- Browse by categories -->
+    <div id="templates-categories-wrap">
+      <div class="px-4 mt-5 flex items-center justify-between">
+        <h2 class="font-bold text-sm">Browse by Categories</h2>
+      </div>
+      <div id="templates-categories" class="mt-3 grid grid-cols-2 gap-2.5 px-4"></div>
+    </div>
+
+    <div class="px-4 mt-5 flex items-center justify-between">
+      <h2 class="font-bold text-sm">All Templates</h2>
+      <span id="templates-count" class="text-[11px] text-muted"></span>
+    </div>
+    <p id="template-search-empty" class="hidden mt-4 px-4 text-center text-xs text-muted">No templates match your search. Try “bakery”, “salon”, “turf” or “solar”.</p>
+    <div id="templates-list" class="px-4 mt-3 space-y-4"></div>
+
+    <!-- Unlock banner -->
+    <div class="px-4 mt-6">
+      <div class="rounded-2xl border border-violet-400/25 bg-gradient-to-r from-violet-600/20 to-blue-600/15 p-4 text-center">
+        <span class="inline-flex w-11 h-11 rounded-xl bg-violet-500/20 border border-violet-400/30 items-center justify-center text-xl">👑</span>
+        <p class="mt-2 text-sm font-bold text-white">Build More Websites</p>
+        <p class="mt-1 text-[11px] text-muted">Monthly ₹499 — 10 websites · Yearly ₹1999 — 100 websites</p>
+        <button class="btn-open-upgrade mt-3 px-5 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-violet-500 to-blue-600 text-white">⭐ Upgrade Plan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== PROJECTS SCREEN ===================== -->
+  <div id="screen-projects" class="hidden relative z-10 max-w-md mx-auto safe-bottom">
+    <header class="px-4 pt-4 pb-2">
+      <div class="flex items-center gap-3">
+        <button id="btn-projects-back" class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center" aria-label="Back">
+          <svg class="w-5 h-5 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+        </button>
+        <div class="flex-1 min-w-0">
+          <h1 class="text-lg font-extrabold leading-tight flex items-center gap-2">My Projects <span id="projects-count-badge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-brand/15 border border-brand/25 text-sky-300">0</span></h1>
+          <p class="text-[11px] text-muted">Manage, edit and grow your websites all in one place.</p>
+        </div>
+      </div>
+      <button id="btn-projects-create" class="mt-3 w-full py-3 rounded-xl font-bold text-sm bg-gradient-to-r from-blue-500 to-blue-700 text-white glow-btn active:scale-[.98] transition">✨ Create New Website</button>
+    </header>
+
+    <!-- Stats -->
+    <div class="px-4 mt-2 grid grid-cols-2 gap-2.5">
+      <div class="rounded-2xl bg-card border border-white/10 p-3"><div class="flex items-center gap-2"><span class="w-8 h-8 rounded-lg bg-blue-500/15 border border-blue-400/25 flex items-center justify-center text-sm">🌐</span><p id="pstat-total" class="text-lg font-extrabold">0</p></div><p class="text-[10px] text-muted mt-1.5">Total Websites</p></div>
+      <div class="rounded-2xl bg-card border border-white/10 p-3"><div class="flex items-center gap-2"><span class="w-8 h-8 rounded-lg bg-emerald-500/15 border border-emerald-400/25 flex items-center justify-center text-sm">🖥️</span><p id="pstat-live" class="text-lg font-extrabold">0</p></div><p class="text-[10px] text-muted mt-1.5">Published · Live websites</p></div>
+      <div class="rounded-2xl bg-card border border-white/10 p-3"><div class="flex items-center gap-2"><span class="w-8 h-8 rounded-lg bg-violet-500/15 border border-violet-400/25 flex items-center justify-center text-sm">⏳</span><p id="pstat-progress" class="text-lg font-extrabold">0</p></div><p class="text-[10px] text-muted mt-1.5">In Progress · Being built</p></div>
+      <div class="rounded-2xl bg-card border border-white/10 p-3"><div class="flex items-center gap-2"><span class="w-8 h-8 rounded-lg bg-amber-500/15 border border-amber-400/25 flex items-center justify-center text-sm">📝</span><p id="pstat-draft" class="text-lg font-extrabold">0</p></div><p class="text-[10px] text-muted mt-1.5">Drafts · Not published</p></div>
+    </div>
+
+    <!-- Search + filter -->
+    <div class="px-4 mt-4">
+      <div class="flex items-center gap-2 bg-card border border-white/10 rounded-2xl px-3.5 py-1 focus-within:border-accent/40 transition">
+        <svg class="w-4 h-4 text-slate-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path stroke-linecap="round" d="M20 20l-3.5-3.5"/></svg>
+        <input id="projects-search" type="text" placeholder="Search your projects..." class="flex-1 bg-transparent text-sm outline-none placeholder:text-slate-500 py-2.5" autocomplete="off" />
+      </div>
+      <div id="projects-filter" class="mt-3 flex gap-2 overflow-x-auto hide-scrollbar pb-1">
+        <button data-filter="all" class="pf-chip shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-brand/20 border border-brand/40 text-sky-300">All Status</button>
+        <button data-filter="active" class="pf-chip shrink-0 px-3.5 py-1.5 rounded-full text-xs font-medium bg-white/5 border border-white/10 text-slate-300">Live</button>
+        <button data-filter="draft" class="pf-chip shrink-0 px-3.5 py-1.5 rounded-full text-xs font-medium bg-white/5 border border-white/10 text-slate-300">Drafts</button>
+      </div>
+    </div>
+
+    <!-- Grid -->
+    <div id="projects-grid" class="px-4 mt-4 grid grid-cols-2 gap-3"></div>
+    <div id="projects-screen-empty" class="hidden px-4 mt-6 text-center">
+      <div class="rounded-2xl border border-dashed border-white/15 bg-card/50 p-6">
+        <p class="text-2xl">🚀</p>
+        <p class="mt-2 text-sm font-bold text-white">No websites yet</p>
+        <p class="mt-1 text-xs text-muted">Create your first AI website in 60 seconds.</p>
+        <button id="btn-projects-empty-create" class="mt-4 px-5 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-blue-500 to-blue-700 text-white">Create New Website</button>
+      </div>
+    </div>
+
+    <!-- Upgrade banner -->
+    <div class="px-4 mt-6">
+      <div class="rounded-2xl border border-violet-400/25 bg-gradient-to-r from-violet-600/20 to-blue-600/15 p-4">
+        <div class="flex items-center gap-3">
+          <span class="w-10 h-10 shrink-0 rounded-xl bg-violet-500/20 border border-violet-400/30 flex items-center justify-center text-lg">🚀</span>
+          <div class="min-w-0">
+            <p class="text-sm font-bold text-white">Build more. Grow faster.</p>
+            <p class="text-[10px] text-muted mt-0.5">Monthly ₹499 — 10 websites · Yearly ₹1999 — 100 websites · Priority support</p>
+          </div>
+        </div>
+        <button class="btn-open-upgrade mt-3 w-full py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-violet-500 to-blue-600 text-white">👑 Upgrade Plan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== ACCOUNT SCREEN ===================== -->
+  <div id="screen-account" class="hidden relative z-10 max-w-md mx-auto safe-bottom">
+    <header class="flex items-center justify-between px-4 pt-4 pb-2">
+      <button id="btn-account-back" class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center" aria-label="Back">
+        <svg class="w-5 h-5 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+      </button>
+      <div class="flex items-center gap-2">
+        <span class="logo-badge w-8 h-8"><img src="/logo.png" alt="WebsConnect" /></span>
+        <span class="font-bold text-[15px] tracking-tight">Webs<span class="text-brand">Connect</span></span>
+        <span class="px-1.5 py-0.5 rounded text-[8px] font-bold bg-brand text-white">AI</span>
+      </div>
+      <span class="w-10"></span>
+    </header>
+
+    <!-- Profile card -->
+    <section class="px-4 mt-2">
+      <div class="rounded-2xl bg-card border border-white/10 p-4">
+        <div class="flex items-center gap-3.5">
+          <div class="relative shrink-0">
+            <div class="w-16 h-16 rounded-full overflow-hidden border-2 border-brand/40 bg-surface">
+              <img id="acct-avatar-img" class="w-full h-full object-cover hidden" alt="" />
+              <span id="acct-avatar-fallback" class="w-full h-full flex items-center justify-center text-xl font-bold text-brand">G</span>
+            </div>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2">
+              <p id="acct-name" class="font-bold text-base truncate">Guest</p>
+              <span id="acct-plan-chip" class="shrink-0 px-2 py-0.5 rounded-full text-[9px] font-bold bg-white/10 border border-white/15 text-slate-300">Free</span>
+            </div>
+            <p id="acct-email" class="text-[11px] text-muted truncate mt-0.5">Not logged in</p>
+            <span id="acct-verified" class="hidden mt-1.5 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-semibold bg-emerald-500/15 border border-emerald-400/25 text-emerald-300">✓ Verified</span>
+          </div>
+        </div>
+        <div class="mt-4 grid grid-cols-3 divide-x divide-white/10 rounded-xl bg-base/50 border border-white/10">
+          <div class="p-3 text-center"><p id="acct-stat-sites" class="text-base font-extrabold">0</p><p class="text-[9px] text-muted mt-0.5">Websites</p></div>
+          <div class="p-3 text-center"><p id="acct-stat-credits" class="text-base font-extrabold">0</p><p class="text-[9px] text-muted mt-0.5">Credits Left</p></div>
+          <div class="p-3 text-center"><p id="acct-stat-days" class="text-base font-extrabold">—</p><p class="text-[9px] text-muted mt-0.5">Days Left</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Plan banner -->
+    <section class="px-4 mt-3">
+      <div id="acct-plan-banner" class="rounded-2xl border border-violet-400/30 bg-gradient-to-r from-violet-600/30 to-blue-600/20 p-4 flex items-center gap-3">
+        <span class="w-10 h-10 shrink-0 rounded-xl bg-violet-500/25 border border-violet-400/30 flex items-center justify-center text-lg">👑</span>
+        <div class="flex-1 min-w-0">
+          <p id="acct-plan-title" class="text-xs font-bold text-white">Free Plan</p>
+          <p id="acct-plan-sub" class="text-[10px] text-slate-300 mt-0.5">Upgrade to build more websites.</p>
+        </div>
+        <button id="btn-acct-manage-plan" class="shrink-0 px-3.5 py-2 rounded-xl text-[10px] font-bold bg-white text-slate-900">Manage Plan →</button>
+      </div>
+    </section>
+
+    <!-- Quick actions -->
+    <section class="px-4 mt-5">
+      <h2 class="font-bold text-sm mb-3">Quick Actions</h2>
+      <div class="flex gap-2.5 overflow-x-auto hide-scrollbar pb-1">
+        <button data-qa="websites" class="qa-btn shrink-0 w-[76px] rounded-2xl bg-card border border-white/10 p-3 text-center"><span class="inline-flex w-9 h-9 rounded-xl bg-blue-500/15 border border-blue-400/25 items-center justify-center text-base">🌐</span><p class="text-[9px] font-semibold mt-1.5 leading-tight">My Websites</p></button>
+        <button data-qa="credits" class="qa-btn shrink-0 w-[76px] rounded-2xl bg-card border border-white/10 p-3 text-center"><span class="inline-flex w-9 h-9 rounded-xl bg-violet-500/15 border border-violet-400/25 items-center justify-center text-base">✨</span><p class="text-[9px] font-semibold mt-1.5 leading-tight">Credits</p></button>
+        <button data-qa="domains" class="qa-btn shrink-0 w-[76px] rounded-2xl bg-card border border-white/10 p-3 text-center"><span class="inline-flex w-9 h-9 rounded-xl bg-emerald-500/15 border border-emerald-400/25 items-center justify-center text-base">🌍</span><p class="text-[9px] font-semibold mt-1.5 leading-tight">Domains</p></button>
+        <button data-qa="billing" class="qa-btn shrink-0 w-[76px] rounded-2xl bg-card border border-white/10 p-3 text-center"><span class="inline-flex w-9 h-9 rounded-xl bg-amber-500/15 border border-amber-400/25 items-center justify-center text-base">💳</span><p class="text-[9px] font-semibold mt-1.5 leading-tight">Billing</p></button>
+        <button data-qa="refer" class="qa-btn shrink-0 w-[76px] rounded-2xl bg-card border border-white/10 p-3 text-center"><span class="inline-flex w-9 h-9 rounded-xl bg-pink-500/15 border border-pink-400/25 items-center justify-center text-base">🎁</span><p class="text-[9px] font-semibold mt-1.5 leading-tight">Refer &amp; Earn</p></button>
+      </div>
+    </section>
+
+    <!-- Account list -->
+    <section class="px-4 mt-5">
+      <h2 class="font-bold text-sm mb-3">Account</h2>
+      <div class="rounded-2xl bg-card border border-white/10 divide-y divide-white/5 overflow-hidden">
+        <button data-acct="profile" class="acct-row w-full flex items-center gap-3 px-4 py-3.5 text-left active:bg-white/5"><span class="w-8 h-8 shrink-0 rounded-lg bg-blue-500/15 border border-blue-400/25 flex items-center justify-center text-sm">👤</span><span class="flex-1 min-w-0"><span class="block text-xs font-semibold">Profile Information</span><span class="block text-[10px] text-muted mt-0.5">Update your personal details</span></span><span class="text-slate-500">›</span></button>
+        <button data-acct="security" class="acct-row w-full flex items-center gap-3 px-4 py-3.5 text-left active:bg-white/5"><span class="w-8 h-8 shrink-0 rounded-lg bg-emerald-500/15 border border-emerald-400/25 flex items-center justify-center text-sm">🛡️</span><span class="flex-1 min-w-0"><span class="block text-xs font-semibold">Security</span><span class="block text-[10px] text-muted mt-0.5">Login &amp; account protection</span></span><span class="text-slate-500">›</span></button>
+        <button data-acct="payments" class="acct-row w-full flex items-center gap-3 px-4 py-3.5 text-left active:bg-white/5"><span class="w-8 h-8 shrink-0 rounded-lg bg-violet-500/15 border border-violet-400/25 flex items-center justify-center text-sm">💳</span><span class="flex-1 min-w-0"><span class="block text-xs font-semibold">Payment Methods</span><span class="block text-[10px] text-muted mt-0.5">UPI &amp; payment options</span></span><span class="text-slate-500">›</span></button>
+        <button data-acct="billing" class="acct-row w-full flex items-center gap-3 px-4 py-3.5 text-left active:bg-white/5"><span class="w-8 h-8 shrink-0 rounded-lg bg-amber-500/15 border border-amber-400/25 flex items-center justify-center text-sm">📄</span><span class="flex-1 min-w-0"><span class="block text-xs font-semibold">Billing History</span><span class="block text-[10px] text-muted mt-0.5">Invoices and transactions</span></span><span class="text-slate-500">›</span></button>
+        <button data-acct="subscription" class="acct-row w-full flex items-center gap-3 px-4 py-3.5 text-left active:bg-white/5"><span class="w-8 h-8 shrink-0 rounded-lg bg-pink-500/15 border border-pink-400/25 flex items-center justify-center text-sm">👑</span><span class="flex-1 min-w-0"><span class="block text-xs font-semibold">Subscription</span><span class="block text-[10px] text-muted mt-0.5">Manage your plan</span></span><span class="text-slate-500">›</span></button>
+        <button data-acct="notifications" class="acct-row w-full flex items-center gap-3 px-4 py-3.5 text-left active:bg-white/5"><span class="w-8 h-8 shrink-0 rounded-lg bg-sky-500/15 border border-sky-400/25 flex items-center justify-center text-sm">🔔</span><span class="flex-1 min-w-0"><span class="block text-xs font-semibold">Notifications</span><span class="block text-[10px] text-muted mt-0.5">Manage email notifications</span></span><span id="acct-notif-state" class="text-[10px] text-muted mr-1">On</span><span class="text-slate-500">›</span></button>
+        <button data-acct="language" class="acct-row w-full flex items-center gap-3 px-4 py-3.5 text-left active:bg-white/5"><span class="w-8 h-8 shrink-0 rounded-lg bg-teal-500/15 border border-teal-400/25 flex items-center justify-center text-sm">🌐</span><span class="flex-1 min-w-0"><span class="block text-xs font-semibold">Language</span><span class="block text-[10px] text-muted mt-0.5">Choose your preferred language</span></span><span class="text-[10px] text-muted mr-1">English</span><span class="text-slate-500">›</span></button>
+      </div>
+    </section>
+
+    <!-- Help -->
+    <section class="px-4 mt-4">
+      <div class="rounded-2xl bg-card border border-white/10 p-4 flex items-center gap-3">
+        <span class="w-10 h-10 shrink-0 rounded-xl bg-sky-500/15 border border-sky-400/25 flex items-center justify-center text-lg">🎧</span>
+        <div class="flex-1 min-w-0">
+          <p class="text-xs font-bold">Need Help?</p>
+          <p class="text-[10px] text-muted mt-0.5">We're here to help you 24/7</p>
+        </div>
+        <a href="https://wa.me/919999999999?text=Hi%20WebsConnect%20Support" target="_blank" rel="noopener" id="btn-acct-support" class="shrink-0 px-3 py-2 rounded-xl text-[10px] font-bold border border-sky-400/40 text-sky-300">Contact Support</a>
+      </div>
+    </section>
+
+    <!-- Logout / Login -->
+    <section class="px-4 mt-4 mb-4">
+      <button id="btn-acct-logout" class="hidden w-full py-3.5 rounded-2xl text-sm font-bold text-red-400 bg-red-500/10 border border-red-500/20 active:scale-[.98] transition">⎋ Logout</button>
+      <button id="btn-acct-login" class="w-full py-3.5 rounded-2xl text-sm font-bold text-white bg-gradient-to-r from-blue-500 to-blue-700 glow-btn active:scale-[.98] transition">Login with Google</button>
+    </section>
+  </div>
+
+  <!-- ===================== UPGRADE MODAL ===================== -->
+  <div id="upgrade-modal" class="hidden fixed inset-0 z-[55] bg-base overflow-y-auto">
+    <div class="max-w-md mx-auto min-h-full flex flex-col">
+      <header class="sticky top-0 z-10 flex items-center gap-3 px-4 py-4 bg-base/95 backdrop-blur border-b border-white/10">
+        <button id="btn-upgrade-close" class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center" aria-label="Back">
+          <svg class="w-5 h-5 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+        </button>
+        <div>
+          <p class="text-[10px] font-semibold uppercase tracking-wider text-violet-300">WebsConnect Plans</p>
+          <h2 class="font-bold text-base">Upgrade Your Plan</h2>
+        </div>
+      </header>
+      <div class="flex-1 px-4 py-5">
+        <div id="upgrade-current" class="rounded-xl bg-card border border-white/10 p-3 text-center text-xs text-muted"></div>
+
+        <div class="mt-4 space-y-3">
+          <button data-plan="monthly" class="plan-card w-full text-left rounded-2xl bg-card border border-white/10 p-4 active:scale-[.99] transition">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm font-bold text-white">Monthly Plan</p>
+                <p class="text-[10px] text-muted mt-0.5">Perfect for getting started</p>
+              </div>
+              <div class="text-right">
+                <p class="text-lg font-extrabold text-white">₹499<span class="text-[10px] font-medium text-muted">/month</span></p>
+              </div>
+            </div>
+            <div class="mt-3 flex flex-wrap gap-1.5">
+              <span class="px-2 py-1 rounded-full text-[9px] font-semibold bg-blue-500/15 border border-blue-400/25 text-sky-300">10 Websites</span>
+              <span class="px-2 py-1 rounded-full text-[9px] font-semibold bg-blue-500/15 border border-blue-400/25 text-sky-300">All Templates</span>
+              <span class="px-2 py-1 rounded-full text-[9px] font-semibold bg-blue-500/15 border border-blue-400/25 text-sky-300">Free Subdomains</span>
+            </div>
+          </button>
+          <button data-plan="yearly" class="plan-card relative w-full text-left rounded-2xl bg-card border border-violet-400/40 p-4 active:scale-[.99] transition">
+            <span class="absolute -top-2 right-4 px-2 py-0.5 rounded-full text-[8px] font-bold bg-gradient-to-r from-violet-500 to-blue-600 text-white">BEST VALUE</span>
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm font-bold text-white">Yearly Plan</p>
+                <p class="text-[10px] text-muted mt-0.5">For serious builders — 100 websites</p>
+              </div>
+              <div class="text-right">
+                <p class="text-lg font-extrabold text-white">₹1999<span class="text-[10px] font-medium text-muted">/year</span></p>
+              </div>
+            </div>
+            <div class="mt-3 flex flex-wrap gap-1.5">
+              <span class="px-2 py-1 rounded-full text-[9px] font-semibold bg-violet-500/15 border border-violet-400/25 text-violet-300">100 Websites</span>
+              <span class="px-2 py-1 rounded-full text-[9px] font-semibold bg-violet-500/15 border border-violet-400/25 text-violet-300">All Templates</span>
+              <span class="px-2 py-1 rounded-full text-[9px] font-semibold bg-violet-500/15 border border-violet-400/25 text-violet-300">Priority Support</span>
+            </div>
+          </button>
+        </div>
+
+        <ul class="mt-5 space-y-2 text-xs text-slate-300">
+          <li class="flex items-center gap-2"><span class="text-emerald-400">✓</span> AI-generated 3-page websites</li>
+          <li class="flex items-center gap-2"><span class="text-emerald-400">✓</span> Free yourname.websconnect.in domain</li>
+          <li class="flex items-center gap-2"><span class="text-emerald-400">✓</span> Hosting &amp; SSL included</li>
+          <li class="flex items-center gap-2"><span class="text-emerald-400">✓</span> WhatsApp &amp; UPI integrations</li>
+          <li class="flex items-center gap-2"><span class="text-emerald-400">✓</span> Mobile-first responsive design</li>
+        </ul>
+
+        <p id="upgrade-error" class="hidden mt-3 text-xs text-red-400 text-center"></p>
+        <button id="btn-upgrade-confirm" class="mt-5 w-full py-3.5 rounded-2xl font-bold text-sm bg-gradient-to-r from-violet-500 to-blue-600 text-white glow-btn active:scale-[.98] transition" disabled>Select a plan above</button>
+        <p class="mt-3 text-center text-[10px] text-muted mb-4">Plan activates instantly. Cancel anytime — no hidden charges.</p>
+      </div>
+    </div>
   </div>
 
   <!-- Template live preview overlay -->
@@ -478,6 +760,12 @@
       </div>
     </div>
     <nav class="flex-1 overflow-y-auto hide-scrollbar py-2">
+      <button id="btn-menu-upgrade" class="menu-item" style="background:linear-gradient(90deg,rgba(139,92,246,.14),rgba(37,99,235,.10))">
+        <span class="menu-ico" style="background:rgba(139,92,246,.15);border-color:rgba(167,139,250,.35);color:#c4b5fd"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l4.5 4L12 5l4.5 7L21 8l-1.5 10h-15L3 8z"/></svg></span>
+        <span class="flex-1">Upgrade Plan</span>
+        <span id="menu-plan-badge" class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-violet-500/20 border border-violet-400/30 text-violet-300">Free</span>
+      </button>
+      <div class="my-2 mx-5 border-t border-white/10"></div>
       <button class="menu-item" data-page="about">
         <span class="menu-ico"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4 21V5a2 2 0 012-2h8a2 2 0 012 2v16M4 21h16M9 7h2m-2 4h2m-2 4h2m5-5h4a1 1 0 011 1v10"/></svg></span>About
       </button>
@@ -538,11 +826,15 @@
       guestId: null,
       user: null,
       token: null,
+      plan: null, // { id, name, quota, used, remaining, daysLeft, expiresAt }
+      projects: [],
       googleClientId: null,
       googleAuthEnabled: false,
       pendingAction: null, // { type, payload }
       choices: { niche: '', vibe: '', feature: '', prompt: '', requirements: {} },
       step: 0,
+      selectedPlan: null,
+      templateChip: 'all',
     };
 
     const CORE_QUESTIONS = [
@@ -816,6 +1108,7 @@
           $('avatar-guest').classList.remove('hidden');
         }
         loadProjects();
+        refreshPlan();
       } else {
         $('avatar-img').classList.add('hidden');
         $('avatar-guest').textContent = 'G';
@@ -936,23 +1229,43 @@
     }
 
     // ── Screens ────────────────────────────────────────────────
+    function hideAllScreens() {
+      ['screen-home', 'screen-templates', 'screen-projects', 'screen-account', 'screen-builder', 'template-modal', 'preview-modal', 'loading-modal', 'upgrade-modal'].forEach(function (id) {
+        $(id).classList.add('hidden');
+      });
+    }
+
     function showHome() {
+      hideAllScreens();
       screenHome.classList.remove('hidden');
-      screenBuilder.classList.add('hidden');
-      $('screen-templates').classList.add('hidden');
-      $('template-modal').classList.add('hidden');
       bottomNav.classList.remove('hidden');
-      $('preview-modal').classList.add('hidden');
-      $('loading-modal').classList.add('hidden');
       setNavActive('home');
+      window.scrollTo({ top: 0 });
     }
 
     function showBuilder() {
-      screenHome.classList.add('hidden');
-      $('screen-templates').classList.add('hidden');
-      $('template-modal').classList.add('hidden');
+      hideAllScreens();
       screenBuilder.classList.remove('hidden');
       bottomNav.classList.add('hidden');
+    }
+
+    function showProjects() {
+      hideAllScreens();
+      $('screen-projects').classList.remove('hidden');
+      bottomNav.classList.remove('hidden');
+      setNavActive('projects');
+      renderProjectsScreen();
+      loadProjects();
+      window.scrollTo({ top: 0 });
+    }
+
+    function showAccount() {
+      hideAllScreens();
+      $('screen-account').classList.remove('hidden');
+      bottomNav.classList.remove('hidden');
+      setNavActive('account');
+      renderAccountScreen();
+      window.scrollTo({ top: 0 });
     }
 
     function setNavActive(nav) {
@@ -1179,8 +1492,17 @@
     function renderTemplates(query) {
       const list = $('templates-list');
       list.innerHTML = '';
-      const visible = TEMPLATES.filter(function (t) { return templateMatches(t, query); });
+      const chip = state.templateChip;
+      const visible = TEMPLATES.filter(function (t) {
+        if (chip && chip !== 'all' && t.niche !== chip) return false;
+        return templateMatches(t, query);
+      });
       $('template-search-empty').classList.toggle('hidden', visible.length > 0);
+      $('templates-count').textContent = visible.length + ' of ' + TEMPLATES.length;
+      // Hide discovery sections while searching/filtering so results appear right below
+      const searching = Boolean((query || '').trim()) || (chip && chip !== 'all');
+      $('templates-trending-wrap').classList.toggle('hidden', searching);
+      $('templates-categories-wrap').classList.toggle('hidden', searching);
       visible.forEach(function (t) {
         const card = document.createElement('div');
         card.className = 'rounded-2xl bg-card border border-white/10 p-3.5';
@@ -1215,12 +1537,99 @@
     }
 
     function showTemplates() {
-      screenHome.classList.add('hidden');
-      screenBuilder.classList.add('hidden');
+      hideAllScreens();
       $('screen-templates').classList.remove('hidden');
       bottomNav.classList.remove('hidden');
       setNavActive('templates');
       window.scrollTo({ top: 0 });
+    }
+
+    // ── Templates: chips / trending / categories ───────────────
+    const TEMPLATE_CHIPS = [
+      ['all', 'All Templates'], ['food', 'Food'], ['salon', 'Salon & Beauty'], ['fashion', 'Fashion'],
+      ['photography', 'Photography'], ['services', 'Services'], ['clinic', 'Healthcare'], ['education', 'Education'],
+      ['auto', 'Auto'], ['sports', 'Sports'], ['gifts', 'Gifts'], ['solar', 'Solar'],
+    ];
+    const TRENDING_IDS = ['lensstory', 'turfnation', 'sweetcraft', 'designspace'];
+
+    function renderTemplateChips() {
+      const wrap = $('template-chips');
+      wrap.innerHTML = '';
+      TEMPLATE_CHIPS.forEach(function (chip) {
+        const active = state.templateChip === chip[0];
+        const btn = document.createElement('button');
+        btn.className = 'shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold border transition ' +
+          (active ? 'bg-brand/20 border-brand/40 text-sky-300' : 'bg-white/5 border-white/10 text-slate-300');
+        btn.textContent = chip[1];
+        btn.addEventListener('click', function () {
+          state.templateChip = chip[0];
+          renderTemplateChips();
+          renderTemplates($('template-search').value);
+        });
+        wrap.appendChild(btn);
+      });
+    }
+
+    function renderTrendingTemplates() {
+      const wrap = $('templates-trending');
+      wrap.innerHTML = '';
+      TRENDING_IDS.forEach(function (id, i) {
+        const t = TEMPLATES.find(function (x) { return x.id === id; });
+        if (!t) return;
+        const card = document.createElement('div');
+        card.className = 'shrink-0 w-[190px] rounded-2xl bg-card border border-white/10 overflow-hidden';
+        card.innerHTML =
+          '<div class="relative">' +
+            '<div style="background:' + t.colors.bg + ';height:96px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 12px;text-align:center">' +
+              '<p style="color:' + t.colors.accent + ';font-size:8px;font-weight:800;letter-spacing:.15em">' + t.category.toUpperCase() + '</p>' +
+              '<p style="color:' + t.colors.text + ';font-size:13px;font-weight:900;line-height:1.15;margin-top:4px">' + t.name + '</p>' +
+            '</div>' +
+            '<span class="absolute top-2 left-2 px-1.5 py-0.5 rounded text-[8px] font-bold ' + (i === 0 ? 'bg-emerald-500 text-white' : i === 1 ? 'bg-violet-500 text-white' : i === 2 ? 'bg-blue-500 text-white' : 'bg-amber-500 text-black') + '">' + (i === 0 ? 'TRENDING' : i === 1 ? 'POPULAR' : 'NEW') + '</span>' +
+          '</div>' +
+          '<div class="p-2.5">' +
+            '<p class="text-[11px] font-bold truncate">' + t.emoji + ' ' + t.name + '</p>' +
+            '<p class="text-[9px] text-muted truncate mt-0.5">' + t.category + '</p>' +
+          '</div>';
+        const row = document.createElement('div');
+        row.className = 'px-2.5 pb-2.5 grid grid-cols-2 gap-1.5';
+        const pv = document.createElement('button');
+        pv.className = 'py-1.5 rounded-lg text-[9px] font-bold bg-white/5 border border-white/15 text-slate-200';
+        pv.textContent = 'Preview';
+        pv.addEventListener('click', function () { openTemplatePreview(t.id); });
+        const use = document.createElement('button');
+        use.className = 'py-1.5 rounded-lg text-[9px] font-bold bg-gradient-to-r from-blue-500 to-blue-700 text-white';
+        use.textContent = 'Use Template';
+        use.addEventListener('click', function () { requireAuth({ type: 'template', payload: t.id }); });
+        row.appendChild(pv);
+        row.appendChild(use);
+        card.appendChild(row);
+        wrap.appendChild(card);
+      });
+    }
+
+    function renderTemplateCategories() {
+      const wrap = $('templates-categories');
+      wrap.innerHTML = '';
+      const groups = {};
+      TEMPLATES.forEach(function (t) {
+        groups[t.category] = groups[t.category] || { count: 0, emoji: t.emoji, niche: t.niche };
+        groups[t.category].count++;
+      });
+      Object.keys(groups).slice(0, 10).forEach(function (cat) {
+        const g = groups[cat];
+        const btn = document.createElement('button');
+        btn.className = 'rounded-2xl bg-card border border-white/10 p-3 text-left flex items-center gap-2.5 active:scale-[.98] transition';
+        btn.innerHTML =
+          '<span class="w-9 h-9 shrink-0 rounded-xl bg-brand/10 border border-brand/20 flex items-center justify-center text-base">' + g.emoji + '</span>' +
+          '<span class="min-w-0"><span class="block text-[11px] font-bold truncate">' + cat + '</span><span class="block text-[9px] text-muted mt-0.5">' + g.count + ' template' + (g.count > 1 ? 's' : '') + '</span></span>';
+        btn.addEventListener('click', function () {
+          $('template-search').value = cat;
+          $('template-search-clear').classList.remove('hidden');
+          renderTemplates(cat);
+          $('templates-list').scrollIntoView({ behavior: 'smooth' });
+        });
+        wrap.appendChild(btn);
+      });
     }
 
     function openTemplatePreview(templateId) {
@@ -1229,6 +1638,7 @@
       state.previewTemplate = t.id;
       $('tpl-preview-title').textContent = t.emoji + ' ' + t.name + ' — 3 page demo';
       $('tpl-preview-frame').src = '/templates/' + t.id + '/index.html';
+      $('btn-tpl-preview-use').classList.remove('hidden');
       $('tpl-preview-overlay').classList.remove('hidden');
       document.body.style.overflow = 'hidden';
     }
@@ -1329,7 +1739,12 @@
         bakery: 'food', photography: 'creative', portfolio: 'creative',
         gym: 'gym', salon: 'salon', store: 'fashion', blog: 'creative'
       };
-      const mapped = categoryMap[opts.niche];
+      let mapped = categoryMap[opts.niche];
+      if (!mapped && opts.niche) {
+        // Allow direct category values (used by Rebuild from Projects screen)
+        const validCategory = CORE_QUESTIONS[0].options.some(function (o) { return o[1] === opts.niche; });
+        if (validCategory) mapped = opts.niche;
+      }
       if (mapped) {
         state.choices.requirements.category = { value: mapped, label: opts.label || opts.niche };
         state.choices.niche = mapped;
@@ -1590,7 +2005,11 @@
         const data = await res.json();
         clearInterval(iv);
 
-        if (!res.ok) throw new Error(data.error || 'Generation failed');
+        if (!res.ok) {
+          const err = new Error(data.error || 'Generation failed');
+          err.code = data.code;
+          throw err;
+        }
 
         $('loading-bar').style.width = '100%';
         $('loading-text').textContent = 'Done! Your site is live ✨';
@@ -1601,6 +2020,12 @@
       } catch (e) {
         clearInterval(iv);
         $('loading-modal').classList.add('hidden');
+        if (e.code === 'QUOTA_EXCEEDED') {
+          openUpgradeModal();
+          $('upgrade-error').textContent = e.message;
+          $('upgrade-error').classList.remove('hidden');
+          return;
+        }
         const msg = '⚠️ ' + (e.message || 'Something went wrong. Please try again.');
         if (!$('template-modal').classList.contains('hidden')) {
           $('template-error').textContent = msg;
@@ -1624,11 +2049,10 @@
     }
 
     async function loadProjects() {
-      const list = $('projects-list');
-      const empty = $('projects-empty');
       if (!isLoggedIn()) {
-        list.querySelectorAll('.project-card').forEach(function (el) { el.remove(); });
-        empty.classList.remove('hidden');
+        state.projects = [];
+        renderHomeProjects();
+        renderProjectsScreen();
         return;
       }
       try {
@@ -1636,28 +2060,418 @@
           headers: { Authorization: 'Bearer ' + state.token },
         });
         const data = await res.json();
-        list.querySelectorAll('.project-card').forEach(function (el) { el.remove(); });
-        if (!data.projects || !data.projects.length) {
-          empty.classList.remove('hidden');
+        state.projects = data.projects || [];
+      } catch (e) {
+        state.projects = [];
+      }
+      renderHomeProjects();
+      renderProjectsScreen();
+      refreshPlan();
+    }
+
+    function renderHomeProjects() {
+      const list = $('projects-list');
+      const empty = $('projects-empty');
+      list.querySelectorAll('.project-card').forEach(function (el) { el.remove(); });
+      if (!state.projects.length) {
+        empty.classList.remove('hidden');
+        return;
+      }
+      empty.classList.add('hidden');
+      state.projects.slice(0, 5).forEach(function (p) {
+        const card = document.createElement('div');
+        card.className = 'project-card rounded-2xl border border-white/10 bg-card p-3 flex gap-3';
+        card.innerHTML =
+          '<div class="w-14 h-14 rounded-xl bg-gradient-to-br from-slate-700 to-slate-900 shrink-0 flex items-center justify-center text-lg">' + nicheEmoji(p.niche) + '</div>' +
+          '<div class="flex-1 min-w-0">' +
+          '<div class="flex items-center gap-2"><p class="text-xs font-bold truncate">' + escapeHtml(p.title) + '</p>' +
+          '<span class="text-[9px] px-1.5 py-0.5 rounded-full ' + (p.status === 'active' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300') + '">' + (p.status === 'active' ? 'Live' : 'Draft') + '</span></div>' +
+          '<p class="text-[10px] text-muted mt-0.5">' + escapeHtml(p.niche || 'Website') + (p.slug ? ' · ' + escapeHtml(p.slug) + '.websconnect.in' : '') + '</p>' +
+          (p.slug && p.status === 'active'
+            ? '<div class="mt-1.5"><a href="https://' + escapeHtml(p.slug) + '.websconnect.in" target="_blank" class="text-[10px] text-accent font-semibold">Open Site ↗</a></div>'
+            : '') +
+          '</div>';
+        list.appendChild(card);
+      });
+    }
+
+    function nicheEmoji(niche) {
+      const t = TEMPLATES.find(function (x) { return x.niche === niche; });
+      return t ? t.emoji : '🌐';
+    }
+
+    function timeAgo(dateStr) {
+      if (!dateStr) return '';
+      const diff = Date.now() - new Date(dateStr).getTime();
+      const mins = Math.floor(diff / 60000);
+      if (mins < 60) return 'Updated ' + Math.max(1, mins) + 'm ago';
+      const hours = Math.floor(mins / 60);
+      if (hours < 24) return 'Updated ' + hours + 'h ago';
+      const days = Math.floor(hours / 24);
+      if (days < 7) return 'Updated ' + days + 'd ago';
+      return 'Updated ' + Math.floor(days / 7) + 'w ago';
+    }
+
+    // ── Projects screen ────────────────────────────────────────
+    state.projectFilter = 'all';
+
+    function renderProjectsScreen() {
+      const grid = $('projects-grid');
+      if (!grid) return;
+      const all = state.projects;
+      $('projects-count-badge').textContent = all.length;
+      $('pstat-total').textContent = all.length;
+      $('pstat-live').textContent = all.filter(function (p) { return p.status === 'active'; }).length;
+      $('pstat-progress').textContent = all.filter(function (p) { return p.status === 'building'; }).length;
+      $('pstat-draft').textContent = all.filter(function (p) { return p.status !== 'active' && p.status !== 'building'; }).length;
+
+      const q = ($('projects-search').value || '').toLowerCase().trim();
+      const filter = state.projectFilter;
+      const visible = all.filter(function (p) {
+        if (filter === 'active' && p.status !== 'active') return false;
+        if (filter === 'draft' && p.status === 'active') return false;
+        if (q && (p.title + ' ' + (p.slug || '') + ' ' + (p.niche || '')).toLowerCase().indexOf(q) === -1) return false;
+        return true;
+      });
+
+      grid.innerHTML = '';
+      $('projects-screen-empty').classList.toggle('hidden', visible.length > 0);
+      visible.forEach(function (p) {
+        const t = TEMPLATES.find(function (x) { return x.niche === p.niche; });
+        const bg = t ? t.colors : { bg: '#131c30', accent: '#1e90ff', text: '#ffffff' };
+        const live = p.status === 'active';
+        const card = document.createElement('div');
+        card.className = 'rounded-2xl bg-card border border-white/10 overflow-hidden';
+        card.innerHTML =
+          '<div class="relative" style="background:' + bg.bg + ';height:88px;display:flex;align-items:center;justify-content:center;padding:0 10px">' +
+            '<p style="color:' + bg.text + ';font-size:11px;font-weight:900;text-align:center;line-height:1.2">' + escapeHtml(p.title) + '</p>' +
+            '<span class="absolute top-2 left-2 px-1.5 py-0.5 rounded text-[8px] font-bold ' + (live ? 'bg-emerald-500/90 text-white' : 'bg-amber-500/90 text-black') + '">' + (live ? '●Live' : 'Draft') + '</span>' +
+          '</div>' +
+          '<div class="p-2.5">' +
+            '<p class="text-[11px] font-bold truncate">' + nicheEmoji(p.niche) + ' ' + escapeHtml(p.title) + '</p>' +
+            (p.slug ? '<p class="text-[9px] text-muted truncate mt-0.5">' + escapeHtml(p.slug) + '.websconnect.in</p>' : '') +
+            '<p class="text-[8px] text-slate-500 mt-1">' + timeAgo(p.updated_at || p.created_at) + '</p>' +
+          '</div>';
+        const row = document.createElement('div');
+        row.className = 'px-2.5 pb-2.5 grid grid-cols-2 gap-1.5';
+        const edit = document.createElement('button');
+        edit.className = 'py-1.5 rounded-lg text-[9px] font-bold bg-white/5 border border-white/15 text-slate-200';
+        edit.textContent = '✏️ Rebuild';
+        edit.addEventListener('click', function () {
+          requireAuth({ type: 'start', payload: { niche: p.niche, prompt: 'Rebuild my website "' + p.title + '"' } });
+        });
+        const preview = document.createElement('button');
+        preview.className = 'py-1.5 rounded-lg text-[9px] font-bold bg-gradient-to-r from-blue-500 to-blue-700 text-white';
+        preview.textContent = '👁️ Preview';
+        if (live && p.slug) {
+          preview.addEventListener('click', function () {
+            $('tpl-preview-title').textContent = p.title;
+            $('tpl-preview-frame').src = 'https://' + p.slug + '.websconnect.in';
+            $('btn-tpl-preview-use').classList.add('hidden');
+            $('tpl-preview-overlay').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+          });
+        } else {
+          preview.disabled = true;
+          preview.classList.add('opacity-40');
+        }
+        row.appendChild(edit);
+        row.appendChild(preview);
+        card.appendChild(row);
+        grid.appendChild(card);
+      });
+    }
+
+    // ── Plan + Account screen ──────────────────────────────────
+    async function refreshPlan() {
+      if (!isLoggedIn()) {
+        state.plan = null;
+        updatePlanUI();
+        return;
+      }
+      try {
+        const res = await fetch('/api/plan', { headers: { Authorization: 'Bearer ' + state.token } });
+        if (res.ok) {
+          const data = await res.json();
+          state.plan = data.current;
+        }
+      } catch (e) {}
+      updatePlanUI();
+    }
+
+    function updatePlanUI() {
+      const plan = state.plan;
+      const isPro = plan && plan.id !== 'free';
+      $('menu-plan-badge').textContent = isPro ? (plan.id === 'yearly' ? 'Yearly' : 'Monthly') : 'Free';
+      if (!$('screen-account').classList.contains('hidden')) renderAccountScreen();
+    }
+
+    function renderAccountScreen() {
+      const logged = isLoggedIn();
+      const plan = state.plan || { id: 'free', name: 'Free', quota: 2, used: 0, remaining: 2, daysLeft: 0 };
+      const isPro = plan.id !== 'free';
+
+      if (logged) {
+        $('acct-name').textContent = state.user.name || 'User';
+        $('acct-email').textContent = state.user.email;
+        $('acct-verified').classList.remove('hidden');
+        if (state.user.avatarUrl) {
+          $('acct-avatar-img').src = state.user.avatarUrl;
+          $('acct-avatar-img').classList.remove('hidden');
+          $('acct-avatar-fallback').classList.add('hidden');
+        } else {
+          $('acct-avatar-img').classList.add('hidden');
+          $('acct-avatar-fallback').textContent = (state.user.name || 'U').charAt(0).toUpperCase();
+          $('acct-avatar-fallback').classList.remove('hidden');
+        }
+      } else {
+        $('acct-name').textContent = 'Guest';
+        $('acct-email').textContent = 'Login to save your websites';
+        $('acct-verified').classList.add('hidden');
+        $('acct-avatar-img').classList.add('hidden');
+        $('acct-avatar-fallback').textContent = 'G';
+        $('acct-avatar-fallback').classList.remove('hidden');
+      }
+
+      $('acct-plan-chip').textContent = isPro ? '⭐ ' + plan.name : 'Free';
+      $('acct-plan-chip').className = 'shrink-0 px-2 py-0.5 rounded-full text-[9px] font-bold ' +
+        (isPro ? 'bg-violet-500/20 border border-violet-400/30 text-violet-300' : 'bg-white/10 border border-white/15 text-slate-300');
+
+      $('acct-stat-sites').textContent = plan.used;
+      $('acct-stat-credits').textContent = plan.remaining;
+      $('acct-stat-days').textContent = isPro ? plan.daysLeft : '—';
+
+      if (isPro) {
+        $('acct-plan-title').textContent = "You're a " + plan.name + ' Member';
+        $('acct-plan-sub').textContent = plan.remaining + ' of ' + plan.quota + ' websites left · ' + plan.daysLeft + ' days remaining';
+        $('btn-acct-manage-plan').textContent = 'Manage Plan →';
+      } else {
+        $('acct-plan-title').textContent = 'Upgrade to Pro';
+        $('acct-plan-sub').textContent = 'Monthly ₹499 — 10 websites · Yearly ₹1999 — 100 websites';
+        $('btn-acct-manage-plan').textContent = 'Upgrade →';
+      }
+
+      $('btn-acct-logout').classList.toggle('hidden', !logged);
+      $('btn-acct-login').classList.toggle('hidden', logged);
+      $('acct-notif-state').textContent = localStorage.getItem('wc_notifications') === 'off' ? 'Off' : 'On';
+    }
+
+    // ── Upgrade modal ──────────────────────────────────────────
+    function openUpgradeModal() {
+      closeMenu();
+      const plan = state.plan;
+      $('upgrade-current').innerHTML = plan && plan.id !== 'free'
+        ? 'Current plan: <span class="text-white font-bold">' + plan.name + '</span> · ' + plan.remaining + ' of ' + plan.quota + ' websites left · ' + plan.daysLeft + ' days remaining'
+        : 'Current plan: <span class="text-white font-bold">Free</span> · ' + (plan ? plan.remaining : 2) + ' website' + ((plan ? plan.remaining : 2) === 1 ? '' : 's') + ' left';
+      state.selectedPlan = null;
+      updatePlanCards();
+      $('upgrade-error').classList.add('hidden');
+      $('btn-upgrade-confirm').textContent = 'Select a plan above';
+      $('btn-upgrade-confirm').disabled = true;
+      $('upgrade-modal').classList.remove('hidden');
+      $('upgrade-modal').scrollTop = 0;
+    }
+
+    function updatePlanCards() {
+      document.querySelectorAll('.plan-card').forEach(function (card) {
+        const selected = card.dataset.plan === state.selectedPlan;
+        card.classList.toggle('ring-2', selected);
+        card.classList.toggle('ring-sky-400/60', selected);
+        card.classList.toggle('border-sky-400/60', selected);
+      });
+      if (state.selectedPlan) {
+        const price = state.selectedPlan === 'yearly' ? '₹1999 / year' : '₹499 / month';
+        $('btn-upgrade-confirm').textContent = 'Activate ' + (state.selectedPlan === 'yearly' ? 'Yearly' : 'Monthly') + ' Plan — ' + price;
+        $('btn-upgrade-confirm').disabled = false;
+      }
+    }
+
+    async function confirmUpgrade() {
+      if (!state.selectedPlan) return;
+      if (!isLoggedIn()) {
+        $('upgrade-modal').classList.add('hidden');
+        state.pendingAction = null;
+        openLoginModal();
+        return;
+      }
+      const btn = $('btn-upgrade-confirm');
+      btn.disabled = true;
+      btn.textContent = 'Activating…';
+      try {
+        const res = await fetch('/api/plan/upgrade', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + state.token },
+          body: JSON.stringify({ plan: state.selectedPlan }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Upgrade failed');
+        state.plan = data.plan;
+        updatePlanUI();
+        btn.textContent = '🎉 Plan Activated!';
+        setTimeout(function () {
+          $('upgrade-modal').classList.add('hidden');
+          showAccount();
+        }, 900);
+      } catch (e) {
+        $('upgrade-error').textContent = e.message || 'Upgrade failed. Please try again.';
+        $('upgrade-error').classList.remove('hidden');
+        btn.disabled = false;
+        updatePlanCards();
+      }
+    }
+
+    // ── Account detail pages (rendered in menu-page overlay) ───
+    function openAccountPage(key) {
+      const plan = state.plan || { id: 'free', name: 'Free', quota: 2, used: 0, remaining: 2, daysLeft: 0 };
+      const logged = isLoggedIn();
+      let title = '';
+      let html = '';
+
+      if (key === 'profile') {
+        title = 'Profile Information';
+        html =
+          '<div class="space-y-3">' +
+            '<div class="rounded-xl bg-card border border-white/10 p-4 text-center">' +
+              '<div class="w-16 h-16 mx-auto rounded-full overflow-hidden border-2 border-brand/40 bg-surface flex items-center justify-center text-xl font-bold text-brand">' +
+              (logged && state.user.avatarUrl ? '<img src="' + state.user.avatarUrl + '" class="w-full h-full object-cover" alt="" />' : (logged ? (state.user.name || 'U').charAt(0).toUpperCase() : 'G')) +
+              '</div>' +
+              '<p class="mt-3 font-bold text-white">' + (logged ? escapeHtml(state.user.name || 'User') : 'Guest User') + '</p>' +
+              '<p class="text-xs text-muted mt-1">' + (logged ? escapeHtml(state.user.email) : 'Not logged in') + '</p>' +
+            '</div>' +
+            '<div class="rounded-xl bg-card border border-white/10 p-4 space-y-2 text-xs">' +
+              '<p><span class="text-muted">Account type:</span> <span class="text-white font-semibold">' + (logged ? 'Google Account' : 'Guest') + '</span></p>' +
+              '<p><span class="text-muted">Plan:</span> <span class="text-white font-semibold">' + plan.name + '</span></p>' +
+              '<p><span class="text-muted">Guest ID:</span> <span class="text-white font-mono text-[10px]">' + (state.guestId || '').slice(0, 24) + '…</span></p>' +
+            '</div>' +
+            '<p class="text-[10px] text-muted text-center">Name and photo come from your Google account. Log in with a different Google account to change them.</p>' +
+          '</div>';
+      } else if (key === 'security') {
+        title = 'Security';
+        html =
+          '<div class="space-y-3">' +
+            '<div class="rounded-xl bg-card border border-white/10 p-4"><p class="text-xs font-bold text-white">🔐 Google Sign-In</p><p class="text-xs text-muted mt-1.5">Your account is protected by Google\'s security — 2FA, phishing protection and account recovery are managed by Google. WebsConnect never sees or stores your password.</p></div>' +
+            '<div class="rounded-xl bg-card border border-white/10 p-4"><p class="text-xs font-bold text-white">🛡️ Session</p><p class="text-xs text-muted mt-1.5">Login sessions expire automatically after 30 days. Logging out removes the session from this device instantly.</p></div>' +
+            (logged ? '<button id="acct-page-logout" class="w-full py-3 rounded-xl text-xs font-bold text-red-400 bg-red-500/10 border border-red-500/20">Log out from this device</button>' : '') +
+          '</div>';
+      } else if (key === 'payments') {
+        title = 'Payment Methods';
+        html =
+          '<div class="space-y-3">' +
+            '<div class="rounded-xl bg-card border border-white/10 p-4"><p class="text-xs font-bold text-white">💳 UPI Payments</p><p class="text-xs text-muted mt-1.5">Plan upgrades are processed via UPI. WebsConnect never stores card numbers or banking passwords.</p></div>' +
+            '<div class="rounded-xl bg-card border border-white/10 p-4"><p class="text-xs font-bold text-white">🧾 Your Website Payments</p><p class="text-xs text-muted mt-1.5">UPI QR codes on your generated websites route payments directly from your customers to your UPI ID — WebsConnect takes zero commission.</p></div>' +
+            '<button class="btn-open-upgrade w-full py-3 rounded-xl text-xs font-bold bg-gradient-to-r from-violet-500 to-blue-600 text-white">View Plans →</button>' +
+          '</div>';
+      } else if (key === 'billing') {
+        title = 'Billing History';
+        html = '<div id="billing-history" class="space-y-3"><p class="text-xs text-muted text-center pt-6">Loading…</p></div>';
+      } else if (key === 'subscription' || key === 'credits') {
+        title = 'Subscription';
+        const pct = plan.quota ? Math.min(100, Math.round((plan.used / plan.quota) * 100)) : 0;
+        html =
+          '<div class="space-y-3">' +
+            '<div class="rounded-xl bg-card border border-white/10 p-4">' +
+              '<div class="flex items-center justify-between"><p class="text-sm font-bold text-white">' + plan.name + ' Plan</p>' +
+              (plan.id !== 'free' ? '<span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-violet-500/20 border border-violet-400/30 text-violet-300">Active</span>' : '<span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-white/10 border border-white/15 text-slate-300">Free</span>') + '</div>' +
+              '<div class="mt-3 h-2 rounded-full bg-slate-800 overflow-hidden"><div class="h-full bg-gradient-to-r from-sky-400 to-blue-600" style="width:' + pct + '%"></div></div>' +
+              '<p class="text-xs text-muted mt-2">' + plan.used + ' of ' + plan.quota + ' websites used · ' + plan.remaining + ' left</p>' +
+              (plan.id !== 'free' ? '<p class="text-xs text-muted mt-1">' + plan.daysLeft + ' days remaining</p>' : '') +
+            '</div>' +
+            '<div class="rounded-xl bg-card border border-white/10 p-4 text-xs space-y-2">' +
+              '<p class="font-bold text-white">Available Plans</p>' +
+              '<p><span class="text-white font-semibold">Monthly ₹499</span> — 10 websites, all templates, free subdomains</p>' +
+              '<p><span class="text-white font-semibold">Yearly ₹1999</span> — 100 websites, all templates, priority support</p>' +
+            '</div>' +
+            '<button class="btn-open-upgrade w-full py-3 rounded-xl text-xs font-bold bg-gradient-to-r from-violet-500 to-blue-600 text-white">' + (plan.id !== 'free' ? 'Change Plan →' : '⭐ Upgrade Now →') + '</button>' +
+          '</div>';
+      } else if (key === 'domains') {
+        title = 'My Domains';
+        const sites = state.projects.filter(function (p) { return p.slug && p.status === 'active'; });
+        html =
+          '<div class="space-y-3">' +
+          (sites.length
+            ? sites.map(function (p) {
+                return '<a href="https://' + escapeHtml(p.slug) + '.websconnect.in" target="_blank" rel="noopener" class="flex items-center gap-3 rounded-xl bg-card border border-white/10 p-3.5">' +
+                  '<span class="w-9 h-9 rounded-lg bg-emerald-500/15 border border-emerald-400/25 flex items-center justify-center text-sm">🌍</span>' +
+                  '<span class="flex-1 min-w-0"><span class="block text-xs font-bold text-white truncate">' + escapeHtml(p.slug) + '.websconnect.in</span><span class="block text-[10px] text-emerald-300 mt-0.5">● Live · SSL active</span></span>' +
+                  '<span class="text-sky-400 text-xs">↗</span></a>';
+              }).join('')
+            : '<div class="rounded-xl border border-dashed border-white/15 bg-card/50 p-6 text-center"><p class="text-xs text-muted">No live domains yet. Build a website to claim your free yourname.websconnect.in domain.</p></div>') +
+          '</div>';
+      } else if (key === 'notifications') {
+        title = 'Notifications';
+        const on = localStorage.getItem('wc_notifications') !== 'off';
+        html =
+          '<div class="rounded-xl bg-card border border-white/10 p-4 flex items-center gap-3">' +
+            '<span class="w-9 h-9 rounded-lg bg-sky-500/15 border border-sky-400/25 flex items-center justify-center text-sm">🔔</span>' +
+            '<div class="flex-1"><p class="text-xs font-bold text-white">Email Notifications</p><p class="text-[10px] text-muted mt-0.5">Updates about your websites and plan</p></div>' +
+            '<button id="notif-toggle" class="px-3.5 py-2 rounded-xl text-[10px] font-bold ' + (on ? 'bg-emerald-500/20 border border-emerald-400/30 text-emerald-300' : 'bg-white/5 border border-white/15 text-slate-400') + '">' + (on ? 'On' : 'Off') + '</button>' +
+          '</div>';
+      } else if (key === 'language') {
+        title = 'Language';
+        html =
+          '<div class="space-y-2.5">' +
+            '<div class="rounded-xl bg-brand/10 border border-brand/30 p-3.5 flex items-center justify-between"><p class="text-xs font-bold text-white">English</p><span class="text-sky-300">✓</span></div>' +
+            '<div class="rounded-xl bg-card border border-white/10 p-3.5 flex items-center justify-between opacity-50"><p class="text-xs font-semibold text-slate-300">हिन्दी (Hindi)</p><span class="text-[9px] text-muted">Coming soon</span></div>' +
+            '<div class="rounded-xl bg-card border border-white/10 p-3.5 flex items-center justify-between opacity-50"><p class="text-xs font-semibold text-slate-300">मराठी (Marathi)</p><span class="text-[9px] text-muted">Coming soon</span></div>' +
+          '</div>';
+      } else {
+        return;
+      }
+
+      $('menu-page-title').textContent = title;
+      $('menu-page').dataset.view = 'account-' + key;
+      $('menu-page-content').innerHTML = html;
+      $('menu-page').classList.remove('hidden');
+      $('menu-page').scrollTop = 0;
+
+      const logoutBtn = document.getElementById('acct-page-logout');
+      if (logoutBtn) logoutBtn.addEventListener('click', function () {
+        logout();
+        $('menu-page').classList.add('hidden');
+        showAccount();
+      });
+      const notifToggle = document.getElementById('notif-toggle');
+      if (notifToggle) notifToggle.addEventListener('click', function () {
+        const nowOn = localStorage.getItem('wc_notifications') === 'off';
+        localStorage.setItem('wc_notifications', nowOn ? 'on' : 'off');
+        openAccountPage('notifications');
+        renderAccountScreen();
+      });
+      document.querySelectorAll('#menu-page-content .btn-open-upgrade').forEach(function (b) {
+        b.addEventListener('click', function () {
+          $('menu-page').classList.add('hidden');
+          openUpgradeModal();
+        });
+      });
+
+      if (key === 'billing') loadBillingHistory();
+    }
+
+    async function loadBillingHistory() {
+      const wrap = document.getElementById('billing-history');
+      if (!isLoggedIn()) {
+        wrap.innerHTML = '<p class="text-xs text-muted text-center pt-6">Login to view your billing history.</p>';
+        return;
+      }
+      try {
+        const res = await fetch('/api/plan/history', { headers: { Authorization: 'Bearer ' + state.token } });
+        const data = await res.json();
+        if (!data.purchases || !data.purchases.length) {
+          wrap.innerHTML = '<div class="rounded-xl border border-dashed border-white/15 bg-card/50 p-6 text-center"><p class="text-xs text-muted">No transactions yet. Upgrade to a plan and your invoices will appear here.</p></div>';
           return;
         }
-        empty.classList.add('hidden');
-        data.projects.forEach(function (p) {
-          const card = document.createElement('div');
-          card.className = 'project-card rounded-2xl border border-white/10 bg-card p-3 flex gap-3';
-          card.innerHTML =
-            '<div class="w-14 h-14 rounded-xl bg-gradient-to-br from-slate-700 to-slate-900 shrink-0"></div>' +
-            '<div class="flex-1 min-w-0">' +
-            '<div class="flex items-center gap-2"><p class="text-xs font-bold truncate">' + escapeHtml(p.title) + '</p>' +
-            '<span class="text-[9px] px-1.5 py-0.5 rounded-full ' + (p.status === 'active' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300') + '">' + (p.status === 'active' ? 'Live' : 'Draft') + '</span></div>' +
-            '<p class="text-[10px] text-muted mt-0.5">' + escapeHtml(p.niche || 'Website') + (p.slug ? ' · ' + escapeHtml(p.slug) + '.websconnect.in' : '') + '</p>' +
-            (p.slug && p.status === 'active'
-              ? '<div class="mt-1.5"><a href="https://' + escapeHtml(p.slug) + '.websconnect.in" target="_blank" class="text-[10px] text-accent font-semibold">Open Site ↗</a></div>'
-              : '') +
-            '</div>';
-          list.appendChild(card);
-        });
-      } catch (e) {}
+        wrap.innerHTML = data.purchases.map(function (p) {
+          const d = new Date(p.created_at);
+          return '<div class="rounded-xl bg-card border border-white/10 p-3.5 flex items-center gap-3">' +
+            '<span class="w-9 h-9 rounded-lg bg-emerald-500/15 border border-emerald-400/25 flex items-center justify-center text-sm">🧾</span>' +
+            '<div class="flex-1 min-w-0"><p class="text-xs font-bold text-white">' + (p.plan === 'yearly' ? 'Yearly' : 'Monthly') + ' Plan</p>' +
+            '<p class="text-[10px] text-muted mt-0.5">' + d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) + ' · valid till ' + new Date(p.expires_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) + '</p></div>' +
+            '<p class="text-sm font-extrabold text-white">₹' + p.amount + '</p>' +
+          '</div>';
+        }).join('');
+      } catch (e) {
+        wrap.innerHTML = '<p class="text-xs text-muted text-center pt-6">Could not load billing history.</p>';
+      }
     }
 
     function escapeHtml(s) {
@@ -1740,19 +2554,75 @@
           const nav = btn.dataset.nav;
           if (nav === 'home') showHome();
           else if (nav === 'templates') showTemplates();
-          else if (nav === 'account') {
-            if (!isLoggedIn()) openLoginModal();
-            else alert('Logged in as ' + state.user.email);
-          } else if (nav === 'projects') {
-            if (!isLoggedIn()) openLoginModal();
-            else {
-              showHome();
-              $('projects-list').scrollIntoView({ behavior: 'smooth' });
-            }
-          } else {
-            requireAuth({ type: 'start', payload: {} });
-          }
+          else if (nav === 'account') showAccount();
+          else if (nav === 'projects') showProjects();
+          else requireAuth({ type: 'start', payload: {} });
         });
+      });
+
+      // Projects screen
+      $('btn-projects-back').addEventListener('click', showHome);
+      $('btn-projects-create').addEventListener('click', function () {
+        requireAuth({ type: 'start', payload: {} });
+      });
+      $('btn-projects-empty-create').addEventListener('click', function () {
+        requireAuth({ type: 'start', payload: {} });
+      });
+      $('projects-search').addEventListener('input', renderProjectsScreen);
+      document.querySelectorAll('.pf-chip').forEach(function (chip) {
+        chip.addEventListener('click', function () {
+          state.projectFilter = chip.dataset.filter;
+          document.querySelectorAll('.pf-chip').forEach(function (c) {
+            const active = c === chip;
+            c.className = 'pf-chip shrink-0 px-3.5 py-1.5 rounded-full text-xs ' +
+              (active ? 'font-semibold bg-brand/20 border border-brand/40 text-sky-300' : 'font-medium bg-white/5 border border-white/10 text-slate-300');
+          });
+          renderProjectsScreen();
+        });
+      });
+
+      // Account screen
+      $('btn-account-back').addEventListener('click', showHome);
+      $('btn-acct-manage-plan').addEventListener('click', openUpgradeModal);
+      $('btn-acct-logout').addEventListener('click', function () {
+        logout();
+        renderAccountScreen();
+      });
+      $('btn-acct-login').addEventListener('click', openLoginModal);
+      document.querySelectorAll('.qa-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          const qa = btn.dataset.qa;
+          if (qa === 'websites') showProjects();
+          else if (qa === 'credits') openAccountPage('subscription');
+          else if (qa === 'domains') openAccountPage('domains');
+          else if (qa === 'billing') openAccountPage('billing');
+          else if (qa === 'refer') shareReferral();
+        });
+      });
+      document.querySelectorAll('.acct-row').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          openAccountPage(btn.dataset.acct);
+        });
+      });
+
+      // Upgrade modal
+      $('btn-upgrade-close').addEventListener('click', function () {
+        $('upgrade-modal').classList.add('hidden');
+      });
+      document.querySelectorAll('.plan-card').forEach(function (card) {
+        card.addEventListener('click', function () {
+          state.selectedPlan = card.dataset.plan;
+          updatePlanCards();
+        });
+      });
+      $('btn-upgrade-confirm').addEventListener('click', confirmUpgrade);
+      $('btn-menu-upgrade').addEventListener('click', openUpgradeModal);
+      $('btn-templates-upgrade').addEventListener('click', openUpgradeModal);
+      document.querySelectorAll('.btn-open-upgrade').forEach(function (btn) {
+        btn.addEventListener('click', openUpgradeModal);
+      });
+      $('btn-trending-viewall').addEventListener('click', function () {
+        $('templates-list').scrollIntoView({ behavior: 'smooth' });
       });
 
       // Side menu
@@ -2310,11 +3180,26 @@
     function logout() {
       state.token = null;
       state.user = null;
+      state.plan = null;
+      state.projects = [];
       localStorage.removeItem('wc_token');
       localStorage.removeItem('wc_user');
       setLoggedInUI();
       loadProjects();
+      updatePlanUI();
       closeMenu();
+    }
+
+    function shareReferral() {
+      const url = 'https://websconnect.in';
+      const text = 'Build your website in 60 seconds with WebsConnect — no laptop, no code! ' + url;
+      if (navigator.share) {
+        navigator.share({ title: 'WebsConnect', text: text, url: url }).catch(function () {});
+      } else if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(function () {
+          alert('Referral link copied! Share it with your friends.');
+        });
+      }
     }
 
     function sendPrompt() {
@@ -2330,6 +3215,9 @@
     async function boot() {
       ensureGuestId();
       bindEvents();
+      renderTemplateChips();
+      renderTrendingTemplates();
+      renderTemplateCategories();
       renderTemplates();
 
       // Restore session
@@ -2346,7 +3234,9 @@
           if (res.ok) {
             const data = await res.json();
             state.user = data.user;
+            if (data.plan) state.plan = data.plan;
             localStorage.setItem('wc_user', JSON.stringify(data.user));
+            updatePlanUI();
           } else {
             state.token = null;
             state.user = null;

@@ -2,7 +2,7 @@
 
 const crypto = require('crypto');
 const { getPool } = require('../db/sites');
-const { authMiddleware } = require('./auth');
+const { authMiddleware, getUserPlanInfo } = require('./auth');
 
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY || '';
 const OPENROUTER_MODEL = process.env.OPENROUTER_MODEL || 'google/gemini-2.5-flash';
@@ -786,6 +786,17 @@ function mountGenerateRoutes(router) {
       const { niche, vibe, feature, prompt, businessName, requirements, desiredSlug } = req.body || {};
       if (requirements && (typeof requirements !== 'object' || JSON.stringify(requirements).length > 20000)) {
         return res.status(400).json({ error: 'Invalid or oversized requirements' });
+      }
+
+      // Enforce website quota per plan (Free: 2 · Monthly ₹499: 10 · Yearly ₹1999: 100)
+      const planInfo = await getUserPlanInfo(pool, req.userId);
+      if (planInfo && planInfo.remaining <= 0) {
+        return res.status(403).json({
+          error: planInfo.plan === 'free'
+            ? `Free plan limit reached (${planInfo.quota} websites). Upgrade to Monthly ₹499 (10 websites) or Yearly ₹1999 (100 websites).`
+            : `Your ${planInfo.planName} plan limit of ${planInfo.quota} websites is reached. Upgrade your plan to build more.`,
+          code: 'QUOTA_EXCEEDED',
+        });
       }
 
       // Reserve the user's chosen domain before spending AI tokens
