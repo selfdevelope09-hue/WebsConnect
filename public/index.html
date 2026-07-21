@@ -77,6 +77,20 @@
     .menu-item:active { background: rgba(255,255,255,.06); }
     .menu-ico { font-size: 17px; width: 24px; text-align: center; }
     #side-menu.open { transform: translateX(0); }
+    .blog-article h2 { color:#7dd3fc; font-size:15px; font-weight:700; margin:24px 0 8px; }
+    .blog-article h3 { color:#fff; font-size:14px; font-weight:700; margin:18px 0 6px; }
+    .blog-article p { margin-top:10px; }
+    .blog-article ul, .blog-article ol { margin:10px 0 0 20px; display:grid; gap:9px; }
+    .blog-article ul { list-style:disc; }
+    .blog-article ol { list-style:decimal; }
+    .blog-article strong { color:#fff; font-weight:600; }
+    .blog-article blockquote { margin-top:18px; padding:14px; border:1px solid rgba(30,144,255,.3); border-radius:12px; background:rgba(0,102,255,.1); color:#e2e8f0; font-style:italic; }
+    .article-cards { display:grid; gap:10px; margin-top:12px; }
+    .article-cards > div { padding:12px; border:1px solid rgba(255,255,255,.1); border-radius:12px; background:#131c30; }
+    .ecosystem-map, .pipeline-map { display:grid; gap:8px; margin-top:14px; padding:14px; text-align:center; border:1px solid rgba(30,144,255,.25); border-radius:12px; background:rgba(0,102,255,.08); }
+    .ecosystem-map > div { display:grid; grid-template-columns:repeat(3,1fr); gap:5px; }
+    .ecosystem-map b, .pipeline-map b { padding:8px 4px; border-radius:8px; background:#131c30; color:#fff; font-size:10px; }
+    .pipeline-map span, .ecosystem-map span { color:#7dd3fc; font-size:10px; }
   </style>
 </head>
 <body class="bg-base text-white font-sans antialiased min-h-screen overflow-x-hidden">
@@ -864,7 +878,11 @@
         });
       });
       $('btn-page-back').addEventListener('click', function () {
-        $('menu-page').classList.add('hidden');
+        if ($('menu-page').dataset.view === 'blog-detail') {
+          openMenuPage('blogs');
+        } else {
+          $('menu-page').classList.add('hidden');
+        }
       });
     }
 
@@ -981,7 +999,7 @@
           '</section>' +
         '</div>'
       },
-      blogs:      { title: 'Blogs', html: '' },
+      blogs:      { title: 'Blogs', html: '__BLOG_LIST__' },
       orders:     { title: 'Orders', html: '' },
       payments:   { title: 'Payments', html: '' },
       support:    { title: 'Support', html: '' },
@@ -1181,6 +1199,124 @@
       },
     };
 
+    const BLOGS = [
+      {
+        id: 1,
+        tag: 'WebsConnect',
+        icon: '🌐',
+        title: "Why 90% of Local Businesses Don't Have a Website (And How Mobile-First AI is Changing That)",
+        meta: 'Discover how WebsConnect is eliminating laptops, coding, and complex hosting to help local Indian merchants launch live websites in 60 seconds using only their smartphones.',
+        body:
+          '<h2>Introduction: The Digital Divide in Local Indian Commerce</h2>' +
+          '<p>India is experiencing an unprecedented digital revolution. From street vendors to high-end boutiques, millions of business owners use smartphones daily to manage UPI payments, communicate with customers via WhatsApp, and market their products on social media.</p>' +
+          '<p>However, when it comes to having a professional, custom-coded website, a massive gap exists. Over 90% of local merchants in Tier-2 and Tier-3 cities still operate without a dedicated website.</p>' +
+          '<p>Why? Because traditional web development was built for a desktop-first world.</p>' +
+          '<h2>The Three Friction Points of Traditional Web Development</h2>' +
+          '<div class="article-cards">' +
+            '<div><strong>The Laptop Barrier</strong><p>Traditional web design tools, CMS platforms, and coding environments require a desktop or laptop computer. Millions of micro-entrepreneurs operate exclusively via mobile devices and cannot justify investing in expensive computer hardware.</p></div>' +
+            '<div><strong>Technical Complexity</strong><p>Setting up a website usually means navigating domain names, DNS records, Git repositories, SSL certificates, and hosting dashboards like Vercel or AWS. For a local bakery or salon owner, this technical jargon is overwhelming.</p></div>' +
+            '<div><strong>High Costs &amp; Slow Turnaround</strong><p>Hiring a web development agency often costs upwards of ₹15,000 to ₹30,000 and takes weeks of back-and-forth communication.</p></div>' +
+          '</div>' +
+          '<h2>The Solution: WebsConnect &amp; The Mobile-First AI Pivot</h2>' +
+          '<p>Recognizing this critical infrastructure gap, WebsConnect—a unit of Connect, founded by 17-year-old entrepreneur Atharva Darshanwar—pioneered a revolutionary shift: <strong>100% Mobile-First AI Website Generation with Headless Invisible DevOps.</strong></p>' +
+          '<p>Instead of forcing business owners to adapt to complex desktop software, WebsConnect brings the entire web creation engine inside a familiar, mobile-friendly conversational interface.</p>' +
+          '<h2>How WebsConnect Works in 3 Simple Steps</h2>' +
+          '<ol>' +
+            '<li><strong>Tap-Based Conversational Onboarding:</strong> Users do not need complex AI prompts. They simply answer interactive questions about their business niche, color aesthetic, and primary call-to-action such as WhatsApp Chat or UPI Payments.</li>' +
+            '<li><strong>Instant AI Code Compilation:</strong> WebsConnect compiles clean semantic HTML5, modern Tailwind CSS, and functional vanilla JavaScript tailored to the business.</li>' +
+            '<li><strong>Zero-Touch Cloud Deployment:</strong> Automated pipelines handle SSL and edge hosting in under 60 seconds, delivering a live shareable subdomain such as yourbusiness.websconnect.in.</li>' +
+          '</ol>' +
+          '<h2>Built for Instant Commerce</h2>' +
+          '<ul><li><strong>Direct WhatsApp Action Buttons:</strong> Potential customers can initiate a chat with one tap.</li><li><strong>Instant UPI Payments:</strong> Embedded QR modules enable direct payments without middleman commission fees.</li></ul>' +
+          '<h2>The Road Ahead for Local Digital Infrastructure</h2>' +
+          '<p>By removing the necessity of laptops, coding skills, and complex DevOps, WebsConnect is empowering local businesses to establish a luxury-level digital presence in less time than it takes to drink a cup of chai.</p>'
+      },
+      {
+        id: 2,
+        tag: 'StadiumConnect',
+        icon: '🏟️',
+        title: 'Fixing a Broken Event Industry: How StadiumConnect Raised ₹5 Lakh Seed Funding to Transform Venues & Vendor Logistics',
+        meta: "Learn how StadiumConnect, part of Atharva Darshanwar's Connect ecosystem, secured ₹5 Lakh funding to fix venue bookings, vendor coordination, and dynamic AI pricing for events in India.",
+        body:
+          '<h2>Introduction: The Invisible Chaos Behind Event Management</h2>' +
+          '<p>Organizing an event in India—whether it is a high-profile corporate product launch, a stadium-scale sports match, or a grand wedding—is notoriously chaotic.</p>' +
+          '<p>Despite the Indian event management industry growing into a multi-billion dollar market, the fundamental infrastructure remains fragmented, offline, and opaque. Customers face massive price markups from unverified intermediaries, vendors struggle with irregular booking cycles, and high-capacity venues like sports stadiums remain underutilized for non-sporting events.</p>' +
+          '<p>To solve this structural bottleneck, StadiumConnect was launched under the Connect ecosystem, founded by 17-year-old entrepreneur Atharva Darshanwar.</p>' +
+          '<h2>The ₹5 Lakh Milestone: Validating the Event-Tech Vision</h2>' +
+          '<p>Recognizing the immense market gap and early operational traction, StadiumConnect successfully secured ₹5 Lakh in early-stage seed funding. This capital is being deployed to accelerate vendor listings across India, scale stadium-partner relationships, and build an automated AI pricing and vendor matching engine.</p>' +
+          '<h2>The Three Core Problems StadiumConnect Solves</h2>' +
+          '<ol><li><strong>Unverified Vendor Supply Chain:</strong> Verified caterers, sound engineers, light technicians, and decorators come together on one platform with performance ratings and transparent pricing.</li><li><strong>Underutilized High-Capacity Venues:</strong> StadiumConnect helps organizers book stadiums and iconic venues with compliance, pitch protection clauses, and ground logistics.</li><li><strong>Stressful Execution &amp; Coordination:</strong> Customers get end-to-end ground operations, vendor coordination, and package management through one unified platform.</li></ol>' +
+          '<h2>The Technology Behind StadiumConnect</h2>' +
+          '<ul><li><strong>AI-Driven Vendor Matching:</strong> Recommends packages based on guest capacity, visual theme, and budget.</li><li><strong>Dynamic Pricing Engine:</strong> Calculates fair market rates and reduces middleman markups.</li><li><strong>Performance Rewards for Vendors:</strong> High-performing vendors receive priority listings and incentives.</li></ul>' +
+          '<h2>The Synergistic Power of Connect &amp; WebsConnect</h2>' +
+          '<p>Vendors listed on StadiumConnect get access to WebsConnect, allowing them to generate mobile-first portfolios and take bookings via WhatsApp and UPI in 60 seconds. Supported by Connect, StadiumConnect operates alongside AuronX Trade, creating a multi-industry ecosystem spanning technology, events, and quantitative finance.</p>' +
+          '<h2>The 3-Year Vision: Scaling Nationwide</h2>' +
+          '<p>With ₹5 Lakh in funding secured, StadiumConnect is expanding to list stadiums and venue partners across major tier-1 and tier-2 Indian cities. The ultimate goal is to make booking a stadium for an event as simple as booking a cab on your phone.</p>'
+      },
+      {
+        id: 3,
+        tag: 'AuronX Trade',
+        icon: '📈',
+        title: 'The Risk-Free Path to Trading Mastery: How AuronX Trade is Gamifying Financial Literacy',
+        meta: 'Discover AuronX Trade, the virtual crypto trading and market simulation platform built by Atharva Darshanwar under the Connect ecosystem to make financial education risk-free and performance-driven.',
+        body:
+          '<h2>Introduction: The Dilemma of Modern Retail Traders</h2>' +
+          '<p>Millions of young individuals and aspiring traders are eager to enter crypto and digital markets, but the learning curve is steep. Most beginners lose capital due to emotional decisions, weak risk management, and volatility, while static courses fail to recreate the pressure of live order books.</p>' +
+          '<p>To bridge the gap between theoretical education and real market execution, AuronX Trade was built under the Connect ecosystem founded by Atharva Darshanwar.</p>' +
+          '<h2>What is AuronX Trade?</h2>' +
+          '<p>AuronX Trade is a high-performance virtual crypto trading and simulation environment that gives users real market exposure without risking real financial capital. Users receive simulated capital to trade real-time crypto market feeds, test hypotheses, analyze dynamics, and master technical indicators in a risk-free sandbox.</p>' +
+          '<h2>Key Features Driving AuronX Trade</h2>' +
+          '<ol><li><strong>Real-Time Market Simulation:</strong> Live price feeds, slippage, volatility, and order management without financial loss.</li><li><strong>Performance-Driven Incentive Model:</strong> Top traders who consistently hit risk-adjusted targets can receive performance rewards, creating a merit-based environment similar to proprietary trading.</li><li><strong>Advanced Strategy Sandbox:</strong> Validate breakout strategies, candlestick patterns, algorithmic logic, and risk-to-reward ratios before using real capital.</li></ol>' +
+          '<h2>The Broader Purpose: Demystifying Finance</h2>' +
+          '<p>Starting his own business and trading journey at 14, Atharva recognized that financial inactivity and lack of practical market literacy hold millions of young people back. AuronX Trade aims to make trading and quantitative skills accessible early—helping individuals build discipline and financial independence.</p>' +
+          '<h2>The Connect Ecosystem</h2>' +
+          '<ul><li><strong>AuronX Trade:</strong> Financial literacy and trading simulation.</li><li><strong>StadiumConnect:</strong> Event logistics and venue management, backed by ₹5 Lakh seed funding.</li><li><strong>WebsConnect:</strong> India’s 100% Mobile-First AI Website Generator and Invisible DevOps Engine.</li></ul>' +
+          '<h2>The Road Ahead for AuronX Trade</h2>' +
+          '<ul><li><strong>Proprietary Trading Firm Capabilities:</strong> Funding top-tier simulated traders with actual capital.</li><li><strong>Institutional-Grade AI Market Analytics:</strong> Real-time pattern recognition and sentiment analysis.</li><li><strong>Full-Scale Crypto Exchange Infrastructure:</strong> A complete digital asset trading ecosystem.</li></ul>'
+      },
+      {
+        id: 4,
+        tag: 'Connect Ecosystem',
+        icon: '🔗',
+        title: 'The Anatomy of a Multi-Startup Ecosystem: How Connect is Scaling Across AI, Events, and Finance',
+        meta: 'Explore how 17-year-old entrepreneur Atharva Darshanwar is building Connect—a multi-venture ecosystem scaling WebsConnect, StadiumConnect (₹5L seed funded), and AuronX Trade.',
+        body:
+          '<h2>Introduction: From Single Apps to Interconnected Ecosystems</h2>' +
+          '<p>Modern automation—powered by AI code generation, serverless cloud architectures, and rapid deployment engines—has unlocked a new model: the multi-startup ecosystem. Interconnected platforms can leverage shared digital infrastructure, cross-venture customer bases, and unified capital allocation.</p>' +
+          '<p>Connect, founded by 17-year-old entrepreneur Atharva Darshanwar in Nagpur, demonstrates how rapid execution and shared infrastructure can power different industries, with an ecosystem value estimated at ₹10 Lakh+.</p>' +
+          '<h2>The Three Pillars of Connect</h2>' +
+          '<div class="ecosystem-map"><strong>CONNECT ECOSYSTEM</strong><span>↓</span><div><b>WebsConnect</b><b>StadiumConnect</b><b>AuronX Trade</b></div></div>' +
+          '<h3>1. Digital Infrastructure: WebsConnect</h3><p><strong>The Problem:</strong> Local merchants lack websites due to laptop dependency, coding complexity, and hosting overhead.</p><p><strong>The Solution:</strong> A 100% Mobile-First AI Website Generator and Invisible DevOps Engine that creates live websites in under 60 seconds.</p><p><strong>Ecosystem Synergy:</strong> WebsConnect powers internal landing pages and vendor portfolios while serving external clients.</p>' +
+          '<h3>2. Event Logistics &amp; Venues: StadiumConnect</h3><p><strong>The Problem:</strong> Fragmented venue bookings, unverified vendors, and chaotic coordination.</p><p><strong>The Solution:</strong> An end-to-end platform with AI pricing and operational support.</p><p><strong>Milestone:</strong> ₹5 Lakh in early-stage seed funding.</p>' +
+          '<h3>3. Financial Literacy &amp; Simulation: AuronX Trade</h3><p><strong>The Problem:</strong> Beginner traders lose money without risk-free experience.</p><p><strong>The Solution:</strong> A real-time virtual crypto trading sandbox with performance-based incentives.</p>' +
+          '<h2>Why the Ecosystem Model Works</h2>' +
+          '<ul><li><strong>Shared Technical Core:</strong> WebsConnect pipelines reduce software costs for other ventures.</li><li><strong>Cross-Pollination:</strong> StadiumConnect vendors gain instant websites through WebsConnect.</li><li><strong>Capital &amp; Operational Efficiency:</strong> Shared leadership, marketing, and operations keep execution lean.</li></ul>' +
+          '<blockquote>“Building an ecosystem is not about doing ten random things. It is about building foundational systems that solve real market problems and reinforce each other. Execution speed and clarity of vision turn ambitious goals into reality.”</blockquote>' +
+          '<h2>What’s Next for Connect?</h2>' +
+          '<ul><li><strong>WebsConnect:</strong> Become the default mobile website builder for Indian micro-merchants.</li><li><strong>StadiumConnect:</strong> Scale listings to major sports stadiums and tier-1 venues.</li><li><strong>AuronX Trade:</strong> Expand into proprietary funding and institutional AI tools.</li><li><strong>Global Footprint:</strong> Take Connect into international technology and SaaS markets.</li></ul>'
+      },
+      {
+        id: 5,
+        tag: 'Technology',
+        icon: '⚙️',
+        title: 'The Rise of Invisible DevOps: How Mobile-First AI is Replacing Traditional Web Infrastructure',
+        meta: 'Explore how WebsConnect is pioneering Invisible DevOps and mobile-first AI automation to eliminate servers, GitHub friction, and complex web deployment for modern businesses.',
+        body:
+          '<h2>Introduction: The Hidden Friction of Web Development</h2>' +
+          '<p>For two decades, publishing a website required semantic HTML, CSS and JavaScript, Git version control, cloud hosting, DNS and SSL configuration, plus responsive breakpoint management. This workflow creates an impassable wall for non-technical creators and micro-entrepreneurs.</p>' +
+          '<p>Enter <strong>Invisible DevOps</strong>—the framework pioneered by WebsConnect under the Connect ecosystem.</p>' +
+          '<h2>What is Invisible DevOps?</h2>' +
+          '<p>Invisible DevOps is an architectural paradigm where code generation, SSL provisioning, serverless routing, and edge deployment happen silently through automated APIs. The user never sees a terminal or DNS record; they describe their needs through mobile chat and receive a live URL in under 60 seconds.</p>' +
+          '<div class="pipeline-map"><b>Mobile Conversational Interface</b><span>↓ Structured Prompts</span><b>WebsConnect AI Engine</b><span>↓ Programmatic APIs</span><b>Invisible DevOps</b><span>↓ Auto SSL · Edge Deployment · DNS</span><b>Live Production Subdomain</b></div>' +
+          '<h2>Why Mobile-First AI Architecture Matters</h2>' +
+          '<ol><li><strong>Decoupling Web Creation from Desktop Hardware:</strong> WebsConnect brings enterprise-grade infrastructure to mobile touchscreens for owners who run their businesses entirely from phones.</li><li><strong>Eliminating Prompt Engineering Fatigue:</strong> Guided MCQs translate simple choices into design tokens and production-grade code.</li><li><strong>Native Commerce Modules Built In:</strong> Direct WhatsApp routing and zero-commission UPI QR triggers are injected automatically.</li></ol>' +
+          '<h2>The Role of WebsConnect within Connect</h2>' +
+          '<p><strong>Powering StadiumConnect:</strong> Vendors and venues use WebsConnect for instant portfolios and booking pages.</p><p><strong>Powering AuronX Trade:</strong> AuronX Trade touchpoints leverage WebsConnect’s automated deployment framework.</p>' +
+          '<h2>The Future: Zero-Code, Zero-Laptop, Infinite Scale</h2>' +
+          '<p>As AI models become faster and edge networks more ubiquitous, the friction between an idea and a live application will approach zero. Invisible DevOps is not just a feature—it is how the next billion internet users will build for the web.</p>'
+      }
+    ];
+
     const PAGE_PLACEHOLDER =
       '<div class="text-center pt-16">' +
       '<div class="text-4xl mb-4">🚧</div>' +
@@ -1209,9 +1345,69 @@
       const page = MENU_PAGES[key];
       if (!page) return;
       $('menu-page-title').textContent = page.title;
-      $('menu-page-content').innerHTML = page.html || PAGE_PLACEHOLDER;
+      $('menu-page').dataset.view = key;
+      $('menu-page-content').innerHTML =
+        page.html === '__BLOG_LIST__' ? renderBlogList() : (page.html || PAGE_PLACEHOLDER);
       $('menu-page').classList.remove('hidden');
+      $('menu-page').scrollTop = 0;
+      if (key === 'blogs') {
+        document.querySelectorAll('[data-blog-id]').forEach(function (card) {
+          card.addEventListener('click', function () {
+            openBlog(Number(card.dataset.blogId));
+          });
+        });
+      }
       closeMenu();
+    }
+
+    function renderBlogList() {
+      return '<div>' +
+        '<div class="mb-5"><p class="text-[10px] font-semibold uppercase tracking-wider text-sky-300">Connect Insights</p>' +
+        '<h1 class="text-xl font-extrabold text-white mt-1">Ideas shaping technology, events &amp; finance</h1>' +
+        '<p class="text-xs text-muted mt-2">Insights from WebsConnect and the wider Connect ecosystem.</p></div>' +
+        '<div class="space-y-3">' +
+        BLOGS.map(function (blog) {
+          return '<button data-blog-id="' + blog.id + '" class="w-full text-left rounded-2xl bg-card border border-white/10 p-4 active:scale-[.99] transition">' +
+            '<div class="flex items-start gap-3"><span class="w-11 h-11 shrink-0 rounded-xl bg-brand/10 border border-brand/20 flex items-center justify-center text-xl">' + blog.icon + '</span>' +
+            '<div><span class="text-[9px] font-semibold uppercase tracking-wider text-sky-300">' + blog.tag + '</span>' +
+            '<h2 class="text-sm font-bold text-white leading-snug mt-1">' + blog.title + '</h2></div></div>' +
+            '<p class="text-[11px] text-muted leading-relaxed mt-3">' + blog.meta + '</p>' +
+            '<p class="text-[11px] text-sky-400 font-semibold mt-3">Read full article →</p>' +
+          '</button>';
+        }).join('') +
+        '</div></div>';
+    }
+
+    function openBlog(id) {
+      const blog = BLOGS.find(function (item) { return item.id === id; });
+      if (!blog) return;
+      $('menu-page').dataset.view = 'blog-detail';
+      $('menu-page-title').textContent = 'Blog';
+      $('menu-page-content').innerHTML =
+        '<article class="blog-article text-sm text-slate-300 leading-relaxed">' +
+          '<div class="text-center mb-5">' +
+            '<span class="inline-flex px-2.5 py-1 rounded-full text-[9px] font-semibold uppercase tracking-wider bg-brand/10 border border-brand/20 text-sky-300">' + blog.tag + '</span>' +
+            '<div class="text-4xl mt-4">' + blog.icon + '</div>' +
+            '<h1 class="text-xl font-extrabold text-white leading-tight mt-3">' + blog.title + '</h1>' +
+            '<p class="text-xs text-muted mt-3">' + blog.meta + '</p>' +
+            '<p class="text-[10px] text-muted mt-3">By Atharva Darshanwar · Connect Ecosystem</p>' +
+          '</div>' +
+          blog.body +
+          renderBlogFooter() +
+        '</article>';
+      $('menu-page').scrollTop = 0;
+    }
+
+    function renderBlogFooter() {
+      return '<section class="mt-7 rounded-xl bg-card border border-white/10 p-4">' +
+        '<h2 class="!mt-0 !text-white">About the Author &amp; Parent Ecosystem</h2>' +
+        '<p>Atharva Darshanwar is a 17-year-old tech entrepreneur from Nagpur, India, and the Founder &amp; CEO of Connect. Connect is a multi-venture ecosystem spanning technology, event management, and quantitative finance, featuring WebsConnect, StadiumConnect—backed by ₹5 Lakh seed funding—and AuronX Trade.</p>' +
+        '<div class="mt-4 space-y-2">' +
+          '<a href="https://websconnect.in" target="_blank" rel="noopener" class="block text-sky-400 font-medium">Explore WebsConnect → websconnect.in</a>' +
+          '<a href="https://stadiumconnect.in" target="_blank" rel="noopener" class="block text-sky-400 font-medium">Explore StadiumConnect → stadiumconnect.in</a>' +
+          '<a href="https://theatharvacapital.com" target="_blank" rel="noopener" class="block text-sky-400 font-medium">Explore AuronX Trade → theatharvacapital.com</a>' +
+        '</div>' +
+      '</section>';
     }
 
     function logout() {
