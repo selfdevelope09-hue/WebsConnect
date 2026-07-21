@@ -516,9 +516,12 @@
         options: [
           ['🍩 Food, Restaurant & Cafe', 'food'], ['💈 Salon, Spa & Beauty Care', 'salon'],
           ['🏋️ Gym, Fitness & Yoga Center', 'gym'], ['👗 Fashion, Clothing & Boutique', 'fashion'],
-          ['🛠️ Services (Plumber, Electrician, Auto Repair)', 'services'],
+          ['🛠️ Services (Plumber, Electrician, Repairs)', 'services'],
           ['📸 Creative & Agency (Photographer, Digital Marketing)', 'creative'],
           ['🩺 Clinic, Healthcare & Pharmacy', 'clinic'], ['🎓 Coaching, School & Education', 'education'],
+          ['🏎️ Auto Garage, Car Wash & Detailing', 'auto'],
+          ['📦 Packers, Movers & Transport', 'movers'],
+          ['⚖️ Legal, CA & Financial Consultant', 'legal'],
           ['✍️ Write Custom Category', 'custom', 'text', 'Enter your business category']
         ]
       },
@@ -624,7 +627,13 @@
         { id: 'foodOrdering', question: 'Aap orders kaise accept karte hain?', options: [['Table Booking Only','table-booking'],['Takeaway / Pickup','pickup'],['Home Delivery via WhatsApp','whatsapp-delivery'],['Custom Food Service','custom','text','Describe your ordering mechanism']] },
         { id: 'dietaryHighlight', question: 'Aapka dietary highlight kya hai?', options: [['100% Pure Veg','pure-veg'],['Veg & Non-Veg Both','veg-nonveg'],['Vegan / Organic Options Available','vegan-organic'],['Custom Food Tag','custom','text','Enter your dietary highlight']] }
       ],
-      salon: 'booking', gym: 'booking', clinic: 'booking',
+      salon: 'booking', gym: 'booking', clinic: 'booking', auto: 'booking', legal: 'booking',
+      movers: [
+        { id: 'moveScope', question: 'Aap kaunsi shifting services dete hain?', options: [['Local (Same City) Shifting','local'],['Intercity / All India','intercity'],['Local + Intercity Both','both'],['Custom Coverage','custom','text','Describe your coverage area']] }
+      ],
+      education: [
+        { id: 'targetExams', question: 'Aap kaunse courses/exams cover karte hain?', options: [['JEE / NEET Coaching','jee-neet'],['School Syllabus (Class 5-12)','school'],['Skill / Language Courses','skills'],['Custom Courses','custom','text','List your courses or exams']] }
+      ],
       creative: [
         { id: 'workSamples', question: 'Kaunse primary work samples dikhane hain?', options: [['Photo & Video Gallery Grid','gallery'],['Case Studies & Client Results','case-studies'],['Video Embeds (YouTube / Instagram Reels)','video-embeds'],['Custom Media Requirement','custom','text','Describe your portfolio media']] }
       ]

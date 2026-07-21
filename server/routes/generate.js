@@ -23,6 +23,9 @@ const NICHE_NAMES = {
   portfolio: 'Personal Portfolio',
   store: 'Online Store',
   blog: 'Blog',
+  auto: 'Auto Garage, Car Wash & Detailing',
+  movers: 'Packers, Movers & Transport',
+  legal: 'Legal, CA & Financial Consultancy',
 };
 
 // ── Category page blueprints ──────────────────────────────────
@@ -117,6 +120,92 @@ PAGE 3 — ABOUT, TESTIMONIALS & INQUIRY (===PAGE:contact===):
 - Inquiry & booking form: event date, event type, venue location — submit opens WhatsApp with a pre-filled quote request.`,
 };
 
+const CLINIC_BLUEPRINT = {
+  second: 'treatments',
+  text: `PAGE 1 — HOME (===PAGE:index===):
+- Header: clinic name/logo, doctor's name, an Emergency Call button (tel: if phone supplied) and a WhatsApp slot-booking button.
+- Hero: clean doctor/clinic photo, trust headline (e.g. "Expert Dental Care in <city> | <X>+ Years Experience" — use supplied experience only), CTAs: "Book Appointment" → /contact and "Emergency Call" (tel:).
+- Quick stats strip: use ONLY supplied numbers/ratings; otherwise qualitative badges like "Sterilized Equipment", "Modern Facility".
+- Key specialties: 4 quick cards for the main treatments (adapt to the actual specialty — dental, general, skin, etc.).
+- Clinic timings card: morning & evening OPD timings with Sunday status (use supplied hours).
+PAGE 2 — TREATMENTS & FACILITIES (===PAGE:treatments===):
+- Specialized treatments grid: each treatment gets an image, short summary, duration (e.g. 30 mins), and pricing range (e.g. "Starting at ₹999") — use supplied pricing style.
+- Technology & hygiene section: modern equipment highlights and sterilization/safety badges.
+- Pre-appointment guidelines: patient tips list (e.g. "Bring previous medical reports").
+PAGE 3 — DOCTOR, REVIEWS & BOOKING (===PAGE:contact===):
+- Doctor bio & degrees: qualifications (MBBS/MDS etc. only if supplied), doctor's message paragraph.
+- Patient testimonials: review cards with star ratings.
+- Slot booking form: date picker (input type=date), preferred slot select (Morning/Evening), issue description — submit opens WhatsApp with all details pre-filled.
+- Map link (https://maps.google.com/?q=<address>) + advance token fee via UPI QR (only if UPI ID supplied; use https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=<url-encoded upi://pay?pa=UPIID&pn=NAME>).`,
+};
+
+const EDUCATION_BLUEPRINT = {
+  second: 'courses',
+  text: `PAGE 1 — HOME (===PAGE:index===):
+- Hero: student/classroom banner, results-focused headline (e.g. "Crack JEE/NEET with <city>'s Top Faculty" — adapt to the subjects taught), CTAs: "Register for Free Demo" → /contact and "View Courses" → /courses.
+- Topper results section: ranker cards with achievements — ONLY if results are supplied; otherwise a "Our Teaching Promise" section.
+- Key features: Small Batch Sizes | Daily Practice Papers | Personal Mentorship (adapt to supplied details).
+- Upcoming batches banner: start dates for new batches (use supplied info or an editable placeholder).
+PAGE 2 — COURSES & FEES (===PAGE:courses===):
+- Course selection tabs (e.g. [JEE] [NEET] [Class 8-10] [Crash Courses] — adapt) that actually filter with vanilla JS.
+- Detailed course cards: duration, weekly class hours, subjects covered, fee structure vs installment plans (use supplied pricing style).
+- Faculty profiles: subject experts with qualification and teaching experience (only supplied facts).
+PAGE 3 — CAMPUS, REVIEWS & ADMISSION (===PAGE:contact===):
+- Campus photos: classrooms, library, test-series center (relevant Unsplash images).
+- Parent & student testimonials: quote cards.
+- Free demo registration form: student name, class select, target exam, parent phone — submit opens WhatsApp with everything pre-filled.
+- Map link + admission fee via UPI QR (only if supplied).`,
+};
+
+const AUTO_BLUEPRINT = {
+  second: 'packages',
+  text: `PAGE 1 — HOME (===PAGE:index===):
+- Hero: glossy car detailing/repair photo, headline like "Give Your Car a Brand New Showroom Look" (adapt), CTAs: "Book Slot on WhatsApp" (wa.me) and "View Rates" → /packages.
+- Service badges: e.g. Genuine Spare Parts | Ceramic Coating Experts | Pick & Drop Available (adapt to supplied services).
+- Top 3 packages: cards (e.g. Express Wash, Deep Interior Cleaning, Ceramic Coating) with price and a WhatsApp book button.
+PAGE 2 — PACKAGES & GALLERY (===PAGE:packages===):
+- Package comparison table: Silver / Gold / Platinum checklist of what's included (✓/✗ rows).
+- Before vs after transformation section: paired photos of dirty vs detailed vehicles.
+- Add-on services list: e.g. Teflon Coating, AC Gas Refill, Engine Wash with prices and WhatsApp book buttons.
+PAGE 3 — GARAGE, REVIEWS & PICKUP (===PAGE:contact===):
+- Garage infrastructure: photos of equipment/workspace and customer waiting area.
+- Customer reviews: feedback cards with vehicle photos.
+- Doorstep pickup form: car model, preferred time, pickup address, service type select — submit opens WhatsApp with all details pre-filled.
+- Map link + UPI QR (only if supplied).`,
+};
+
+const MOVERS_BLUEPRINT = {
+  second: 'rates',
+  text: `PAGE 1 — HOME (===PAGE:index===):
+- Hero: delivery truck/relocation banner, reliability headline (e.g. "Safe & Zero-Damage Home Relocation Across India"), CTAs: "Get Instant WhatsApp Quote" (wa.me) and "Calculate Shifting Cost" → /rates.
+- Trust counters: use ONLY supplied numbers; otherwise qualitative badges (Trained Crew, Quality Packing, On-Time Delivery).
+- Services grid: Household Shifting, Office Relocation, Bike/Car Transport, Storage/Warehousing (adapt to supplied services).
+PAGE 2 — RATES, PROCESS & INSURANCE (===PAGE:rates===):
+- Estimated rates table: Local (1BHK/2BHK/3BHK) vs Intercity base prices (use supplied pricing style; mark as estimates).
+- 4-step shifting process: Packing → Loading → Safe Transit → Unpacking (visual timeline).
+- Insurance & safety section: transit insurance details and packing material standards (bubble wrap, corrugated boxes) — only claim insurance if supplied.
+PAGE 3 — REVIEWS & INSTANT QUOTE (===PAGE:contact===):
+- Customer reviews: testimonial cards from families/offices that shifted.
+- Detailed quote request form: Moving From (city/pincode), Moving To, shifting date (input type=date), items checklist (checkboxes: Furniture, Appliances, Vehicle, Fragile Items...) — submit opens WhatsApp with a fully pre-filled quote request.
+- Office address, registration/GST badges (only if supplied), map link + token payment UPI QR (only if supplied).`,
+};
+
+const LEGAL_BLUEPRINT = {
+  second: 'services',
+  text: `PAGE 1 — HOME (===PAGE:index===):
+- Hero: professional office photo, headline like "Hassle-Free Income Tax Filing & Business Registration" (adapt to the practice), CTAs: "Consult on WhatsApp" (wa.me) and "View Services" → /services.
+- Trust badges: e.g. 100% Legal Compliance | Confidential Data Guarantee | <X>+ Years Experience (experience only if supplied).
+- Popular services: cards like GST Registration, ITR Filing, Company Incorporation, Trademark Filing (adapt).
+PAGE 2 — SERVICES & PRICING (===PAGE:services===):
+- Service categories as accordion view (Business Setup, Tax & Audit, Legal Drafting, Licensing — adapt) working with vanilla JS.
+- Transparent pricing cards: service name, required-documents checklist, turnaround time (e.g. 3-5 working days), fee (use supplied pricing style; separate govt fee vs professional fee if given).
+PAGE 3 — FIRM, CLIENTS & CONSULTATION (===PAGE:contact===):
+- Senior partner profile: name, qualifications/enrollment numbers (ONLY if supplied), practice areas.
+- Client reviews: rating cards from business owners.
+- Consultation booking form: service type select, preferred date/time, brief description — submit opens WhatsApp; add a "Share Documents on WhatsApp" button.
+- Office address + map link + consultation fee UPI QR (only if supplied).`,
+};
+
 const CATEGORY_BLUEPRINTS = {
   food: FOOD_BLUEPRINT,
   bakery: FOOD_BLUEPRINT,
@@ -128,6 +217,11 @@ const CATEGORY_BLUEPRINTS = {
   photography: CREATIVE_BLUEPRINT,
   creative: CREATIVE_BLUEPRINT,
   portfolio: CREATIVE_BLUEPRINT,
+  clinic: CLINIC_BLUEPRINT,
+  education: EDUCATION_BLUEPRINT,
+  auto: AUTO_BLUEPRINT,
+  movers: MOVERS_BLUEPRINT,
+  legal: LEGAL_BLUEPRINT,
 };
 
 function buildSystemPrompt() {
