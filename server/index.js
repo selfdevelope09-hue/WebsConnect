@@ -6,6 +6,7 @@ const { subdomainRouter, parseSubdomain } = require('./middleware/subdomainRoute
 const { mountAuthRoutes } = require('./routes/auth');
 const { mountGenerateRoutes } = require('./routes/generate');
 const { mountConsultantRoutes } = require('./routes/consultant');
+const { mountExportRoutes } = require('./routes/export');
 const { migrate } = require('./db/migrate');
 
 const app = express();
@@ -26,6 +27,7 @@ apiRouter.get('/health', (_req, res) => {
 mountAuthRoutes(apiRouter);
 mountGenerateRoutes(apiRouter);
 mountConsultantRoutes(apiRouter);
+mountExportRoutes(apiRouter);
 
 app.use((req, res, next) => {
   if (parseSubdomain(req.hostname, ROOT_DOMAIN) === 'api') {

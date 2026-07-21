@@ -796,6 +796,10 @@
           <a id="preview-link" href="#" target="_blank" class="text-sky-400 font-semibold underline"></a>
         </p>
         <a id="btn-open-site" href="#" target="_blank" class="mt-4 block w-full py-3.5 rounded-xl font-bold text-sm bg-gradient-to-r from-blue-500 to-blue-700 text-white glow-btn">Open My Website ↗</a>
+        <button id="btn-share-whatsapp" class="mt-2 w-full py-3 rounded-xl font-bold text-xs bg-emerald-500/15 border border-emerald-400/30 text-emerald-300 flex items-center justify-center gap-2">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.95 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.61.14-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.5 0 1.47 1.07 2.9 1.22 3.1.15.2 2.1 3.2 5.1 4.49.71.3 1.27.49 1.7.63.72.23 1.37.2 1.88.12.58-.09 1.76-.72 2-1.42.25-.7.25-1.3.18-1.42-.08-.13-.28-.2-.58-.35z"/><path d="M12 2a10 10 0 00-8.6 15.06L2 22l5.08-1.33A10 10 0 1012 2zm0 18.2c-1.5 0-2.97-.4-4.26-1.15l-.3-.18-3.02.8.8-2.94-.2-.3A8.2 8.2 0 1112 20.2z"/></svg>
+          Share link on WhatsApp
+        </button>
         <button id="btn-preview-home" class="mt-2 w-full py-2.5 text-xs text-muted">Done — Back to Home</button>
         <button id="btn-build-another" class="w-full py-2 text-xs text-sky-400 font-medium">Build another website →</button>
       </div>
@@ -2413,8 +2417,48 @@
       $('preview-link').textContent = url.replace('https://', '');
       $('preview-link').href = url;
       $('btn-open-site').href = url;
+      state.lastPublishedUrl = url;
       $('preview-modal').classList.remove('hidden');
       loadProjects();
+    }
+
+    /** Open WhatsApp with the live-site congratulation message pre-filled. */
+    function shareSiteOnWhatsApp(url) {
+      const msg = '🎉 Mubarak ho! Aapki website live ho gayi hai:\n' + url +
+        '\n\n⚡ Built in 60 seconds with WebsConnect — https://websconnect.in';
+      window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+    }
+
+    /** Download the full site source as a ZIP (auth-protected endpoint). */
+    async function downloadProjectZip(slug, btn) {
+      const orig = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = '⏳ Preparing…';
+      try {
+        const res = await fetch('/api/projects/' + slug + '/download', {
+          headers: { Authorization: 'Bearer ' + state.token },
+        });
+        if (!res.ok) {
+          const d = await res.json().catch(function () { return {}; });
+          throw new Error(d.error || 'Download failed');
+        }
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = slug + '-website.zip';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(function () { URL.revokeObjectURL(url); }, 5000);
+      } catch (e) {
+        btn.textContent = '⚠️ ' + (e.message || 'Failed');
+        setTimeout(function () { btn.textContent = orig; }, 2500);
+        btn.disabled = false;
+        return;
+      }
+      btn.disabled = false;
+      btn.textContent = orig;
     }
 
     async function loadProjects() {
@@ -2547,6 +2591,23 @@
         row.appendChild(edit);
         row.appendChild(preview);
         card.appendChild(row);
+        if (live && p.slug) {
+          const row2 = document.createElement('div');
+          row2.className = 'px-2.5 pb-2.5 grid grid-cols-2 gap-1.5';
+          const dl = document.createElement('button');
+          dl.className = 'py-1.5 rounded-lg text-[9px] font-bold bg-white/5 border border-white/15 text-slate-200';
+          dl.textContent = '⬇️ Download ZIP';
+          dl.addEventListener('click', function () { downloadProjectZip(p.slug, dl); });
+          const share = document.createElement('button');
+          share.className = 'py-1.5 rounded-lg text-[9px] font-bold bg-emerald-500/15 border border-emerald-400/30 text-emerald-300';
+          share.textContent = '💬 WhatsApp';
+          share.addEventListener('click', function () {
+            shareSiteOnWhatsApp('https://' + p.slug + '.websconnect.in');
+          });
+          row2.appendChild(dl);
+          row2.appendChild(share);
+          card.appendChild(row2);
+        }
         grid.appendChild(card);
       });
     }
@@ -2910,6 +2971,9 @@
       $('btn-template-generate').addEventListener('click', submitTemplateForm);
       attachSlugChecker($('tf-domain'), $('tf-domain-status'));
       $('btn-preview-home').addEventListener('click', showHome);
+      $('btn-share-whatsapp').addEventListener('click', function () {
+        if (state.lastPublishedUrl) shareSiteOnWhatsApp(state.lastPublishedUrl);
+      });
       $('btn-build-another').addEventListener('click', function () {
         $('preview-modal').classList.add('hidden');
         requireAuth({ type: 'start', payload: {} });
