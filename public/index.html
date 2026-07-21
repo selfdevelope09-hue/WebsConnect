@@ -77,6 +77,17 @@
     .menu-item:active { background: rgba(255,255,255,.06); }
     .menu-ico { font-size: 17px; width: 24px; text-align: center; }
     #side-menu.open { transform: translateX(0); }
+    .tf-input {
+      margin-top: 6px; width: 100%; border-radius: 12px;
+      background: #0d1424; border: 1px solid rgba(255,255,255,.1);
+      padding: 12px 16px; font-size: 14px; color: #fff; outline: none;
+    }
+    .tf-input:focus { border-color: rgba(56,189,248,.6); }
+    .tpl-mock { border-radius: 14px; overflow: hidden; border: 1px solid rgba(255,255,255,.12); }
+    .tpl-mock-bar { display:flex; align-items:center; justify-content:space-between; padding: 7px 10px; }
+    .tpl-mock-hero { padding: 18px 12px 14px; text-align:center; }
+    .tpl-mock-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:4px; padding: 6px; }
+    .tpl-mock-grid div { height: 26px; border-radius: 4px; }
     .blog-article h2 { color:#7dd3fc; font-size:15px; font-weight:700; margin:24px 0 8px; }
     .blog-article h3 { color:#fff; font-size:14px; font-weight:700; margin:18px 0 6px; }
     .blog-article p { margin-top:10px; }
@@ -213,6 +224,83 @@
         </div>
       </div>
     </section>
+  </div>
+
+  <!-- ===================== TEMPLATES SCREEN ===================== -->
+  <div id="screen-templates" class="hidden relative z-10 max-w-md mx-auto safe-bottom">
+    <header class="flex items-center gap-3 px-4 pt-4 pb-2">
+      <button id="btn-templates-back" class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center" aria-label="Back">
+        <svg class="w-5 h-5 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+      </button>
+      <div>
+        <p class="text-[10px] font-semibold uppercase tracking-wider text-sky-300">Template Gallery</p>
+        <h1 class="text-lg font-extrabold leading-tight">📸 Photography Templates</h1>
+      </div>
+    </header>
+    <p class="px-4 text-xs text-muted">Template pasand karo → apni details do → AI tumhare naam, phone aur style ke saath website bana dega.</p>
+    <div id="templates-list" class="px-4 mt-4 space-y-4"></div>
+  </div>
+
+  <!-- Template customize modal -->
+  <div id="template-modal" class="hidden fixed inset-0 z-[45] bg-base overflow-y-auto">
+    <div class="max-w-md mx-auto min-h-full flex flex-col">
+      <header class="sticky top-0 z-10 flex items-center gap-3 px-4 py-4 bg-base/95 backdrop-blur border-b border-white/10">
+        <button id="btn-template-close" class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center" aria-label="Back">
+          <svg class="w-5 h-5 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+        </button>
+        <div class="min-w-0">
+          <p class="text-[10px] font-semibold uppercase tracking-wider text-sky-300">Customize Template</p>
+          <h2 id="template-modal-title" class="font-bold text-base truncate"></h2>
+        </div>
+      </header>
+      <div class="flex-1 px-4 py-5">
+        <div id="template-modal-preview"></div>
+        <p class="mt-4 text-xs text-muted leading-relaxed">Apni details bharo — AI inhe template mein daal ke tumhari personal website banayega. Sirf Studio Name zaroori hai, baaki optional.</p>
+        <div class="mt-4 space-y-3">
+          <div>
+            <label class="text-[11px] font-semibold text-slate-300">Studio / Business Name <span class="text-red-400">*</span></label>
+            <input id="tf-studio" type="text" placeholder="e.g. LensCraft Studio" class="tf-input" />
+          </div>
+          <div>
+            <label class="text-[11px] font-semibold text-slate-300">Photographer Name</label>
+            <input id="tf-photographer" type="text" placeholder="e.g. Rahul Sharma" class="tf-input" />
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="text-[11px] font-semibold text-slate-300">WhatsApp Number</label>
+              <input id="tf-whatsapp" type="tel" placeholder="+91 98765 43210" class="tf-input" />
+            </div>
+            <div>
+              <label class="text-[11px] font-semibold text-slate-300">Call Number</label>
+              <input id="tf-phone" type="tel" placeholder="+91 98765 43210" class="tf-input" />
+            </div>
+          </div>
+          <div>
+            <label class="text-[11px] font-semibold text-slate-300">Email</label>
+            <input id="tf-email" type="email" placeholder="hello@studio.com" class="tf-input" />
+          </div>
+          <div>
+            <label class="text-[11px] font-semibold text-slate-300">City / Studio Address</label>
+            <input id="tf-city" type="text" placeholder="e.g. Nagpur, Maharashtra" class="tf-input" />
+          </div>
+          <div>
+            <label class="text-[11px] font-semibold text-slate-300">Instagram Handle</label>
+            <input id="tf-instagram" type="text" placeholder="e.g. @lenscraft.studio" class="tf-input" />
+          </div>
+          <div>
+            <label class="text-[11px] font-semibold text-slate-300">Services You Offer</label>
+            <input id="tf-services" type="text" placeholder="e.g. Wedding, Pre-wedding, Maternity, Events" class="tf-input" />
+          </div>
+          <div>
+            <label class="text-[11px] font-semibold text-slate-300">AI ko aur kya batana hai? (Custom changes)</label>
+            <textarea id="tf-extra" rows="3" placeholder="e.g. Pricing section chahiye, Starting ₹15,000. Hindi tagline daalna. 10 saal ka experience mention karna." class="tf-input resize-none"></textarea>
+          </div>
+        </div>
+        <p id="template-error" class="hidden mt-3 text-xs text-red-400"></p>
+        <button id="btn-template-generate" class="mt-5 w-full py-3.5 rounded-2xl font-bold text-sm bg-gradient-to-r from-blue-500 to-blue-700 text-white glow-btn active:scale-[.98] transition">Generate My Website ✨</button>
+        <p class="mt-3 text-center text-[10px] text-muted mb-4">AI ~60 seconds mein tumhari live website bana dega</p>
+      </div>
+    </div>
   </div>
 
   <!-- Bottom nav -->
@@ -521,6 +609,80 @@
       { id: 'pricingDisplay', question: 'Website par prices kaise dikhane hain?', options: [['Show Exact Price List','exact-prices'],['Show “Starting From ₹XX”','starting-from'],['Hide Prices (Quote on Request)','quote-request'],['Custom Price Format','custom','text','Describe your price format']] }
     ];
 
+    // ── Photography templates ──────────────────────────────────
+    const TEMPLATES = [
+      {
+        id: 'noir-studio', name: 'Noir Studio', emoji: '🖤',
+        tags: ['Dark & Moody', 'Luxury', 'Wedding'],
+        desc: 'Cinematic black & gold luxury portfolio — high-end wedding and editorial photographers ke liye.',
+        colors: { bg: '#0a0a0a', card: '#1a1a1a', accent: '#d4af37', text: '#ffffff' },
+        spec: 'Ultra-dark monochrome luxury photography portfolio. Near-black #0A0A0A background, white typography, warm gold #D4AF37 accents on buttons and section titles. Elegant serif display headings (Playfair Display), light sans-serif body. Full-screen dark hero with studio name in large serif type, sticky transparent header, masonry portfolio grid with hover zoom, services in dark cards with thin gold borders, testimonials with oversized quote marks, WhatsApp CTA. Mood: cinematic, editorial, high-end wedding and portrait studio.'
+      },
+      {
+        id: 'golden-hour', name: 'Golden Hour', emoji: '🌅',
+        tags: ['Warm', 'Romantic', 'Pre-wedding'],
+        desc: 'Soft cream aur amber tones — romantic pre-wedding aur couple shoots ke liye perfect.',
+        colors: { bg: '#fdf6ec', card: '#f7e8d0', accent: '#c98a2d', text: '#3d2c17' },
+        spec: 'Warm romantic photography website. Cream #FDF6EC background, deep amber #C98A2D accents, dark brown text. Serif headings with italic romantic sub-taglines. Soft rounded cards, hero with warm gradient overlay on a golden-hour couple photo, love-story style about section, horizontal scrolling gallery, package cards with soft shadows, Instagram feed strip, WhatsApp booking button. Mood: golden hour, dreamy, romantic pre-wedding specialist.'
+      },
+      {
+        id: 'minimal-frame', name: 'Minimal Frame', emoji: '⬜',
+        tags: ['Minimal', 'Clean', 'Portfolio'],
+        desc: 'Pure white gallery-style minimal design — photos hi hero hain, koi distraction nahi.',
+        colors: { bg: '#ffffff', card: '#f4f4f4', accent: '#111111', text: '#111111' },
+        spec: 'Ultra-minimal white photography portfolio like an art gallery. Pure white background, black text, generous whitespace, thin sans-serif typography (Inter/Helvetica), no decorative colors. Small understated header, large edge-to-edge photo grid (2-column masonry), photo captions on hover, simple about line, minimal contact footer with email and phone as plain text links. Mood: sophisticated fine-art photographer, let the photos speak.'
+      },
+      {
+        id: 'bold-lens', name: 'Bold Lens', emoji: '💜',
+        tags: ['Fashion', 'Vibrant', 'Editorial'],
+        desc: 'Neon purple-pink gradients — fashion, model portfolio aur creative shoots ke liye.',
+        colors: { bg: '#12002b', card: '#26094a', accent: '#ff2d78', text: '#ffffff' },
+        spec: 'Bold fashion photography website. Deep purple #12002B background with neon pink #FF2D78 and violet gradient accents, glassmorphism cards, oversized display typography with gradient text effects, diagonal section dividers, full-bleed fashion hero image, animated hover effects on portfolio tiles, bold stats strip (shoots done, brands worked with), Instagram reel embeds section, neon CTA buttons. Mood: edgy, high-fashion, editorial magazine energy.'
+      },
+      {
+        id: 'urban-street', name: 'Urban Street', emoji: '🏙️',
+        tags: ['Street', 'Gritty', 'Documentary'],
+        desc: 'Dark urban texture with orange pop — street aur documentary photographers ke liye.',
+        colors: { bg: '#101418', card: '#1c232b', accent: '#ff6b35', text: '#e8e8e8' },
+        spec: 'Urban street photography portfolio. Charcoal #101418 background, burnt orange #FF6B35 accents, condensed bold uppercase headings, monospace detail text, grain/noise texture feel, full-width city hero shot with bold overlay title, filmstrip-style horizontal gallery, photo-journal blog section, about section with photographer portrait, simple contact strip. Mood: raw, documentary, street culture.'
+      },
+      {
+        id: 'wedding-bliss', name: 'Wedding Bliss', emoji: '💍',
+        tags: ['Wedding', 'Pastel', 'Elegant'],
+        desc: 'Ivory-rose pastel elegance — traditional Indian wedding photography studios ke liye.',
+        colors: { bg: '#fff7f8', card: '#fce9ee', accent: '#d96c82', text: '#4a2c33' },
+        spec: 'Elegant Indian wedding photography website. Ivory #FFF7F8 background, rose #D96C82 accents, soft pastel florals feel, script font for romantic taglines with serif headings, hero with soft-focus wedding photo and overlay, services (Wedding, Pre-wedding, Engagement, Haldi/Mehendi coverage) in soft rounded cards, real wedding stories gallery section, testimonials from couples, packages section, prominent WhatsApp and call booking buttons. Mood: romantic, traditional-modern Indian weddings.'
+      },
+      {
+        id: 'nature-focus', name: 'Nature Focus', emoji: '🌿',
+        tags: ['Wildlife', 'Landscape', 'Earthy'],
+        desc: 'Earthy green natural tones — wildlife aur landscape photographers ke liye.',
+        colors: { bg: '#f3f7f2', card: '#e2ede0', accent: '#2e6b3f', text: '#1d3324' },
+        spec: 'Nature and wildlife photography portfolio. Soft sage #F3F7F2 background, forest green #2E6B3F accents, organic rounded shapes, hero with breathtaking landscape photo and centered title, category tabs (Wildlife, Landscape, Macro, Birds), large immersive photo grid, expedition/behind-the-scenes story section, print shop teaser section, contact form. Mood: calm, natural, National Geographic inspired.'
+      },
+      {
+        id: 'studio-pro', name: 'Studio Pro', emoji: '💼',
+        tags: ['Commercial', 'Product', 'Corporate'],
+        desc: 'Clean corporate blue — product, e-commerce aur brand photography studios ke liye.',
+        colors: { bg: '#f5f8ff', card: '#e4ecff', accent: '#1d4ed8', text: '#101a33' },
+        spec: 'Professional commercial photography studio website. Light #F5F8FF background, corporate blue #1D4ED8 accents, crisp modern sans-serif, structured grid layout, hero with studio product shot and clear value proposition, client logo strip, services (Product, E-commerce, Corporate headshots, Brand campaigns) with pricing-from labels, process timeline (Brief → Shoot → Edit → Deliver), portfolio case-study cards, strong quote-request CTA form. Mood: reliable, B2B, agency-grade professional.'
+      },
+      {
+        id: 'little-moments', name: 'Little Moments', emoji: '👶',
+        tags: ['Baby', 'Family', 'Soft'],
+        desc: 'Warm soft peach tones — newborn, baby aur family photographers ke liye.',
+        colors: { bg: '#fffdf5', card: '#fdeedd', accent: '#f4a259', text: '#54402c' },
+        spec: 'Newborn and family photography website. Warm cream #FFFDF5 background, soft peach #F4A259 accents, rounded friendly typography, gentle pastel illustrations/dots, hero with adorable baby photo and soft headline, sessions offered (Newborn, Baby milestones, Maternity, Family) as cute rounded cards with icons, safety-first trust section, gallery with rounded corners, parent testimonials, easy WhatsApp booking. Mood: warm, safe, family-friendly.'
+      },
+      {
+        id: 'cinematic-reel', name: 'Cinematic Reel', emoji: '🎬',
+        tags: ['Videography', 'Films', 'Dramatic'],
+        desc: 'Netflix-style dark red drama — wedding films aur cinematography ke liye.',
+        colors: { bg: '#0d0d0f', card: '#1b1b20', accent: '#e50914', text: '#f5f5f5' },
+        spec: 'Cinematic wedding films and videography website. Near-black #0D0D0F background, cinematic red #E50914 accents, widescreen 16:9 video-frame styled sections, bold condensed headings, hero styled like a movie poster with film title treatment of the studio name, showreel section with embedded video placeholders, film categories (Wedding films, Pre-wedding teasers, Corporate films), letterboxed gallery, awards/features strip, dramatic CTA. Mood: blockbuster movie, dramatic storytelling.'
+      }
+    ];
+
     const LOADING_MESSAGES = [
       'Analyzing requirements...',
       'Composing structural semantic HTML...',
@@ -673,6 +835,8 @@
         startBuilder({ prompt: action.payload, niche: guessNiche(action.payload) });
       } else if (action.type === 'niche') {
         startBuilder({ niche: action.payload.niche, label: action.payload.label, prompt: action.payload.label });
+      } else if (action.type === 'template') {
+        openTemplateForm(action.payload);
       }
     }
 
@@ -691,15 +855,142 @@
     function showHome() {
       screenHome.classList.remove('hidden');
       screenBuilder.classList.add('hidden');
+      $('screen-templates').classList.add('hidden');
+      $('template-modal').classList.add('hidden');
       bottomNav.classList.remove('hidden');
       $('preview-modal').classList.add('hidden');
       $('loading-modal').classList.add('hidden');
+      setNavActive('home');
     }
 
     function showBuilder() {
       screenHome.classList.add('hidden');
+      $('screen-templates').classList.add('hidden');
+      $('template-modal').classList.add('hidden');
       screenBuilder.classList.remove('hidden');
       bottomNav.classList.add('hidden');
+    }
+
+    function setNavActive(nav) {
+      document.querySelectorAll('.nav-item').forEach(function (btn) {
+        const active = btn.dataset.nav === nav;
+        btn.classList.toggle('text-brand', active);
+        btn.classList.toggle('text-slate-400', !active);
+      });
+    }
+
+    // ── Templates ──────────────────────────────────────────────
+    function templateMockHtml(t) {
+      const c = t.colors;
+      return '<div class="tpl-mock" style="background:' + c.bg + '">' +
+        '<div class="tpl-mock-bar" style="background:' + c.card + '">' +
+          '<span style="width:34px;height:5px;border-radius:3px;background:' + c.accent + ';display:block"></span>' +
+          '<span style="display:flex;gap:3px">' +
+            '<span style="width:12px;height:4px;border-radius:2px;background:' + c.text + '55;display:block"></span>' +
+            '<span style="width:12px;height:4px;border-radius:2px;background:' + c.text + '55;display:block"></span>' +
+            '<span style="width:12px;height:4px;border-radius:2px;background:' + c.accent + ';display:block"></span>' +
+          '</span>' +
+        '</div>' +
+        '<div class="tpl-mock-hero">' +
+          '<p style="color:' + c.text + ';font-weight:800;font-size:13px;letter-spacing:.02em">' + t.emoji + ' Your Studio Name</p>' +
+          '<p style="color:' + c.text + '99;font-size:8px;margin-top:3px">Capturing moments that last forever</p>' +
+          '<span style="display:inline-block;margin-top:7px;padding:4px 14px;border-radius:999px;background:' + c.accent + ';color:' + (c.bg === '#ffffff' ? '#fff' : c.bg) + ';font-size:8px;font-weight:700">Book a Shoot</span>' +
+        '</div>' +
+        '<div class="tpl-mock-grid">' +
+          '<div style="background:' + c.accent + '33"></div>' +
+          '<div style="background:' + c.card + '"></div>' +
+          '<div style="background:' + c.accent + '22"></div>' +
+        '</div>' +
+      '</div>';
+    }
+
+    function renderTemplates() {
+      const list = $('templates-list');
+      list.innerHTML = '';
+      TEMPLATES.forEach(function (t) {
+        const card = document.createElement('div');
+        card.className = 'rounded-2xl bg-card border border-white/10 p-3.5';
+        card.innerHTML =
+          templateMockHtml(t) +
+          '<div class="mt-3 flex items-center gap-2">' +
+            '<h3 class="text-sm font-bold text-white">' + t.emoji + ' ' + t.name + '</h3>' +
+          '</div>' +
+          '<div class="mt-1.5 flex flex-wrap gap-1.5">' +
+            t.tags.map(function (tag) { return '<span class="px-2 py-0.5 rounded-full text-[9px] font-semibold bg-brand/10 border border-brand/20 text-sky-300">' + tag + '</span>'; }).join('') +
+          '</div>' +
+          '<p class="mt-2 text-[11px] text-muted leading-relaxed">' + t.desc + '</p>';
+        const btn = document.createElement('button');
+        btn.className = 'mt-3 w-full py-3 rounded-xl font-bold text-xs bg-gradient-to-r from-blue-500 to-blue-700 text-white glow-btn active:scale-[.98] transition';
+        btn.textContent = 'Use This Template ✨';
+        btn.addEventListener('click', function () {
+          requireAuth({ type: 'template', payload: t.id });
+        });
+        card.appendChild(btn);
+        list.appendChild(card);
+      });
+    }
+
+    function showTemplates() {
+      screenHome.classList.add('hidden');
+      screenBuilder.classList.add('hidden');
+      $('screen-templates').classList.remove('hidden');
+      bottomNav.classList.remove('hidden');
+      setNavActive('templates');
+      window.scrollTo({ top: 0 });
+    }
+
+    function openTemplateForm(templateId) {
+      const t = TEMPLATES.find(function (x) { return x.id === templateId; });
+      if (!t) return;
+      state.activeTemplate = t;
+      $('template-modal-title').textContent = t.emoji + ' ' + t.name;
+      $('template-modal-preview').innerHTML = templateMockHtml(t);
+      $('template-error').classList.add('hidden');
+      $('btn-template-generate').disabled = false;
+      $('btn-template-generate').textContent = 'Generate My Website ✨';
+      $('template-modal').classList.remove('hidden');
+      $('template-modal').scrollTop = 0;
+    }
+
+    function submitTemplateForm() {
+      const t = state.activeTemplate;
+      if (!t) return;
+      const studio = $('tf-studio').value.trim();
+      if (!studio) {
+        $('template-error').textContent = 'Studio / Business name zaroori hai.';
+        $('template-error').classList.remove('hidden');
+        $('tf-studio').focus();
+        return;
+      }
+      $('template-error').classList.add('hidden');
+
+      const fields = [
+        ['Photographer name', $('tf-photographer').value],
+        ['WhatsApp number', $('tf-whatsapp').value],
+        ['Call number', $('tf-phone').value],
+        ['Email', $('tf-email').value],
+        ['City / Studio address', $('tf-city').value],
+        ['Instagram handle', $('tf-instagram').value],
+        ['Services offered', $('tf-services').value],
+      ];
+      const requirements = {
+        template: { question: 'Selected design template', label: t.name, input: t.spec },
+        studioName: { question: 'Studio / Business name', label: studio },
+      };
+      fields.forEach(function (f, i) {
+        const val = String(f[1] || '').trim();
+        if (val) requirements['tf' + i] = { question: f[0], label: val };
+      });
+
+      state.choices = {
+        niche: 'photography',
+        vibe: t.id,
+        feature: 'portfolio',
+        businessName: studio,
+        prompt: $('tf-extra').value.trim(),
+        requirements: requirements,
+      };
+      startGeneration();
     }
 
     // ── AI requirements wizard ─────────────────────────────────
@@ -892,6 +1183,7 @@
             vibe: state.choices.vibe,
             feature: state.choices.feature,
             prompt: state.choices.prompt,
+            businessName: state.choices.businessName || '',
             requirements: state.choices.requirements,
           }),
         });
@@ -909,9 +1201,16 @@
       } catch (e) {
         clearInterval(iv);
         $('loading-modal').classList.add('hidden');
-        $('wizard-error').textContent = '⚠️ ' + (e.message || 'Something went wrong. Please try again.');
-        $('wizard-error').classList.remove('hidden');
-        $('wizard-next').textContent = 'Try Building Again 🔄';
+        const msg = '⚠️ ' + (e.message || 'Something went wrong. Please try again.');
+        if (!$('template-modal').classList.contains('hidden')) {
+          $('template-error').textContent = msg;
+          $('template-error').classList.remove('hidden');
+          $('btn-template-generate').textContent = 'Try Again 🔄';
+        } else {
+          $('wizard-error').textContent = msg;
+          $('wizard-error').classList.remove('hidden');
+          $('wizard-next').textContent = 'Try Building Again 🔄';
+        }
       }
     }
 
@@ -1004,6 +1303,11 @@
       $('btn-builder-back').addEventListener('click', showHome);
       $('wizard-back').addEventListener('click', wizardBack);
       $('wizard-next').addEventListener('click', wizardNext);
+      $('btn-templates-back').addEventListener('click', showHome);
+      $('btn-template-close').addEventListener('click', function () {
+        $('template-modal').classList.add('hidden');
+      });
+      $('btn-template-generate').addEventListener('click', submitTemplateForm);
       $('btn-preview-home').addEventListener('click', showHome);
       $('btn-build-another').addEventListener('click', function () {
         $('preview-modal').classList.add('hidden');
@@ -1017,6 +1321,7 @@
         btn.addEventListener('click', function () {
           const nav = btn.dataset.nav;
           if (nav === 'home') showHome();
+          else if (nav === 'templates') showTemplates();
           else if (nav === 'account') {
             if (!isLoggedIn()) openLoginModal();
             else alert('Logged in as ' + state.user.email);
@@ -1607,6 +1912,7 @@
     async function boot() {
       ensureGuestId();
       bindEvents();
+      renderTemplates();
 
       // Restore session
       const savedToken = localStorage.getItem('wc_token');
