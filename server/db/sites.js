@@ -9,11 +9,14 @@ function getPool() {
     return null;
   }
   if (!pool) {
+    // Strip sslmode from the URL so pg doesn't enforce CA verification;
+    // DO managed databases use a self-signed chain, so we relax it explicitly.
+    const url = new URL(process.env.DATABASE_URL);
+    const needsSsl = url.searchParams.get('sslmode') !== 'disable';
+    url.searchParams.delete('sslmode');
     pool = new Pool({
-      connectionString: process.env.DATABASE_URL,
-      ssl: process.env.DATABASE_URL.includes('sslmode=require')
-        ? { rejectUnauthorized: false }
-        : undefined,
+      connectionString: url.toString(),
+      ssl: needsSsl ? { rejectUnauthorized: false } : undefined,
     });
   }
   return pool;
