@@ -79,6 +79,15 @@ function buildSystemPrompt() {
    - Page 3: About, Google Maps, Reviews & WhatsApp Booking / UPI Payment
 3. Recommend the single best-matching WebsConnect category preset from the catalog below.
 4. Give 1-2 quick, practical tips to grow their local sales & trust (WhatsApp CTA, UPI QR, reviews, etc.).
+5. BUILD-READY DETAILS: You are also the requirements collector for the website builder AI. After recommending the category, in the SAME or next messages, gently collect these build details (2-3 at a time, never all at once):
+   - Business name (exact spelling)
+   - Phone / WhatsApp number
+   - Main products or services with prices (top 3-5)
+   - Address / area + opening hours
+   - UPI ID (optional, for payment QR)
+   - Preferred look: Dark & Premium / Light & Minimal / Colorful & Bold
+   Whatever the user shares, acknowledge it. When you have at least the business name + a phone/WhatsApp number + main offerings, tell them: "Ab bas 'Build this website now' button dabao — main saari details website AI ko de dunga! 🚀"
+   Never invent details the user didn't share.
 
 ## RESPONSE STYLE
 - Keep it concise, scannable and mobile-friendly. Use short bullet points. NEVER write huge walls of text.
@@ -102,7 +111,8 @@ function sanitizeHistory(raw) {
     .map((m) => ({ role: m.role, content: String(m.content).slice(0, 2000) }));
 }
 
-async function callGroq(messages) {
+async function callGroq(messages, opts) {
+  opts = opts || {};
   const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
     method: 'POST',
     headers: {
@@ -112,8 +122,8 @@ async function callGroq(messages) {
     body: JSON.stringify({
       model: GROQ_MODEL,
       messages,
-      max_tokens: 900,
-      temperature: 0.75,
+      max_tokens: opts.maxTokens || 900,
+      temperature: opts.temperature != null ? opts.temperature : 0.75,
       top_p: 0.9,
     }),
   });
@@ -125,9 +135,59 @@ async function callGroq(messages) {
   return data.choices?.[0]?.message?.content || '';
 }
 
+const HANDOFF_PROMPT = `You are a requirements extractor for WebsConnect's website builder AI.
+You will receive a consultation chat between a business owner and an advisor.
+Extract ONLY facts the OWNER actually stated (never invent anything) and reply with a single JSON object, no markdown, no explanation:
+{
+  "businessName": "exact business name or empty string",
+  "city": "city/area or empty string",
+  "phone": "phone/WhatsApp number digits or empty string",
+  "whatsapp": "WhatsApp number if different from phone, else empty",
+  "upiId": "UPI id or empty string",
+  "address": "full address or empty string",
+  "hours": "opening hours or empty string",
+  "offerings": ["main products/services with prices if stated"],
+  "audience": "target customers if stated, else empty",
+  "vibe": "one of: dark, light, colorful — or empty if not stated",
+  "usp": "what makes them special, if stated",
+  "notes": "any other important requirements the owner mentioned (languages, delivery, booking, social links, etc.)",
+  "summary": "2-3 sentence English brief of the business and what the website must achieve"
+}
+Use empty strings / empty arrays for anything not mentioned. Output valid JSON only.`;
+
 function mountConsultantRoutes(router) {
   router.get('/consultant/status', (_req, res) => {
     res.json({ enabled: Boolean(GROQ_API_KEY), presets: VALID_NICHES.size });
+  });
+
+  // Summarize the consultation chat into a structured brief for the builder AI.
+  router.post('/consultant/handoff', async (req, res) => {
+    try {
+      if (!GROQ_API_KEY) {
+        return res.status(503).json({ error: 'AI Consultant not configured.' });
+      }
+      const history = sanitizeHistory(req.body?.messages);
+      if (!history.length) {
+        return res.json({ brief: null });
+      }
+      const transcript = history
+        .map((m) => `${m.role === 'user' ? 'OWNER' : 'ADVISOR'}: ${m.content}`)
+        .join('\n');
+      const raw = await callGroq([
+        { role: 'system', content: HANDOFF_PROMPT },
+        { role: 'user', content: `CONSULTATION CHAT:\n${transcript}\n\nExtract the JSON brief now.` },
+      ], { temperature: 0.1, maxTokens: 700 });
+      let brief = null;
+      try {
+        const jsonMatch = raw.match(/\{[\s\S]*\}/);
+        if (jsonMatch) brief = JSON.parse(jsonMatch[0]);
+      } catch (_e) { /* fall through with null brief */ }
+      res.json({ brief });
+    } catch (err) {
+      console.error('consultant handoff:', err.message);
+      // Handoff is best-effort — the builder can still run without a brief.
+      res.json({ brief: null });
+    }
   });
 
   router.post('/consultant', async (req, res) => {

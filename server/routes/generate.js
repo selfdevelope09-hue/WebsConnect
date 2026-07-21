@@ -661,16 +661,43 @@ function formatRequirements(requirements) {
   }).filter(Boolean).join('\n');
 }
 
-function buildUserPrompt({ niche, vibe, feature, prompt, businessName, requirements }) {
+/** Turn the AI-consultant brief into prompt lines for the builder AI. */
+function formatConsultantBrief(brief) {
+  if (!brief || typeof brief !== 'object') return '';
+  const lines = [];
+  const add = (label, val) => {
+    if (val == null) return;
+    const str = Array.isArray(val) ? val.filter(Boolean).join('; ') : String(val).trim();
+    if (str) lines.push(`- ${label}: ${str}`);
+  };
+  add('Business name', brief.businessName);
+  add('City/Area', brief.city);
+  add('Phone', brief.phone);
+  add('WhatsApp', brief.whatsapp);
+  add('UPI ID', brief.upiId);
+  add('Address', brief.address);
+  add('Opening hours', brief.hours);
+  add('Main products/services (with prices)', brief.offerings);
+  add('Target customers', brief.audience);
+  add('What makes them special', brief.usp);
+  add('Other requirements', brief.notes);
+  add('Business summary', brief.summary);
+  if (!lines.length) return '';
+  return `\nAI CONSULTATION BRIEF — details the owner shared during a live consultation chat. Treat every fact here as an explicit requirement and build the site around them:\n${lines.join('\n')}`;
+}
+
+function buildUserPrompt({ niche, vibe, feature, prompt, businessName, requirements, consultantBrief }) {
   const detailedRequirements = formatRequirements(requirements);
+  const briefText = formatConsultantBrief(consultantBrief);
   const blueprint = CATEGORY_BLUEPRINTS[niche];
   return [
     `Business type: ${NICHE_NAMES[niche] || niche || 'local business'}`,
-    `Business name: ${businessName || 'create a catchy realistic name'}`,
+    `Business name: ${businessName || (consultantBrief && consultantBrief.businessName) || 'create a catchy realistic name'}`,
     vibe ? `Visual style key: ${vibe}` : '',
     feature ? `Primary action key: ${feature}` : '',
     prompt ? `Owner's description: ${prompt}` : '',
     detailedRequirements ? `\nCOMPLETE DISCOVERY ANSWERS:\n${detailedRequirements}` : '',
+    briefText,
     blueprint
       ? `\nPAGE BLUEPRINT — follow this structure section-by-section (second page must be named "${blueprint.second}", so nav links are /, /${blueprint.second}, /contact):\n${blueprint.text}`
       : '',
@@ -797,9 +824,12 @@ function mountGenerateRoutes(router) {
         return res.status(503).json({ error: 'Database unavailable' });
       }
 
-      const { niche, vibe, feature, prompt, businessName, requirements, desiredSlug } = req.body || {};
+      const { niche, vibe, feature, prompt, businessName, requirements, desiredSlug, consultantBrief } = req.body || {};
       if (requirements && (typeof requirements !== 'object' || JSON.stringify(requirements).length > 20000)) {
         return res.status(400).json({ error: 'Invalid or oversized requirements' });
+      }
+      if (consultantBrief && (typeof consultantBrief !== 'object' || JSON.stringify(consultantBrief).length > 8000)) {
+        return res.status(400).json({ error: 'Invalid consultant brief' });
       }
 
       // Enforce website quota per plan (Free: 2 · Monthly ₹499: 10 · Yearly ₹1999: 100)
@@ -829,7 +859,7 @@ function mountGenerateRoutes(router) {
 
       const content = await callOpenRouter([
         { role: 'system', content: buildSystemPrompt() },
-        { role: 'user', content: buildUserPrompt({ niche, vibe, feature, prompt, businessName, requirements }) },
+        { role: 'user', content: buildUserPrompt({ niche, vibe, feature, prompt, businessName, requirements, consultantBrief }) },
       ]);
 
       const pages = extractPages(content);
@@ -846,7 +876,8 @@ function mountGenerateRoutes(router) {
         const { rows } = await pool.query('SELECT 1 FROM sites WHERE slug = $1', [slug]);
         if (rows.length) slug = null;
       }
-      if (!slug) slug = await uniqueSlug(pool, makeSlugBase(niche, businessName));
+      const effectiveName = (businessName || (consultantBrief && consultantBrief.businessName) || '').trim();
+      if (!slug) slug = await uniqueSlug(pool, makeSlugBase(niche, effectiveName));
 
       await pool.query(
         `INSERT INTO sites (slug, index_html, pages, status) VALUES ($1, $2, $3, 'active')`,
@@ -857,7 +888,7 @@ function mountGenerateRoutes(router) {
          VALUES ($1, $2, $3, $4, $5, $6, $7, 'active', $8)`,
         [
           req.userId,
-          businessName || `My ${NICHE_NAMES[niche] || 'Website'}`,
+          effectiveName || `My ${NICHE_NAMES[niche] || 'Website'}`,
           slug,
           niche || null,
           vibe || null,

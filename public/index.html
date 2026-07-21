@@ -1237,6 +1237,8 @@
         startBuilder({ prompt: action.payload, niche: guessNiche(action.payload) });
       } else if (action.type === 'niche') {
         startBuilder({ niche: action.payload.niche, label: action.payload.label, prompt: action.payload.label });
+      } else if (action.type === 'consultant') {
+        startConsultantBuild(action.payload);
       } else if (action.type === 'template') {
         openTemplateForm(action.payload);
       }
@@ -1672,7 +1674,7 @@
         box.dataset.started = '1';
         state.consultantHistory = [];
         addConsultantBubble('assistant',
-          'Namaste! 🙏 Main aapka WebsConnect AI Advisor hoon.\n\nMujhe bas itna batao:\n• Aapka business kya hai?\n• Kaunse sheher me?\n\nMain aapke liye perfect 3-page website structure aur best category suggest karunga. 😊');
+          'Namaste! 🙏 Main aapka WebsConnect AI Advisor hoon.\n\nMujhe bas itna batao:\n• Aapka business kya hai?\n• Kaunse sheher me?\n\nMain aapke liye perfect 3-page website structure suggest karunga, aur aapki saari details (naam, number, products, prices) collect karke seedha website builder AI ko de dunga — aapko kuch dobara nahi bharna padega. 😊');
       }
       renderConsultantQuick();
       $('consultant-overlay').classList.remove('hidden');
@@ -1745,9 +1747,25 @@
       const btn = document.createElement('button');
       btn.className = 'mt-2.5 w-full py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-violet-500 to-blue-600 text-white active:scale-[.98] transition';
       btn.textContent = '✨ Build this website now';
-      btn.addEventListener('click', function () {
+      btn.addEventListener('click', async function () {
+        if (btn.disabled) return;
+        btn.disabled = true;
+        btn.textContent = '⏳ Sending your details to the builder AI…';
+        // Summarize the whole consultation into a structured brief for the builder AI
+        let brief = null;
+        try {
+          const r = await fetch('/api/consultant/handoff', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ messages: state.consultantHistory || [] }),
+          });
+          const d = await r.json();
+          brief = d.brief || null;
+        } catch (_e) { /* brief is optional — build proceeds without it */ }
+        btn.disabled = false;
+        btn.textContent = '✨ Build this website now';
         closeConsultant();
-        requireAuth({ type: 'niche', payload: { niche: niche, label: cat ? cat.label : niche } });
+        requireAuth({ type: 'consultant', payload: { niche: niche, label: cat ? cat.label : niche, brief: brief } });
       });
       card.appendChild(btn);
       row.appendChild(card);
@@ -1791,6 +1809,24 @@
         $('btn-consultant-send').disabled = false;
         input.focus();
       }
+    }
+
+    /** Build directly from the consultant chat — the brief replaces the wizard. */
+    function startConsultantBuild(p) {
+      const brief = p.brief || null;
+      state.choices = {
+        niche: p.niche,
+        vibe: (brief && brief.vibe) || '',
+        feature: '',
+        prompt: (brief && brief.summary) || p.label || '',
+        businessName: (brief && brief.businessName) || '',
+        requirements: { category: { question: 'Business category', value: p.niche, label: p.label } },
+      };
+      state.consultantBrief = brief;
+      state.generationSource = 'consultant';
+      state.desiredSlug = '';
+      state.slugStatus = 'unchecked';
+      startGeneration();
     }
 
     // ── All-categories browser (home "See all") ────────────────
@@ -1955,12 +1991,16 @@
         prompt: $('tf-extra').value.trim(),
         requirements: requirements,
       };
+      state.consultantBrief = null;
+      state.generationSource = 'template';
       startGeneration();
     }
 
     // ── AI requirements wizard ─────────────────────────────────
     function startBuilder(opts) {
       opts = opts || {};
+      state.consultantBrief = null;
+      state.generationSource = 'wizard';
       state.choices = {
         niche: '',
         vibe: '',
@@ -2321,6 +2361,7 @@
             businessName: state.choices.businessName || '',
             requirements: state.choices.requirements,
             desiredSlug: state.slugStatus === 'available' ? state.desiredSlug : '',
+            consultantBrief: state.consultantBrief || undefined,
           }),
         });
         const data = await res.json();
@@ -2348,6 +2389,13 @@
           return;
         }
         const msg = '⚠️ ' + (e.message || 'Something went wrong. Please try again.');
+        if (state.generationSource === 'consultant') {
+          // Build was started from the consultant chat — report the error there
+          openConsultant();
+          addConsultantBubble('assistant', msg + '\nKoi baat nahi — neeche button se dobara try karo. 👇');
+          addConsultantPreset(state.choices.niche);
+          return;
+        }
         if (!$('template-modal').classList.contains('hidden')) {
           $('template-error').textContent = msg;
           $('template-error').classList.remove('hidden');
