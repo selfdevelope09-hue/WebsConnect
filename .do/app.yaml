@@ -38,6 +38,12 @@ services:
         value: ""
       - key: OPENROUTER_MODEL
         value: "google/gemini-2.5-flash"
+      - key: GROQ_API_KEY
+        scope: RUN_TIME
+        type: SECRET
+        value: ""
+      - key: GROQ_MODEL
+        value: "llama-3.3-70b-versatile"
 
 databases:
   - name: websconnect-db

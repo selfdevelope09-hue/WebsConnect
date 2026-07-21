@@ -653,6 +653,38 @@
     </div>
   </nav>
 
+  <!-- ===================== AI CONSULTANT CHAT ===================== -->
+  <button id="btn-consultant-fab" class="fixed z-[49] bottom-24 right-4 flex items-center gap-2 pl-3 pr-4 py-3 rounded-full glow-btn bg-gradient-to-r from-violet-500 to-blue-600 text-white text-xs font-bold active:scale-95 transition">
+    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M8 10h8M8 14h5M21 12a8 8 0 01-11.5 7.2L3 21l1.8-6.5A8 8 0 1121 12z"/></svg>
+    Ask AI Advisor
+  </button>
+
+  <div id="consultant-overlay" class="hidden fixed inset-0 z-[56] bg-base flex flex-col">
+    <div class="max-w-md w-full mx-auto flex flex-col h-full">
+      <header class="shrink-0 flex items-center gap-3 px-4 py-3 bg-surface/90 backdrop-blur border-b border-white/10">
+        <button id="btn-consultant-close" class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center" aria-label="Close">
+          <svg class="w-5 h-5 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+        </button>
+        <span class="w-10 h-10 shrink-0 rounded-full bg-gradient-to-br from-violet-500 to-blue-600 flex items-center justify-center text-lg">🤖</span>
+        <div class="flex-1 min-w-0">
+          <p class="font-bold text-sm leading-tight">WebsConnect AI Advisor</p>
+          <p class="text-[11px] text-emerald-400 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Online · Business &amp; website expert</p>
+        </div>
+      </header>
+      <div id="consultant-messages" class="flex-1 overflow-y-auto hide-scrollbar px-4 py-4 space-y-3"></div>
+      <div class="shrink-0 px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2 bg-surface/90 backdrop-blur border-t border-white/10">
+        <div id="consultant-quick" class="flex gap-2 overflow-x-auto hide-scrollbar pb-2"></div>
+        <div class="flex items-end gap-2 bg-card border border-white/10 rounded-2xl px-3 py-1.5 focus-within:border-accent/40 transition">
+          <textarea id="consultant-input" rows="1" placeholder="Apna business batao... (e.g. Nagpur me bakery hai)" class="flex-1 bg-transparent text-sm outline-none placeholder:text-slate-500 py-2 resize-none max-h-24"></textarea>
+          <button id="btn-consultant-send" class="w-10 h-10 shrink-0 rounded-full bg-gradient-to-br from-violet-500 to-blue-600 flex items-center justify-center active:scale-95 transition" aria-label="Send">
+            <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+        <p class="mt-1.5 text-center text-[9px] text-muted">AI advice can make mistakes — always review before going live.</p>
+      </div>
+    </div>
+  </div>
+
   <!-- ===================== ALL CATEGORIES BROWSER ===================== -->
   <div id="categories-overlay" class="hidden fixed inset-0 z-[52] bg-base overflow-y-auto">
     <div class="max-w-md mx-auto min-h-full flex flex-col">
@@ -1232,6 +1264,7 @@
       hideAllScreens();
       screenHome.classList.remove('hidden');
       bottomNav.classList.remove('hidden');
+      showConsultantFab();
       setNavActive('home');
       window.scrollTo({ top: 0 });
     }
@@ -1240,6 +1273,11 @@
       hideAllScreens();
       screenBuilder.classList.remove('hidden');
       bottomNav.classList.add('hidden');
+      $('btn-consultant-fab').classList.add('hidden');
+    }
+
+    function showConsultantFab() {
+      $('btn-consultant-fab').classList.remove('hidden');
     }
 
     function showProjects() {
@@ -1617,6 +1655,142 @@
         card.appendChild(row);
         wrap.appendChild(card);
       });
+    }
+
+    // ── AI Consultant chat ─────────────────────────────────────
+    const CONSULTANT_QUICK = [
+      'Nagpur me bakery hai 🍰',
+      'Gym kholna hai 💪',
+      'Photography studio 📸',
+      'Beauty salon 💈',
+      'Kaunsa page structure best hai?',
+    ];
+
+    function openConsultant() {
+      const box = $('consultant-messages');
+      if (!box.dataset.started) {
+        box.dataset.started = '1';
+        state.consultantHistory = [];
+        addConsultantBubble('assistant',
+          'Namaste! 🙏 Main aapka WebsConnect AI Advisor hoon.\n\nMujhe bas itna batao:\n• Aapka business kya hai?\n• Kaunse sheher me?\n\nMain aapke liye perfect 3-page website structure aur best category suggest karunga. 😊');
+      }
+      renderConsultantQuick();
+      $('consultant-overlay').classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+      setTimeout(function () { $('consultant-input').focus(); }, 150);
+    }
+
+    function closeConsultant() {
+      $('consultant-overlay').classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+
+    function renderConsultantQuick() {
+      const wrap = $('consultant-quick');
+      if (state.consultantHistory && state.consultantHistory.length) {
+        wrap.classList.add('hidden');
+        return;
+      }
+      wrap.classList.remove('hidden');
+      wrap.innerHTML = '';
+      CONSULTANT_QUICK.forEach(function (q) {
+        const btn = document.createElement('button');
+        btn.className = 'shrink-0 px-3 py-1.5 rounded-full text-[11px] font-medium bg-white/5 border border-white/10 text-slate-300 active:scale-95 transition';
+        btn.textContent = q;
+        btn.addEventListener('click', function () {
+          $('consultant-input').value = q;
+          sendConsultant();
+        });
+        wrap.appendChild(btn);
+      });
+    }
+
+    function addConsultantBubble(role, text) {
+      const box = $('consultant-messages');
+      const row = document.createElement('div');
+      const isUser = role === 'user';
+      row.className = 'flex ' + (isUser ? 'justify-end' : 'justify-start');
+      const bubble = document.createElement('div');
+      bubble.className = isUser
+        ? 'max-w-[82%] rounded-2xl rounded-br-md bg-gradient-to-br from-blue-500 to-blue-700 text-white px-3.5 py-2.5 text-sm leading-relaxed whitespace-pre-wrap'
+        : 'max-w-[85%] rounded-2xl rounded-bl-md bg-card border border-white/10 text-slate-100 px-3.5 py-2.5 text-sm leading-relaxed whitespace-pre-wrap';
+      bubble.textContent = text;
+      row.appendChild(bubble);
+      box.appendChild(row);
+      box.scrollTop = box.scrollHeight;
+      return bubble;
+    }
+
+    function addConsultantTyping() {
+      const box = $('consultant-messages');
+      const row = document.createElement('div');
+      row.className = 'flex justify-start';
+      row.id = 'consultant-typing';
+      row.innerHTML = '<div class="rounded-2xl rounded-bl-md bg-card border border-white/10 px-4 py-3 flex gap-1"><span class="typing-dot w-1.5 h-1.5 rounded-full bg-slate-400"></span><span class="typing-dot w-1.5 h-1.5 rounded-full bg-slate-400"></span><span class="typing-dot w-1.5 h-1.5 rounded-full bg-slate-400"></span></div>';
+      box.appendChild(row);
+      box.scrollTop = box.scrollHeight;
+    }
+
+    function addConsultantPreset(niche) {
+      const cat = (window.WC_CATEGORIES || []).find(function (c) { return c.value === niche; });
+      const box = $('consultant-messages');
+      const row = document.createElement('div');
+      row.className = 'flex justify-start';
+      const card = document.createElement('div');
+      card.className = 'max-w-[85%] rounded-2xl border border-violet-400/30 bg-gradient-to-br from-violet-600/20 to-blue-600/15 p-3';
+      card.innerHTML =
+        '<p class="text-[10px] font-semibold uppercase tracking-wider text-violet-300">Recommended preset</p>' +
+        '<p class="text-sm font-bold text-white mt-1">' + (cat ? cat.label : niche) + '</p>' +
+        (cat ? '<p class="text-[10px] text-muted mt-0.5">' + cat.group + '</p>' : '');
+      const btn = document.createElement('button');
+      btn.className = 'mt-2.5 w-full py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-violet-500 to-blue-600 text-white active:scale-[.98] transition';
+      btn.textContent = '✨ Build this website now';
+      btn.addEventListener('click', function () {
+        closeConsultant();
+        requireAuth({ type: 'niche', payload: { niche: niche, label: cat ? cat.label : niche } });
+      });
+      card.appendChild(btn);
+      row.appendChild(card);
+      box.appendChild(row);
+      box.scrollTop = box.scrollHeight;
+    }
+
+    async function sendConsultant() {
+      const input = $('consultant-input');
+      const text = input.value.trim();
+      if (!text || state.consultantBusy) return;
+      input.value = '';
+      input.style.height = 'auto';
+      state.consultantBusy = true;
+      $('btn-consultant-send').disabled = true;
+      addConsultantBubble('user', text);
+      state.consultantHistory = state.consultantHistory || [];
+      renderConsultantQuick();
+      addConsultantTyping();
+      try {
+        const res = await fetch('/api/consultant', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: text, messages: state.consultantHistory }),
+        });
+        const data = await res.json();
+        const typing = document.getElementById('consultant-typing');
+        if (typing) typing.remove();
+        if (!res.ok) throw new Error(data.error || 'Something went wrong');
+        addConsultantBubble('assistant', data.reply || 'Sorry, main samajh nahi paaya. Dobara try karo?');
+        state.consultantHistory.push({ role: 'user', content: text });
+        state.consultantHistory.push({ role: 'assistant', content: data.reply || '' });
+        if (state.consultantHistory.length > 16) state.consultantHistory = state.consultantHistory.slice(-16);
+        if (data.category) addConsultantPreset(data.category);
+      } catch (e) {
+        const typing = document.getElementById('consultant-typing');
+        if (typing) typing.remove();
+        addConsultantBubble('assistant', '⚠️ ' + (e.message || 'Advisor abhi busy hai. Thodi der baad try karo.'));
+      } finally {
+        state.consultantBusy = false;
+        $('btn-consultant-send').disabled = false;
+        input.focus();
+      }
     }
 
     // ── All-categories browser (home "See all") ────────────────
@@ -2770,6 +2944,21 @@
       });
       $('btn-trending-viewall').addEventListener('click', function () {
         $('templates-list').scrollIntoView({ behavior: 'smooth' });
+      });
+
+      // AI Consultant
+      $('btn-consultant-fab').addEventListener('click', openConsultant);
+      $('btn-consultant-close').addEventListener('click', closeConsultant);
+      $('btn-consultant-send').addEventListener('click', sendConsultant);
+      $('consultant-input').addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          sendConsultant();
+        }
+      });
+      $('consultant-input').addEventListener('input', function () {
+        this.style.height = 'auto';
+        this.style.height = Math.min(this.scrollHeight, 96) + 'px';
       });
 
       // All-categories browser
