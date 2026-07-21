@@ -9,15 +9,12 @@ services:
   - name: web
     dockerfile_path: Dockerfile
     source_dir: /
-    github:
-      repo: selfdevelope09-hue/WebsConnect
+    git:
+      repo_clone_url: https://github.com/selfdevelope09-hue/WebsConnect.git
       branch: main
-      deploy_on_push: true
     instance_count: 1
     instance_size_slug: basic-xxs
     http_port: 3000
-    health_check:
-      http_path: /api/health
     routes:
       - path: /
     envs:
@@ -32,7 +29,14 @@ databases:
   - name: websconnect-db
     engine: PG
     version: "16"
-    production: true
+    production: false
 
-# Add domains AFTER first deploy succeeds:
-# Settings → Domains → websconnect.in, www.websconnect.in, api.websconnect.in, *.websconnect.in
+domains:
+  - domain: websconnect.in
+    type: PRIMARY
+  - domain: www.websconnect.in
+    type: ALIAS
+  - domain: api.websconnect.in
+    type: ALIAS
+  - domain: "*.websconnect.in"
+    type: WILDCARD

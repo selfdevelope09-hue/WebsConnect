@@ -46,7 +46,10 @@ app.use((err, _req, res, _next) => {
   res.status(500).json({ error: 'Internal server error' });
 });
 
+const { migrate } = require('./db/migrate');
+
 app.listen(PORT, () => {
   console.log(`WebsConnect server listening on port ${PORT}`);
   console.log(`Root domain: ${ROOT_DOMAIN}`);
+  migrate();
 });
