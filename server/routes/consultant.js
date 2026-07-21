@@ -6,6 +6,7 @@
 
 const GROQ_API_KEY = process.env.GROQ_API_KEY || '';
 const GROQ_MODEL = process.env.GROQ_MODEL || 'llama-3.3-70b-versatile';
+const GROQ_FALLBACK_MODEL = process.env.GROQ_FALLBACK_MODEL || 'llama-3.1-8b-instant';
 const ROOT_DOMAIN = process.env.ROOT_DOMAIN || 'websconnect.in';
 const { CONNECT_KNOWLEDGE } = require('../data/connectKnowledge');
 
@@ -129,23 +130,31 @@ function sanitizeHistory(raw) {
 
 async function callGroq(messages, opts) {
   opts = opts || {};
-  const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+  const request = (model) => fetch('https://api.groq.com/openai/v1/chat/completions', {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${GROQ_API_KEY}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: GROQ_MODEL,
+      model,
       messages,
       max_tokens: opts.maxTokens || 900,
       temperature: opts.temperature != null ? opts.temperature : 0.75,
       top_p: 0.9,
     }),
   });
+
+  let model = GROQ_MODEL;
+  let res = await request(model);
+  if (res.status === 429 && GROQ_FALLBACK_MODEL && GROQ_FALLBACK_MODEL !== model) {
+    console.warn(`consultant: ${model} rate-limited, retrying with ${GROQ_FALLBACK_MODEL}`);
+    model = GROQ_FALLBACK_MODEL;
+    res = await request(model);
+  }
   if (!res.ok) {
     const errText = await res.text().catch(() => '');
-    throw new Error(`Groq ${res.status}: ${errText.slice(0, 300)}`);
+    throw new Error(`Groq ${model} ${res.status}: ${errText.slice(0, 300)}`);
   }
   const data = await res.json();
   return data.choices?.[0]?.message?.content || '';
