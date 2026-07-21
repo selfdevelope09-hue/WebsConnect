@@ -239,7 +239,11 @@ function mountConsultantRoutes(router) {
       }, ...history];
       if (message) messages.push({ role: 'user', content: message });
 
-      const raw = await callGroq(messages);
+      const raw = await callGroq(messages, {
+        // Public company answers should stay close to the supplied facts,
+        // especially when the smaller fallback model is serving the request.
+        temperature: knowledgeQuestion ? 0.2 : 0.75,
+      });
 
       // Extract the optional [[category:<id>]] tag and strip it from display text.
       let category = null;
