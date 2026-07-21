@@ -161,6 +161,9 @@
       <button id="btn-start-building" class="mt-5 w-full glow-btn py-3.5 rounded-2xl font-bold text-sm bg-gradient-to-r from-blue-500 to-blue-700 text-white active:scale-[0.98] transition">
         Start Building with AI
       </button>
+      <button id="btn-free-builder" class="mt-2.5 w-full py-3.5 rounded-2xl font-bold text-sm bg-emerald-500/10 border border-emerald-400/30 text-emerald-300 active:scale-[0.98] transition flex items-center justify-center gap-2">
+        🛠️ Free Builder — Edit a Template Yourself <span class="px-1.5 py-0.5 rounded text-[8px] font-black bg-emerald-500/20 border border-emerald-400/30">NO AI</span>
+      </button>
       <p class="mt-3 text-[11px] text-muted">Free while we build · Google login to save your site</p>
     </section>
 
@@ -554,8 +557,9 @@
       </div>
     </header>
     <iframe id="tpl-preview-frame" class="flex-1 w-full bg-white" title="Template preview"></iframe>
-    <div class="shrink-0 px-4 py-3 bg-base/95 backdrop-blur border-t border-white/10">
-      <button id="btn-tpl-preview-use" class="w-full py-3.5 rounded-xl font-bold text-sm bg-gradient-to-r from-blue-500 to-blue-700 text-white glow-btn active:scale-[.98] transition">Use This Template ✨</button>
+    <div class="shrink-0 px-4 py-3 bg-base/95 backdrop-blur border-t border-white/10 grid grid-cols-2 gap-2">
+      <button id="btn-tpl-preview-edit" class="py-3.5 rounded-xl font-bold text-xs bg-emerald-500/10 border border-emerald-400/30 text-emerald-300 active:scale-[.98] transition">🛠️ Edit Manually — Free</button>
+      <button id="btn-tpl-preview-use" class="py-3.5 rounded-xl font-bold text-xs bg-gradient-to-r from-blue-500 to-blue-700 text-white glow-btn active:scale-[.98] transition">Build with AI ✨</button>
     </div>
   </div>
 
@@ -681,6 +685,75 @@
           </button>
         </div>
         <p class="mt-1.5 text-center text-[9px] text-muted">AI advice can make mistakes — always review before going live.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== MANUAL TEMPLATE EDITOR (No-AI) ===================== -->
+  <div id="editor-overlay" class="hidden fixed inset-0 z-[57] bg-base flex flex-col">
+    <header class="shrink-0 flex items-center gap-2 px-3 py-2.5 bg-surface/95 backdrop-blur border-b border-white/10">
+      <button id="editor-back" class="w-9 h-9 shrink-0 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center" aria-label="Close editor">
+        <svg class="w-4 h-4 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+      </button>
+      <div class="flex-1 min-w-0">
+        <p id="editor-title" class="text-xs font-bold truncate">Editor</p>
+        <p class="text-[9px] text-emerald-400">Free Editor · No AI · Double-tap any text to edit</p>
+      </div>
+      <button id="editor-publish-open" class="shrink-0 px-3.5 py-2 rounded-xl text-[11px] font-bold bg-gradient-to-r from-emerald-500 to-teal-600 text-white glow-btn active:scale-95 transition">🚀 Publish</button>
+    </header>
+    <div id="editor-tabs" class="shrink-0 flex gap-1.5 px-3 py-2 bg-surface/80 border-b border-white/10 overflow-x-auto hide-scrollbar"></div>
+    <iframe id="editor-frame" class="flex-1 w-full bg-white" title="Website editor"></iframe>
+    <div class="shrink-0 bg-surface/95 backdrop-blur border-t border-white/10 pb-[env(safe-area-inset-bottom)]">
+      <div class="flex justify-around px-2 py-2">
+        <button data-etool="text" class="etool flex flex-col items-center gap-0.5 px-2 py-1 text-slate-300"><span class="text-base">✏️</span><span class="text-[8px] font-semibold">Text</span></button>
+        <button data-etool="images" class="etool flex flex-col items-center gap-0.5 px-2 py-1 text-slate-300"><span class="text-base">🖼️</span><span class="text-[8px] font-semibold">Images</span></button>
+        <button data-etool="colors" class="etool flex flex-col items-center gap-0.5 px-2 py-1 text-slate-300"><span class="text-base">🎨</span><span class="text-[8px] font-semibold">Colors</span></button>
+        <button data-etool="sections" class="etool flex flex-col items-center gap-0.5 px-2 py-1 text-slate-300"><span class="text-base">🧩</span><span class="text-[8px] font-semibold">Sections</span></button>
+        <button data-etool="contact" class="etool flex flex-col items-center gap-0.5 px-2 py-1 text-slate-300"><span class="text-base">📞</span><span class="text-[8px] font-semibold">Contact</span></button>
+      </div>
+    </div>
+
+    <!-- Bottom-sheet panel -->
+    <div id="editor-panel" class="hidden absolute inset-x-0 bottom-0 z-10 rounded-t-3xl bg-card border-t border-white/15 p-4 max-h-[60%] overflow-y-auto hide-scrollbar shadow-2xl">
+      <div class="flex items-center justify-between mb-3">
+        <p id="editor-panel-title" class="text-sm font-bold"></p>
+        <button id="editor-panel-close" class="w-8 h-8 rounded-lg bg-white/5 border border-white/10 text-slate-300 text-xs">✕</button>
+      </div>
+      <div id="editor-panel-body"></div>
+    </div>
+
+    <!-- Image replace modal -->
+    <div id="editor-img-modal" class="hidden absolute inset-0 z-20 bg-black/70 backdrop-blur-sm flex items-center justify-center p-5">
+      <div class="w-full max-w-sm rounded-2xl bg-card border border-white/15 p-4">
+        <p class="text-sm font-bold">🖼️ Replace Image</p>
+        <img id="editor-img-preview" class="mt-3 w-full h-32 object-cover rounded-xl border border-white/10" alt="Current image" />
+        <label class="block mt-3 text-[10px] font-semibold text-muted">New image URL</label>
+        <input id="editor-img-url" type="url" placeholder="https://images.unsplash.com/..." class="mt-1 w-full px-3 py-2.5 rounded-xl bg-white/5 border border-white/15 text-xs outline-none focus:border-accent/50" />
+        <p class="mt-1.5 text-[9px] text-muted">Tip: unsplash.com se koi bhi photo kholo, right-click → Copy image address, aur yahan paste karo.</p>
+        <div class="grid grid-cols-2 gap-2 mt-4">
+          <button id="editor-img-cancel" class="py-2.5 rounded-xl text-xs font-bold bg-white/5 border border-white/15 text-slate-300">Cancel</button>
+          <button id="editor-img-apply" class="py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-blue-500 to-blue-700 text-white">Apply</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Publish modal -->
+    <div id="editor-publish-modal" class="hidden absolute inset-0 z-20 bg-black/70 backdrop-blur-sm flex items-center justify-center p-5">
+      <div class="w-full max-w-sm rounded-2xl bg-card border border-white/15 p-4">
+        <p class="text-sm font-bold">🚀 Publish Your Website</p>
+        <label class="block mt-3 text-[10px] font-semibold text-muted">Website / business name</label>
+        <input id="editor-pub-title" type="text" placeholder="e.g. Sharma Sweets" class="mt-1 w-full px-3 py-2.5 rounded-xl bg-white/5 border border-white/15 text-xs outline-none focus:border-accent/50" />
+        <label class="block mt-3 text-[10px] font-semibold text-muted">Choose your free domain</label>
+        <div class="mt-1 flex items-center rounded-xl bg-white/5 border border-white/15 focus-within:border-accent/50 overflow-hidden">
+          <input id="editor-pub-slug" type="text" placeholder="sharmasweets" class="flex-1 min-w-0 px-3 py-2.5 bg-transparent text-xs outline-none" />
+          <span class="px-2.5 text-[10px] text-muted whitespace-nowrap">.websconnect.in</span>
+        </div>
+        <p id="editor-pub-slug-status" class="mt-1.5 text-[9px] text-muted h-3"></p>
+        <p id="editor-pub-error" class="hidden mt-2 text-[10px] text-red-400"></p>
+        <div class="grid grid-cols-2 gap-2 mt-4">
+          <button id="editor-pub-cancel" class="py-2.5 rounded-xl text-xs font-bold bg-white/5 border border-white/15 text-slate-300">Cancel</button>
+          <button id="editor-pub-go" class="py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-emerald-500 to-teal-600 text-white">Publish Now 🚀</button>
+        </div>
       </div>
     </div>
   </div>
@@ -1243,6 +1316,8 @@
         startBuilder({ niche: action.payload.niche, label: action.payload.label, prompt: action.payload.label });
       } else if (action.type === 'consultant') {
         startConsultantBuild(action.payload);
+      } else if (action.type === 'publish') {
+        doManualPublish(action.payload);
       } else if (action.type === 'template') {
         openTemplateForm(action.payload);
       }
@@ -1663,6 +1738,362 @@
       });
     }
 
+    // ── Manual Template Editor (No-AI Free Builder) ────────────
+    function wcToast(msg) {
+      let el = document.getElementById('wc-toast');
+      if (!el) {
+        el = document.createElement('div');
+        el.id = 'wc-toast';
+        el.className = 'fixed left-1/2 -translate-x-1/2 bottom-24 z-[80] px-4 py-2.5 rounded-xl bg-slate-800 border border-white/20 text-xs text-white shadow-2xl transition-opacity max-w-[85vw] text-center';
+        document.body.appendChild(el);
+      }
+      el.textContent = msg;
+      el.style.opacity = '1';
+      clearTimeout(el._t);
+      el._t = setTimeout(function () { el.style.opacity = '0'; }, 2600);
+    }
+
+    async function openManualEditor(templateId) {
+      const t = TEMPLATES.find(function (x) { return x.id === templateId; });
+      if (!t) return;
+      wcToast('Loading template…');
+      const order = ['index', t.page2 || 'about', 'contact'];
+      const pages = {};
+      try {
+        for (let i = 0; i < order.length; i++) {
+          const res = await fetch('/templates/' + t.id + '/' + order[i] + '.html');
+          if (!res.ok) throw new Error('Template page missing');
+          pages[order[i]] = await res.text();
+        }
+      } catch (e) {
+        wcToast('⚠️ Could not load this template. Try another.');
+        return;
+      }
+      state.editor = {
+        template: t,
+        pages: pages,
+        order: order,
+        current: 'index',
+        colors: { accent: t.colors.accent, bg: t.colors.bg, text: t.colors.text },
+        editImg: null,
+      };
+      $('editor-title').textContent = t.emoji + ' ' + t.name + ' — Free Editor';
+      $('tpl-preview-overlay').classList.add('hidden');
+      $('categories-overlay').classList.add('hidden');
+      hideAllScreens();
+      $('editor-overlay').classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+      renderEditorTabs();
+      loadEditorPage('index');
+      setTimeout(function () { wcToast('✏️ Double-tap any text to edit it. Tap any image to replace it.'); }, 900);
+    }
+
+    function closeManualEditor() {
+      $('editor-overlay').classList.add('hidden');
+      $('editor-frame').removeAttribute('srcdoc');
+      document.body.style.overflow = '';
+      state.editor = null;
+      showHome();
+    }
+
+    function editorPageLabel(key) {
+      if (key === 'index') return '🏠 Home';
+      if (key === 'contact') return '📞 Contact';
+      const t = state.editor && state.editor.template;
+      const label = (t && t.page2Label) || key;
+      return '📄 ' + label.charAt(0).toUpperCase() + label.slice(1);
+    }
+
+    function renderEditorTabs() {
+      const wrap = $('editor-tabs');
+      wrap.innerHTML = '';
+      state.editor.order.forEach(function (key) {
+        const b = document.createElement('button');
+        b.className = 'shrink-0 px-3 py-1.5 rounded-lg text-[10px] font-bold transition ' +
+          (key === state.editor.current ? 'bg-blue-500/20 border border-blue-400/40 text-sky-300' : 'bg-white/5 border border-white/10 text-slate-400');
+        b.textContent = editorPageLabel(key);
+        b.addEventListener('click', function () { switchEditorPage(key); });
+        wrap.appendChild(b);
+      });
+    }
+
+    function editorDoc() {
+      const f = $('editor-frame');
+      return f.contentDocument || (f.contentWindow && f.contentWindow.document);
+    }
+
+    /** Serialize the live iframe DOM into clean production HTML. */
+    function serializeEditorPage() {
+      const doc = editorDoc();
+      if (!doc || !doc.documentElement) return null;
+      const clone = doc.documentElement.cloneNode(true);
+      clone.querySelectorAll('[data-wc-editor]').forEach(function (n) { n.remove(); });
+      clone.querySelectorAll('[contenteditable]').forEach(function (n) { n.removeAttribute('contenteditable'); });
+      clone.querySelectorAll('[data-wc-editing]').forEach(function (n) { n.removeAttribute('data-wc-editing'); });
+      return '<!DOCTYPE html>\n' + clone.outerHTML;
+    }
+
+    function saveCurrentEditorPage() {
+      if (!state.editor) return;
+      const html = serializeEditorPage();
+      if (html) state.editor.pages[state.editor.current] = html;
+    }
+
+    function loadEditorPage(key) {
+      state.editor.current = key;
+      renderEditorTabs();
+      const frame = $('editor-frame');
+      frame.onload = function () { wireEditorFrame(); };
+      frame.srcdoc = state.editor.pages[key];
+    }
+
+    function switchEditorPage(key) {
+      if (!state.editor || key === state.editor.current) return;
+      saveCurrentEditorPage();
+      closeEditorPanel();
+      loadEditorPage(key);
+    }
+
+    /** Attach editing behaviours inside the iframe (same-origin srcdoc). */
+    function wireEditorFrame() {
+      const doc = editorDoc();
+      if (!doc || !doc.body) return;
+      const style = doc.createElement('style');
+      style.setAttribute('data-wc-editor', '1');
+      style.textContent = '[contenteditable="true"]{outline:2px dashed #38bdf8 !important;outline-offset:2px;} img{cursor:pointer;} img:hover{outline:2px dashed #f472b6 !important;outline-offset:2px;}';
+      doc.head.appendChild(style);
+
+      doc.addEventListener('click', function (e) {
+        const a = e.target.closest && e.target.closest('a');
+        if (a) { e.preventDefault(); }
+        const img = e.target.closest && e.target.closest('img');
+        if (img) {
+          e.preventDefault();
+          e.stopPropagation();
+          openEditorImageModal(img);
+        }
+      }, true);
+
+      doc.addEventListener('submit', function (e) { e.preventDefault(); }, true);
+
+      doc.addEventListener('dblclick', function (e) {
+        const el = e.target.closest && e.target.closest('h1,h2,h3,h4,h5,h6,p,a,button,span,li,figcaption,blockquote,label,small,strong,em,td,th');
+        if (!el || el.querySelector('img')) return;
+        el.setAttribute('contenteditable', 'true');
+        el.setAttribute('data-wc-editing', '1');
+        el.focus();
+        const done = function () {
+          el.removeAttribute('contenteditable');
+          el.removeAttribute('data-wc-editing');
+          el.removeEventListener('blur', done);
+        };
+        el.addEventListener('blur', done);
+      });
+    }
+
+    // — Image replacement —
+    function openEditorImageModal(img) {
+      state.editor.editImg = img;
+      $('editor-img-preview').src = img.src;
+      $('editor-img-url').value = '';
+      $('editor-img-modal').classList.remove('hidden');
+    }
+
+    function applyEditorImage() {
+      const url = $('editor-img-url').value.trim();
+      if (state.editor && state.editor.editImg && /^https?:\/\//i.test(url)) {
+        state.editor.editImg.src = url;
+        if (state.editor.editImg.srcset) state.editor.editImg.removeAttribute('srcset');
+      }
+      $('editor-img-modal').classList.add('hidden');
+      state.editor.editImg = null;
+    }
+
+    // — Bottom-sheet panels —
+    function closeEditorPanel() {
+      $('editor-panel').classList.add('hidden');
+    }
+
+    function openEditorPanel(tool) {
+      const body = $('editor-panel-body');
+      const title = $('editor-panel-title');
+      body.innerHTML = '';
+      if (tool === 'text') { wcToast('✏️ Double-tap any text in the preview to edit it directly.'); return; }
+      if (tool === 'images') { wcToast('🖼️ Tap any image in the preview to replace it.'); return; }
+
+      if (tool === 'colors') {
+        title.textContent = '🎨 Brand Colors';
+        [['accent', 'Primary / Accent color'], ['bg', 'Background color'], ['text', 'Text color']].forEach(function (pair) {
+          const key = pair[0];
+          const row = document.createElement('div');
+          row.className = 'flex items-center justify-between py-2.5 border-b border-white/5';
+          row.innerHTML = '<span class="text-xs text-slate-300">' + pair[1] + '</span>';
+          const input = document.createElement('input');
+          input.type = 'color';
+          input.value = state.editor.colors[key];
+          input.className = 'w-10 h-8 rounded cursor-pointer bg-transparent border border-white/20';
+          input.addEventListener('change', function () { applyEditorColor(key, input.value); });
+          row.appendChild(input);
+          body.appendChild(row);
+        });
+        const note = document.createElement('p');
+        note.className = 'mt-2 text-[9px] text-muted';
+        note.textContent = 'Color changes apply to all pages instantly.';
+        body.appendChild(note);
+      }
+
+      if (tool === 'sections') {
+        title.textContent = '🧩 Page Sections — show / hide';
+        const doc = editorDoc();
+        const sections = doc ? doc.querySelectorAll('section') : [];
+        if (!sections.length) {
+          body.innerHTML = '<p class="text-xs text-muted">No toggleable sections found on this page.</p>';
+        }
+        Array.prototype.forEach.call(sections, function (sec, i) {
+          const heading = sec.querySelector('h1,h2,h3');
+          const label = (heading ? heading.textContent.trim().slice(0, 34) : ('Section ' + (i + 1))) || ('Section ' + (i + 1));
+          const hidden = sec.style.display === 'none';
+          const row = document.createElement('div');
+          row.className = 'flex items-center justify-between py-2.5 border-b border-white/5';
+          row.innerHTML = '<span class="text-xs text-slate-300 truncate mr-3">' + escapeHtml(label) + '</span>';
+          const btn = document.createElement('button');
+          btn.className = 'shrink-0 px-3 py-1.5 rounded-lg text-[10px] font-bold ' + (hidden ? 'bg-white/5 border border-white/15 text-slate-400' : 'bg-emerald-500/15 border border-emerald-400/30 text-emerald-300');
+          btn.textContent = hidden ? 'Hidden' : 'Visible';
+          btn.addEventListener('click', function () {
+            const nowHidden = sec.style.display !== 'none';
+            sec.style.display = nowHidden ? 'none' : '';
+            btn.textContent = nowHidden ? 'Hidden' : 'Visible';
+            btn.className = 'shrink-0 px-3 py-1.5 rounded-lg text-[10px] font-bold ' + (nowHidden ? 'bg-white/5 border border-white/15 text-slate-400' : 'bg-emerald-500/15 border border-emerald-400/30 text-emerald-300');
+          });
+          row.appendChild(btn);
+          body.appendChild(row);
+        });
+      }
+
+      if (tool === 'contact') {
+        title.textContent = '📞 Contact & Links';
+        body.innerHTML =
+          '<label class="block text-[10px] font-semibold text-muted">WhatsApp number (with country code)</label>' +
+          '<input id="ed-contact-wa" type="tel" placeholder="919822012345" class="mt-1 w-full px-3 py-2.5 rounded-xl bg-white/5 border border-white/15 text-xs outline-none focus:border-accent/50" />' +
+          '<label class="block mt-3 text-[10px] font-semibold text-muted">Phone number (for call buttons)</label>' +
+          '<input id="ed-contact-tel" type="tel" placeholder="+919822012345" class="mt-1 w-full px-3 py-2.5 rounded-xl bg-white/5 border border-white/15 text-xs outline-none focus:border-accent/50" />' +
+          '<label class="block mt-3 text-[10px] font-semibold text-muted">Business address (for Google Maps links)</label>' +
+          '<input id="ed-contact-maps" type="text" placeholder="Shop 4, Dharampeth, Nagpur" class="mt-1 w-full px-3 py-2.5 rounded-xl bg-white/5 border border-white/15 text-xs outline-none focus:border-accent/50" />' +
+          '<button id="ed-contact-apply" class="mt-4 w-full py-3 rounded-xl text-xs font-bold bg-gradient-to-r from-blue-500 to-blue-700 text-white">Apply to all pages</button>' +
+          '<p class="mt-2 text-[9px] text-muted">Updates every WhatsApp, call and map link across all 3 pages.</p>';
+        body.querySelector('#ed-contact-apply').addEventListener('click', applyEditorContact);
+      }
+
+      $('editor-panel').classList.remove('hidden');
+    }
+
+    /** Replace a brand color across every page (string replace on hex). */
+    function applyEditorColor(key, newHex) {
+      const oldHex = state.editor.colors[key];
+      if (!oldHex || oldHex.toLowerCase() === newHex.toLowerCase()) return;
+      saveCurrentEditorPage();
+      const re = new RegExp(oldHex.replace('#', '#\\s*'), 'gi');
+      state.editor.order.forEach(function (k) {
+        state.editor.pages[k] = state.editor.pages[k].replace(re, newHex);
+      });
+      state.editor.colors[key] = newHex;
+      loadEditorPage(state.editor.current);
+    }
+
+    /** Rewrite WhatsApp / tel / maps links across all pages. */
+    function applyEditorContact() {
+      const wa = ($('ed-contact-wa').value || '').replace(/[^0-9]/g, '');
+      const tel = ($('ed-contact-tel').value || '').replace(/[^0-9+]/g, '');
+      const maps = ($('ed-contact-maps').value || '').trim();
+      saveCurrentEditorPage();
+      state.editor.order.forEach(function (k) {
+        let html = state.editor.pages[k];
+        if (wa) html = html.replace(/https:\/\/wa\.me\/[0-9]*/gi, 'https://wa.me/' + wa);
+        if (tel) html = html.replace(/tel:[+0-9()\-\s]+(["'])/gi, 'tel:' + tel + '$1');
+        if (maps) html = html.replace(/https:\/\/maps\.google\.com\/\?q=[^"']*/gi, 'https://maps.google.com/?q=' + encodeURIComponent(maps));
+        state.editor.pages[k] = html;
+      });
+      loadEditorPage(state.editor.current);
+      closeEditorPanel();
+      wcToast('✅ Contact links updated on all pages.');
+    }
+
+    // — Publish pipeline —
+    function openEditorPublishModal() {
+      saveCurrentEditorPage();
+      $('editor-pub-error').classList.add('hidden');
+      $('editor-publish-modal').classList.remove('hidden');
+    }
+
+    async function editorPublish() {
+      const title = $('editor-pub-title').value.trim();
+      const slug = ($('editor-pub-slug').value || '').trim().toLowerCase();
+      if (!title) {
+        $('editor-pub-error').textContent = 'Please enter your website / business name.';
+        $('editor-pub-error').classList.remove('hidden');
+        return;
+      }
+      saveCurrentEditorPage();
+      const payload = {
+        desiredSlug: slug,
+        title: title,
+        niche: state.editor.template.niche,
+        pages: state.editor.pages,
+      };
+      $('editor-publish-modal').classList.add('hidden');
+      if (!isLoggedIn()) {
+        $('editor-overlay').classList.add('hidden');
+        document.body.style.overflow = '';
+        requireAuth({ type: 'publish', payload: payload });
+        return;
+      }
+      doManualPublish(payload);
+    }
+
+    async function doManualPublish(payload) {
+      $('editor-overlay').classList.add('hidden');
+      document.body.style.overflow = '';
+      $('loading-modal').classList.remove('hidden');
+      $('loading-bar').style.width = '30%';
+      $('loading-text').textContent = 'Publishing your website…';
+      try {
+        const res = await fetch('/api/publish', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + state.token },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          const err = new Error(data.error || 'Publish failed');
+          err.code = data.code;
+          throw err;
+        }
+        $('loading-bar').style.width = '100%';
+        $('loading-text').textContent = 'Done! Your site is live ✨';
+        state.editor = null;
+        setTimeout(function () {
+          $('loading-modal').classList.add('hidden');
+          showPreview(data.url);
+        }, 600);
+      } catch (e) {
+        $('loading-modal').classList.add('hidden');
+        if (e.code === 'QUOTA_EXCEEDED') {
+          openUpgradeModal();
+          $('upgrade-error').textContent = e.message;
+          $('upgrade-error').classList.remove('hidden');
+          return;
+        }
+        // Reopen the editor so nothing is lost
+        if (state.editor) {
+          $('editor-overlay').classList.remove('hidden');
+          document.body.style.overflow = 'hidden';
+          $('editor-publish-modal').classList.remove('hidden');
+        }
+        $('editor-pub-error').textContent = e.message || 'Publish failed. Please try again.';
+        $('editor-pub-error').classList.remove('hidden');
+      }
+    }
+
     // ── AI Consultant chat ─────────────────────────────────────
     const CONSULTANT_QUICK = [
       'Nagpur me bakery hai 🍰',
@@ -1917,6 +2348,7 @@
       $('tpl-preview-title').textContent = t.emoji + ' ' + t.name + ' — 3 page demo';
       $('tpl-preview-frame').src = '/templates/' + t.id + '/index.html';
       $('btn-tpl-preview-use').classList.remove('hidden');
+      $('btn-tpl-preview-edit').classList.remove('hidden');
       $('tpl-preview-overlay').classList.remove('hidden');
       document.body.style.overflow = 'hidden';
     }
@@ -2581,6 +3013,7 @@
             $('tpl-preview-title').textContent = p.title;
             $('tpl-preview-frame').src = 'https://' + p.slug + '.websconnect.in';
             $('btn-tpl-preview-use').classList.add('hidden');
+            $('btn-tpl-preview-edit').classList.add('hidden');
             $('tpl-preview-overlay').classList.remove('hidden');
             document.body.style.overflow = 'hidden';
           });
@@ -3057,6 +3490,33 @@
       $('btn-trending-viewall').addEventListener('click', function () {
         $('templates-list').scrollIntoView({ behavior: 'smooth' });
       });
+
+      // Manual Template Editor (Free Builder)
+      $('btn-free-builder').addEventListener('click', function () {
+        showTemplates();
+        wcToast('🛠️ Pick any template, preview it, then tap "Edit Manually — Free"');
+      });
+      $('btn-tpl-preview-edit').addEventListener('click', function () {
+        if (state.previewTemplate) openManualEditor(state.previewTemplate);
+      });
+      $('editor-back').addEventListener('click', function () {
+        if (confirm('Editor band karna hai? Unsaved changes chale jayenge.')) closeManualEditor();
+      });
+      document.querySelectorAll('.etool').forEach(function (b) {
+        b.addEventListener('click', function () { openEditorPanel(b.dataset.etool); });
+      });
+      $('editor-panel-close').addEventListener('click', closeEditorPanel);
+      $('editor-img-cancel').addEventListener('click', function () {
+        $('editor-img-modal').classList.add('hidden');
+        state.editor && (state.editor.editImg = null);
+      });
+      $('editor-img-apply').addEventListener('click', applyEditorImage);
+      $('editor-publish-open').addEventListener('click', openEditorPublishModal);
+      $('editor-pub-cancel').addEventListener('click', function () {
+        $('editor-publish-modal').classList.add('hidden');
+      });
+      $('editor-pub-go').addEventListener('click', editorPublish);
+      attachSlugChecker($('editor-pub-slug'), $('editor-pub-slug-status'));
 
       // AI Consultant
       $('btn-consultant-fab').addEventListener('click', openConsultant);

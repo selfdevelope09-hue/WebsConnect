@@ -906,4 +906,4 @@ function mountGenerateRoutes(router) {
   });
 }
 
-module.exports = { mountGenerateRoutes };
+module.exports = { mountGenerateRoutes, sanitizeSlug, RESERVED_SLUGS, uniqueSlug, makeSlugBase, NICHE_NAMES };

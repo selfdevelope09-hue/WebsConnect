@@ -7,6 +7,7 @@ const { mountAuthRoutes } = require('./routes/auth');
 const { mountGenerateRoutes } = require('./routes/generate');
 const { mountConsultantRoutes } = require('./routes/consultant');
 const { mountExportRoutes } = require('./routes/export');
+const { mountPublishRoutes } = require('./routes/publish');
 const { migrate } = require('./db/migrate');
 
 const app = express();
@@ -14,7 +15,7 @@ const PORT = process.env.PORT || 3000;
 const ROOT_DOMAIN = process.env.ROOT_DOMAIN || 'websconnect.in';
 
 app.set('trust proxy', true);
-app.use(express.json({ limit: '1mb' }));
+app.use(express.json({ limit: '4mb' }));
 
 app.use(subdomainRouter({ rootDomain: ROOT_DOMAIN }));
 
@@ -28,6 +29,7 @@ mountAuthRoutes(apiRouter);
 mountGenerateRoutes(apiRouter);
 mountConsultantRoutes(apiRouter);
 mountExportRoutes(apiRouter);
+mountPublishRoutes(apiRouter);
 
 app.use((req, res, next) => {
   if (parseSubdomain(req.hostname, ROOT_DOMAIN) === 'api') {
