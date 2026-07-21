@@ -4,8 +4,13 @@ const crypto = require('crypto');
 const { getPool } = require('../db/sites');
 const { authMiddleware, getUserPlanInfo } = require('./auth');
 
+const GROQ_API_KEY = process.env.GROQ_API_KEY || '';
+const GROQ_GENERATOR_MODEL = process.env.GROQ_GENERATOR_MODEL || 'llama-3.3-70b-versatile';
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY || '';
 const OPENROUTER_MODEL = process.env.OPENROUTER_MODEL || 'google/gemini-2.5-flash';
+// Groq is the active free generator. Set this to "openrouter" later without
+// changing code when paid production generation is required.
+const WEBSITE_GENERATOR_PROVIDER = (process.env.WEBSITE_GENERATOR_PROVIDER || 'groq').toLowerCase();
 const ROOT_DOMAIN = process.env.ROOT_DOMAIN || 'websconnect.in';
 
 const NICHE_NAMES = {
@@ -769,32 +774,67 @@ async function uniqueSlug(pool, base) {
   return `${base}-${crypto.randomBytes(3).toString('hex')}`;
 }
 
-async function callOpenRouter(messages) {
-  const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${OPENROUTER_API_KEY}`,
-      'Content-Type': 'application/json',
-      'HTTP-Referer': `https://${ROOT_DOMAIN}`,
-      'X-Title': 'WebsConnect AI',
-    },
-    body: JSON.stringify({
+function activeGenerator() {
+  if (WEBSITE_GENERATOR_PROVIDER === 'openrouter') {
+    return {
+      name: 'OpenRouter',
+      apiKey: OPENROUTER_API_KEY,
       model: OPENROUTER_MODEL,
+      url: 'https://openrouter.ai/api/v1/chat/completions',
+      maxTokens: 50000,
+    };
+  }
+  return {
+    name: 'Groq',
+    apiKey: GROQ_API_KEY,
+    model: GROQ_GENERATOR_MODEL,
+    url: 'https://api.groq.com/openai/v1/chat/completions',
+    // Llama 3.3 70B on Groq supports less output than the paid OpenRouter
+    // generator, but this budget is sufficient for three concise HTML pages.
+    maxTokens: 24000,
+  };
+}
+
+async function callWebsiteGenerator(messages) {
+  const generator = activeGenerator();
+  const headers = {
+    Authorization: `Bearer ${generator.apiKey}`,
+    'Content-Type': 'application/json',
+  };
+  if (generator.name === 'OpenRouter') {
+    headers['HTTP-Referer'] = `https://${ROOT_DOMAIN}`;
+    headers['X-Title'] = 'WebsConnect AI';
+  }
+
+  const res = await fetch(generator.url, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({
+      model: generator.model,
       messages,
-      max_tokens: 50000,
-      temperature: 0.7,
+      max_tokens: generator.maxTokens,
+      temperature: 0.65,
     }),
   });
 
   if (!res.ok) {
     const errText = await res.text().catch(() => '');
-    throw new Error(`OpenRouter ${res.status}: ${errText.slice(0, 300)}`);
+    throw new Error(`${generator.name} ${res.status}: ${errText.slice(0, 300)}`);
   }
   const data = await res.json();
   return data.choices?.[0]?.message?.content || '';
 }
 
 function mountGenerateRoutes(router) {
+  router.get('/generator/status', (_req, res) => {
+    const generator = activeGenerator();
+    res.json({
+      provider: WEBSITE_GENERATOR_PROVIDER,
+      model: generator.model,
+      enabled: Boolean(generator.apiKey),
+    });
+  });
+
   router.get('/slug-check', async (req, res) => {
     try {
       const slug = sanitizeSlug(req.query.slug);
@@ -816,8 +856,11 @@ function mountGenerateRoutes(router) {
 
   router.post('/generate', authMiddleware, async (req, res) => {
     try {
-      if (!OPENROUTER_API_KEY) {
-        return res.status(503).json({ error: 'AI generation not configured (OPENROUTER_API_KEY missing)' });
+      const generator = activeGenerator();
+      if (!generator.apiKey) {
+        return res.status(503).json({
+          error: `AI generation not configured (${WEBSITE_GENERATOR_PROVIDER.toUpperCase()} API key missing)`,
+        });
       }
       const pool = getPool();
       if (!pool) {
@@ -857,7 +900,7 @@ function mountGenerateRoutes(router) {
         chosenSlug = wanted;
       }
 
-      const content = await callOpenRouter([
+      const content = await callWebsiteGenerator([
         { role: 'system', content: buildSystemPrompt() },
         { role: 'user', content: buildUserPrompt({ niche, vibe, feature, prompt, businessName, requirements, consultantBrief }) },
       ]);
@@ -906,4 +949,12 @@ function mountGenerateRoutes(router) {
   });
 }
 
-module.exports = { mountGenerateRoutes, sanitizeSlug, RESERVED_SLUGS, uniqueSlug, makeSlugBase, NICHE_NAMES };
+module.exports = {
+  mountGenerateRoutes,
+  sanitizeSlug,
+  RESERVED_SLUGS,
+  uniqueSlug,
+  makeSlugBase,
+  NICHE_NAMES,
+  activeGenerator,
+};
