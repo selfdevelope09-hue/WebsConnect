@@ -36,6 +36,11 @@ const NICHE_NAMES = {
   printing: 'Printing, Signage & Packaging Solutions',
   gadgets: 'Electronics Repair & Refurbished Gadgets',
   driving: 'Driving School & RTO Consultancy',
+  cleaning: 'Cleaning, Housekeeping & Pest Control',
+  mobileshop: 'Mobile Accessories, SIM & DTH Agency',
+  solar: 'Solar Panel Dealer & Renewable Energy',
+  gifts: 'Gift Shop, Custom Printing & Trophies',
+  tutor: 'Private Tutor & Language Classes',
 };
 
 // ── Category page blueprints ──────────────────────────────────
@@ -384,6 +389,90 @@ PAGE 3 — INSTRUCTORS, REVIEWS & ADMISSION (===PAGE:contact===):
 - Office address + map link + admission advance UPI QR (only if supplied).`,
 };
 
+const CLEANING_BLUEPRINT = {
+  second: 'packages',
+  text: `PAGE 1 — HOME (===PAGE:index===):
+- Hero: sparkling clean home/office photo, headline like "100% Odorless Pest Control & Deep Home Cleaning", CTAs: "Book Cleaning Slot" → /contact and "Get Instant Estimate" → /packages.
+- Trust badges: Eco-Friendly Chemicals | Safe for Kids & Pets | Verified Staff (govt approval only if supplied).
+- Top services grid: Deep Home Cleaning, Sofa/Carpet Shampooing, Termite & Cockroach Control, Bathroom Disinfection (adapt).
+PAGE 2 — RATES & PACKAGES (===PAGE:packages===):
+- Package comparison cards: 1BHK / 2BHK / 3BHK deep cleaning rate cards with an included-items checklist (balcony, kitchen, windows, washrooms).
+- Pest control treatments: Single Service vs Annual Maintenance Contract (AMC, e.g. 3 services/year) with warranty period (only supplied warranty claims).
+- Equipment & safety section: steam machines, vacuum tech, chemical safety practices.
+PAGE 3 — VERIFICATION, REVIEWS & BOOKING (===PAGE:contact===):
+- Staff trust section: background-checked and ID-verified workers (qualitative unless specifics supplied).
+- Customer reviews: before/after cleaning photos with star ratings.
+- Booking form: property size select (1/2/3BHK/Office), service type select, preferred date (input type=date) & time slot — submit opens WhatsApp with everything pre-filled.
+- Map link (https://maps.google.com/?q=<address>) + slot reservation UPI QR (only if UPI ID supplied; use https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=<url-encoded upi://pay?pa=UPIID&pn=NAME>).`,
+};
+
+const MOBILE_SHOP_BLUEPRINT = {
+  second: 'catalog',
+  text: `PAGE 1 — HOME (===PAGE:index===):
+- Hero: store interior with covers & gadgets, headline like "Premium Covers, Tempered Glass, Fast Chargers & New Connections", CTAs: "Order on WhatsApp" (wa.me) and "View Hot Deals" → /catalog.
+- Quick action buttons: New SIM Porting | DTH Recharge | Screen Guard Replacement | Wireless Earbuds (adapt to supplied services).
+- Hot deals banner: current offers (use supplied offers or an editable placeholder).
+PAGE 2 — PRODUCTS & SERVICES (===PAGE:catalog===):
+- Product catalog grid with category filter tabs (working vanilla JS): back covers (Silicone/Armor/MagSafe), TWS earbuds, power banks, smartwatches — each with price and a "Buy on WhatsApp" button that pre-fills the product name.
+- Utility services rate card: SIM porting charges (Jio/Airtel/Vi), DTH connection rates, data recovery fees (adapt to supplied services).
+PAGE 3 — STORE, REVIEWS & ORDER (===PAGE:contact===):
+- Shop showcase: store inventory and counter photos.
+- Customer reviews: genuine products and fast service feedback.
+- Quick order form: phone model input, required accessory/service, color preference — submit opens WhatsApp with the order pre-filled.
+- Shop map link + UPI QR for instant payments (only if supplied).`,
+};
+
+const SOLAR_BLUEPRINT = {
+  second: 'systems',
+  text: `PAGE 1 — HOME (===PAGE:index===):
+- Hero: rooftop solar panels photo, headline like "Reduce Your Monthly Electricity Bill to ₹0 with Govt Subsidized Solar Systems", CTAs: "Calculate Solar Savings" → /systems and "Book Free Site Survey" → /contact.
+- Key highlights: Govt Subsidy (PM Surya Ghar scheme), panel performance warranty, net metering assistance — subsidy percentages and warranty years only as supplied or described generically.
+- Trust counters: use ONLY supplied numbers (installations, savings); otherwise qualitative badges.
+PAGE 2 — SYSTEMS & SAVINGS (===PAGE:systems===):
+- System variant cards: On-Grid (3kW/5kW/10kW) for homes with monthly generation units and subsidy benefits; Off-Grid with battery backup for power-cut areas (adapt to offerings).
+- Savings calculator: dropdown of monthly bill ranges that shows estimated system size and payback with vanilla JS (mark as estimates).
+- ROI & payback timeline: simple visual showing the system paying for itself in 3-4 years.
+PAGE 3 — APPROVALS, REVIEWS & SURVEY (===PAGE:contact===):
+- Certifications & empanelment: authorized dealer badges and state electricity board empanelment — ONLY if supplied.
+- Customer testimonials: homeowners with reduced electricity bills.
+- Free site survey form: monthly bill amount (₹), roof area (sq.ft), connection type select (Residential/Commercial) — submit opens WhatsApp with everything pre-filled for the solar engineer.
+- Office map link + survey/booking advance UPI QR (only if supplied).`,
+};
+
+const GIFTS_BLUEPRINT = {
+  second: 'catalog',
+  text: `PAGE 1 — HOME (===PAGE:index===):
+- Hero: customized mugs/trophies/frames display, headline like "Personalized Photo Gifts, Corporate Trophies & Birthday Surprises", CTAs: "Create Custom Gift" → /contact and "View Catalog" → /catalog.
+- Occasion quick links: Birthday | Anniversary | Corporate | Valentine's | Graduation (link to catalog sections/anchors).
+- Express banner: same-day delivery availability (only if supplied).
+PAGE 2 — CATALOG & PERSONALIZATION (===PAGE:catalog===):
+- Category showcase with filter tabs (working vanilla JS): Personalized Photo Items (LED acrylic frames, magic mugs, wooden engravings, keychains), Corporate & Event Trophies (crystal awards, plaques, medals with bulk discounts), Hampers & Flowers (chocolate boxes, bouquets, combos).
+- Each product card: image, name, price, and a "Customize on WhatsApp" button with the product pre-filled.
+- Customization guidelines: image resolution requirements and engraving character limits.
+PAGE 3 — GALLERY, REVIEWS & CUSTOM ORDER (===PAGE:contact===):
+- Sample portfolio: finished personalized items and corporate orders.
+- Customer testimonials: print quality and packing feedback.
+- Custom order form: receiver name, occasion select, product type select, custom message — submit opens WhatsApp; add a "Send Photo/Design on WhatsApp" button.
+- Shop map link + advance payment UPI QR (only if supplied).`,
+};
+
+const TUTOR_BLUEPRINT = {
+  second: 'courses',
+  text: `PAGE 1 — HOME (===PAGE:index===):
+- Hero: interactive classroom/online session photo, headline like "Speak Fluent English, Master German/French or Crack IELTS in 60 Days" (adapt to subjects), CTAs: "Book Free Demo Class" → /contact and "View Courses" → /courses.
+- USPs: 1-on-1 Personal Attention | Certified Trainers | Flexible Batches (Online & Offline) — adapt.
+- Stats: use ONLY supplied numbers (students trained, top scores, success rates); otherwise qualitative badges.
+PAGE 2 — COURSES & BATCHES (===PAGE:courses===):
+- Course cards: Spoken English & Personality Development (Basic/Intermediate/Advanced), Foreign Languages (German A1-B2, French, Spanish — adapt), IELTS/TOEFL Prep with module breakdown + mock tests.
+- Batch schedule timetable: Morning, Evening, Weekend batches (use supplied timings).
+- Fee structure per course (use supplied pricing style).
+PAGE 3 — SUCCESS STORIES & DEMO REGISTRATION (===PAGE:contact===):
+- Trainer profiles: qualifications and experience (only supplied facts).
+- Student reviews: score/success story cards.
+- Free demo registration form: student name, course select, mode select (Online/In-person), preferred time slot — submit opens WhatsApp with the registration pre-filled.
+- Institute map link + course fee advance UPI QR (only if supplied).`,
+};
+
 const CATEGORY_BLUEPRINTS = {
   food: FOOD_BLUEPRINT,
   bakery: FOOD_BLUEPRINT,
@@ -410,6 +499,11 @@ const CATEGORY_BLUEPRINTS = {
   printing: PRINTING_BLUEPRINT,
   gadgets: GADGET_REPAIR_BLUEPRINT,
   driving: DRIVING_BLUEPRINT,
+  cleaning: CLEANING_BLUEPRINT,
+  mobileshop: MOBILE_SHOP_BLUEPRINT,
+  solar: SOLAR_BLUEPRINT,
+  gifts: GIFTS_BLUEPRINT,
+  tutor: TUTOR_BLUEPRINT,
 };
 
 function buildSystemPrompt() {
@@ -571,15 +665,15 @@ function mountGenerateRoutes(router) {
     try {
       const slug = sanitizeSlug(req.query.slug);
       if (!slug || slug.length < 3) {
-        return res.json({ available: false, slug, reason: 'Kam se kam 3 characters chahiye' });
+        return res.json({ available: false, slug, reason: 'At least 3 characters required' });
       }
       if (RESERVED_SLUGS.has(slug)) {
-        return res.json({ available: false, slug, reason: 'Yeh naam reserved hai' });
+        return res.json({ available: false, slug, reason: 'This name is reserved' });
       }
       const pool = getPool();
       if (!pool) return res.status(503).json({ error: 'Database unavailable' });
       const { rows } = await pool.query('SELECT 1 FROM sites WHERE slug = $1', [slug]);
-      res.json({ available: !rows.length, slug, reason: rows.length ? 'Yeh domain already taken hai' : '' });
+      res.json({ available: !rows.length, slug, reason: rows.length ? 'This domain is already taken' : '' });
     } catch (err) {
       console.error('slug-check:', err.message);
       res.status(500).json({ error: 'Check failed' });
@@ -606,11 +700,11 @@ function mountGenerateRoutes(router) {
       const wanted = sanitizeSlug(desiredSlug);
       if (wanted && wanted.length >= 3) {
         if (RESERVED_SLUGS.has(wanted)) {
-          return res.status(409).json({ error: `"${wanted}" reserved hai — doosra naam choose karo.` });
+          return res.status(409).json({ error: `"${wanted}" is reserved — please choose another name.` });
         }
         const { rows } = await pool.query('SELECT 1 FROM sites WHERE slug = $1', [wanted]);
         if (rows.length) {
-          return res.status(409).json({ error: `"${wanted}.${ROOT_DOMAIN}" already taken hai — doosra naam try karo.` });
+          return res.status(409).json({ error: `"${wanted}.${ROOT_DOMAIN}" is already taken — please try another name.` });
         }
         chosenSlug = wanted;
       }

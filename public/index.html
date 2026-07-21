@@ -75,7 +75,14 @@
       transition: background .15s;
     }
     .menu-item:active { background: rgba(255,255,255,.06); }
-    .menu-ico { font-size: 17px; width: 24px; text-align: center; }
+    .menu-ico {
+      width: 34px; height: 34px; flex-shrink: 0;
+      display: inline-flex; align-items: center; justify-content: center;
+      border-radius: 10px; background: rgba(30,144,255,.10);
+      border: 1px solid rgba(30,144,255,.22); color: #7dd3fc;
+    }
+    .menu-ico svg { width: 17px; height: 17px; }
+    .menu-ico-danger { background: rgba(248,113,113,.10); border-color: rgba(248,113,113,.25); color: #f87171; }
     #side-menu.open { transform: translateX(0); }
     .tf-input {
       margin-top: 6px; width: 100%; border-radius: 12px;
@@ -205,12 +212,12 @@
     <section class="px-4 mt-6">
       <h2 class="font-bold text-sm mb-3">Why WebsConnect?</h2>
       <div class="grid grid-cols-2 gap-2.5">
-        <div class="rounded-2xl bg-card border border-white/10 p-3"><div class="text-lg">⚡</div><p class="text-xs font-semibold mt-1">AI Website in 60 Sec</p></div>
-        <div class="rounded-2xl bg-card border border-white/10 p-3"><div class="text-lg">📱</div><p class="text-xs font-semibold mt-1">Mobile-First Design</p></div>
-        <div class="rounded-2xl bg-card border border-white/10 p-3"><div class="text-lg">📈</div><p class="text-xs font-semibold mt-1">Built-in SEO</p></div>
-        <div class="rounded-2xl bg-card border border-white/10 p-3"><div class="text-lg">🌐</div><p class="text-xs font-semibold mt-1">Custom Domain</p></div>
-        <div class="rounded-2xl bg-card border border-white/10 p-3"><div class="text-lg">☁️</div><p class="text-xs font-semibold mt-1">Hosting Included</p></div>
-        <div class="rounded-2xl bg-card border border-white/10 p-3"><div class="text-lg">🎧</div><p class="text-xs font-semibold mt-1">24/7 Support</p></div>
+        <div class="rounded-2xl bg-card border border-white/10 p-3"><span class="menu-ico"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M13 3L5 13.5h5L10.5 21 19 10.5h-5L13 3z"/></svg></span><p class="text-xs font-semibold mt-2">AI Website in 60 Sec</p></div>
+        <div class="rounded-2xl bg-card border border-white/10 p-3"><span class="menu-ico"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><rect x="7" y="3" width="10" height="18" rx="2"/><path stroke-linecap="round" d="M11 18h2"/></svg></span><p class="text-xs font-semibold mt-2">Mobile-First Design</p></div>
+        <div class="rounded-2xl bg-card border border-white/10 p-3"><span class="menu-ico"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4 19h16M6 16l4-5 3 3 5-7"/><path stroke-linecap="round" d="M15 7h3v3"/></svg></span><p class="text-xs font-semibold mt-2">Built-in SEO</p></div>
+        <div class="rounded-2xl bg-card border border-white/10 p-3"><span class="menu-ico"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path stroke-linecap="round" d="M3 12h18M12 3c2.5 2.5 3.5 5.5 3.5 9S14.5 18.5 12 21c-2.5-2.5-3.5-5.5-3.5-9S9.5 5.5 12 3z"/></svg></span><p class="text-xs font-semibold mt-2">Custom Domain</p></div>
+        <div class="rounded-2xl bg-card border border-white/10 p-3"><span class="menu-ico"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M7 18a4 4 0 01-.9-7.9 5.5 5.5 0 0110.7-1.2A4.5 4.5 0 0116.5 18H7z"/></svg></span><p class="text-xs font-semibold mt-2">Hosting Included</p></div>
+        <div class="rounded-2xl bg-card border border-white/10 p-3"><span class="menu-ico"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4 13a8 8 0 0116 0m-16 0v4a2 2 0 002 2h1v-6H6a2 2 0 00-2 2zm16 0v4a2 2 0 01-2 2h-1v-6h1a2 2 0 012 2z"/></svg></span><p class="text-xs font-semibold mt-2">24/7 Support</p></div>
       </div>
     </section>
 
@@ -234,10 +241,21 @@
       </button>
       <div>
         <p class="text-[10px] font-semibold uppercase tracking-wider text-sky-300">Template Gallery</p>
-        <h1 class="text-lg font-extrabold leading-tight">📸 Photography Templates</h1>
+        <h1 class="text-lg font-extrabold leading-tight">Website Templates</h1>
       </div>
     </header>
-    <p class="px-4 text-xs text-muted">Template pasand karo → apni details do → AI tumhare naam, phone aur style ke saath website bana dega.</p>
+    <p class="px-4 text-xs text-muted">Pick a template → add your details → AI builds your website with your name, phone and style.</p>
+    <div class="px-4 mt-4">
+      <div class="flex items-center gap-2 bg-card border border-white/10 rounded-2xl px-3.5 py-1 focus-within:border-accent/40 transition">
+        <svg class="w-4 h-4 text-slate-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path stroke-linecap="round" d="M20 20l-3.5-3.5"/></svg>
+        <input id="template-search" type="text" placeholder="Search templates — e.g. photo, wedding, minimal..."
+          class="flex-1 bg-transparent text-sm outline-none placeholder:text-slate-500 py-2.5" autocomplete="off" />
+        <button id="template-search-clear" class="hidden w-7 h-7 shrink-0 rounded-full bg-white/5 border border-white/10 flex items-center justify-center" aria-label="Clear search">
+          <svg class="w-3.5 h-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </div>
+      <p id="template-search-empty" class="hidden mt-4 text-center text-xs text-muted">No templates match your search. Try “photo”, “wedding” or “minimal”.</p>
+    </div>
     <div id="templates-list" class="px-4 mt-4 space-y-4"></div>
   </div>
 
@@ -248,7 +266,7 @@
         <svg class="w-5 h-5 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
       </button>
       <div class="min-w-0 flex-1">
-        <p class="text-[10px] font-semibold uppercase tracking-wider text-sky-300">Live Preview · sab buttons kaam karte hain</p>
+        <p class="text-[10px] font-semibold uppercase tracking-wider text-sky-300">Live Preview · all buttons work</p>
         <h2 id="tpl-preview-title" class="font-bold text-sm truncate"></h2>
       </div>
     </header>
@@ -272,7 +290,7 @@
       </header>
       <div class="flex-1 px-4 py-5">
         <div id="template-modal-preview"></div>
-        <p class="mt-4 text-xs text-muted leading-relaxed">Apni details bharo — AI inhe template mein daal ke tumhari personal website banayega. Sirf Studio Name zaroori hai, baaki optional.</p>
+        <p class="mt-4 text-xs text-muted leading-relaxed">Fill in your details — AI will apply them to this template and build your personal website. Only Studio Name is required, everything else is optional.</p>
         <div class="mt-4 space-y-3">
           <div>
             <label class="text-[11px] font-semibold text-slate-300">Studio / Business Name <span class="text-red-400">*</span></label>
@@ -309,22 +327,22 @@
             <input id="tf-services" type="text" placeholder="e.g. Wedding, Pre-wedding, Maternity, Events" class="tf-input" />
           </div>
           <div class="rounded-xl border border-brand/25 bg-brand/5 p-3">
-            <label class="text-[11px] font-semibold text-sky-300">🌐 Apna Free Domain Choose Karo</label>
+            <label class="text-[11px] font-semibold text-sky-300">🌐 Choose Your Free Domain</label>
             <div class="flex items-center gap-2">
               <input id="tf-domain" type="text" placeholder="e.g. lenscraft" autocapitalize="none" autocomplete="off" class="tf-input flex-1 min-w-0" />
               <span class="text-xs text-muted shrink-0 mt-1.5">.websconnect.in</span>
             </div>
             <p id="tf-domain-status" class="text-[11px] mt-1.5 min-h-[14px]"></p>
-            <p class="text-[10px] text-muted mt-0.5">Khali chhodo toh hum studio name se auto bana denge.</p>
+            <p class="text-[10px] text-muted mt-0.5">Leave empty and we'll auto-create one from your studio name.</p>
           </div>
           <div>
-            <label class="text-[11px] font-semibold text-slate-300">AI ko aur kya batana hai? (Custom changes)</label>
-            <textarea id="tf-extra" rows="3" placeholder="e.g. Pricing section chahiye, Starting ₹15,000. Hindi tagline daalna. 10 saal ka experience mention karna." class="tf-input resize-none"></textarea>
+            <label class="text-[11px] font-semibold text-slate-300">Anything else for the AI? (Custom changes)</label>
+            <textarea id="tf-extra" rows="3" placeholder="e.g. Add a pricing section starting at ₹15,000. Mention 10 years of experience." class="tf-input resize-none"></textarea>
           </div>
         </div>
         <p id="template-error" class="hidden mt-3 text-xs text-red-400"></p>
         <button id="btn-template-generate" class="mt-5 w-full py-3.5 rounded-2xl font-bold text-sm bg-gradient-to-r from-blue-500 to-blue-700 text-white glow-btn active:scale-[.98] transition">Generate My Website ✨</button>
-        <p class="mt-3 text-center text-[10px] text-muted mb-4">AI ~60 seconds mein tumhari live website bana dega</p>
+        <p class="mt-3 text-center text-[10px] text-muted mb-4">AI will build your live website in ~60 seconds</p>
       </div>
     </div>
   </div>
@@ -359,14 +377,14 @@
         <span class="logo-badge w-16 h-16 mx-auto"><img src="/logo.png" alt="WebsConnect" /></span>
         <h3 class="mt-4 text-lg font-bold">Continue with Google</h3>
         <p class="mt-1.5 text-xs text-muted leading-relaxed">
-          Browse free as guest. Website build &amp; save ke liye Google login zaroori hai.
+          Browse free as a guest. Google login is required to build &amp; save your website.
         </p>
         <p id="guest-badge" class="mt-2 text-[10px] text-slate-500 font-mono"></p>
       </div>
       <div id="google-btn-wrap" class="mt-5 flex justify-center min-h-[44px]"></div>
       <p id="login-error" class="hidden mt-3 text-xs text-red-400 text-center"></p>
       <p id="login-setup-hint" class="hidden mt-3 text-[11px] text-amber-300/90 text-center leading-relaxed"></p>
-      <button id="btn-login-close" class="mt-4 w-full py-2.5 text-xs text-muted">Pehle browse karo — baad mein login</button>
+      <button id="btn-login-close" class="mt-4 w-full py-2.5 text-xs text-muted">Browse first — log in later</button>
     </div>
   </div>
 
@@ -460,18 +478,36 @@
       </div>
     </div>
     <nav class="flex-1 overflow-y-auto hide-scrollbar py-2">
-      <button class="menu-item" data-page="about"><span class="menu-ico">🏢</span>About</button>
-      <button class="menu-item" data-page="founder"><span class="menu-ico">🚀</span>Founder</button>
-      <button class="menu-item" data-page="blogs"><span class="menu-ico">📝</span>Blogs</button>
+      <button class="menu-item" data-page="about">
+        <span class="menu-ico"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4 21V5a2 2 0 012-2h8a2 2 0 012 2v16M4 21h16M9 7h2m-2 4h2m-2 4h2m5-5h4a1 1 0 011 1v10"/></svg></span>About
+      </button>
+      <button class="menu-item" data-page="founder">
+        <span class="menu-ico"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15c4.5-2 7-6.5 7-11-4.5 0-9 2.5-11 7m4 4l-4-4m4 4l-1.5 4.5L8 17m-1-1l-3.5-2.5L8 12m-2.5 6.5c-.5 1.5-1 2.5-1 2.5s1-.5 2.5-1"/><circle cx="14.5" cy="9.5" r="1.5"/></svg></span>Founder
+      </button>
+      <button class="menu-item" data-page="blogs">
+        <span class="menu-ico"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M5 4h11a2 2 0 012 2v13.5a1.5 1.5 0 01-3 0V6H5a1 1 0 00-1 1v12a2 2 0 002 2h11.5M8 9h6m-6 4h6"/></svg></span>Blogs
+      </button>
       <div class="my-2 mx-5 border-t border-white/10"></div>
-      <button class="menu-item" data-page="orders"><span class="menu-ico">📦</span>Orders</button>
-      <button class="menu-item" data-page="payments"><span class="menu-ico">💳</span>Payments</button>
+      <button class="menu-item" data-page="orders">
+        <span class="menu-ico"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M20 8l-8-4-8 4m16 0v8l-8 4m8-12l-8 4m-8-4v8l8 4m-8-12l8 4m0 8V12"/></svg></span>Orders
+      </button>
+      <button class="menu-item" data-page="payments">
+        <span class="menu-ico"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><rect x="3" y="6" width="18" height="13" rx="2"/><path stroke-linecap="round" d="M3 10h18M7 15h4"/></svg></span>Payments
+      </button>
       <div class="my-2 mx-5 border-t border-white/10"></div>
-      <button class="menu-item" data-page="support"><span class="menu-ico">🛟</span>Support</button>
-      <button class="menu-item" data-page="contact"><span class="menu-ico">📞</span>Contact Us</button>
+      <button class="menu-item" data-page="support">
+        <span class="menu-ico"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4 13a8 8 0 0116 0m-16 0v4a2 2 0 002 2h1v-6H6a2 2 0 00-2 2zm16 0v4a2 2 0 01-2 2h-1v-6h1a2 2 0 012 2zm-3 6.5c0 1-1.5 1.5-4 1.5"/></svg></span>Support
+      </button>
+      <button class="menu-item" data-page="contact">
+        <span class="menu-ico"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M5 4h3.5l1.5 4.5-2 1.5a12 12 0 006 6l1.5-2L20 15.5V19a2 2 0 01-2.2 2A16 16 0 013 6.2 2 2 0 015 4z"/></svg></span>Contact Us
+      </button>
       <div class="my-2 mx-5 border-t border-white/10"></div>
-      <button class="menu-item" data-page="privacy"><span class="menu-ico">🔒</span>Privacy Policy</button>
-      <button class="menu-item" data-page="disclaimer"><span class="menu-ico">⚠️</span>Disclaimer</button>
+      <button class="menu-item" data-page="privacy">
+        <span class="menu-ico"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3l7 3v5c0 4.5-3 8.5-7 10-4-1.5-7-5.5-7-10V6l7-3z"/><path stroke-linecap="round" stroke-linejoin="round" d="M9.5 12l2 2 3.5-4"/></svg></span>Privacy Policy
+      </button>
+      <button class="menu-item" data-page="disclaimer">
+        <span class="menu-ico"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4L2.5 20h19L12 4z"/><path stroke-linecap="round" d="M12 10v4m0 3v.01"/></svg></span>Disclaimer
+      </button>
     </nav>
     <div class="p-4 border-t border-white/10">
       <button id="btn-logout" class="hidden w-full py-3 rounded-xl text-sm font-semibold text-red-400 bg-red-500/10 border border-red-500/20 active:scale-[0.98] transition">Log Out</button>
@@ -512,7 +548,7 @@
     const CORE_QUESTIONS = [
       {
         id: 'category', section: 'Step 1 · Core Business Identification',
-        question: 'Which best describes your business?', help: 'Apni primary business category select karein.',
+        question: 'Which best describes your business?', help: 'Select your primary business category.',
         options: [
           ['🍩 Food, Restaurant & Cafe', 'food'], ['💈 Salon, Spa & Beauty Care', 'salon'],
           ['🏋️ Gym, Fitness & Yoga Center', 'gym'], ['👗 Fashion, Clothing & Boutique', 'fashion'],
@@ -532,20 +568,25 @@
           ['🖨️ Printing, Signage & Packaging', 'printing'],
           ['📱 Electronics Repair & Refurbished', 'gadgets'],
           ['🚗 Driving School & RTO Consultant', 'driving'],
+          ['🧼 Cleaning, Housekeeping & Pest Control', 'cleaning'],
+          ['🛍️ Mobile Accessories, SIM & DTH Shop', 'mobileshop'],
+          ['☀️ Solar Panels & Renewable Energy', 'solar'],
+          ['🎁 Gift Shop, Custom Prints & Trophies', 'gifts'],
+          ['🗣️ Private Tutor & Language Classes', 'tutor'],
           ['✍️ Write Custom Category', 'custom', 'text', 'Enter your business category']
         ]
       },
       {
         id: 'businessStage', section: 'Step 1 · Core Business Identification',
-        question: 'Aapka business kitna purana hai?', help: 'This helps AI choose the right trust messaging.',
+        question: 'How old is your business?', help: 'This helps AI choose the right trust messaging.',
         options: [
-          ['🚀 Brand New (Abhi start kar rahe hain)', 'brand-new'], ['🟢 1 to 3 Years Old', '1-3-years'],
+          ['🚀 Brand New (Just starting out)', 'brand-new'], ['🟢 1 to 3 Years Old', '1-3-years'],
           ['⭐ Established (3+ Years)', 'established'], ['✍️ Custom Status', 'custom', 'text', 'Describe your business stage']
         ]
       },
       {
         id: 'targetAudience', section: 'Step 1 · Core Business Identification',
-        question: 'Aapki website par zyada tar kaun aane waale hain?', help: 'Choose your main customer group.',
+        question: 'Who will visit your website the most?', help: 'Choose your main customer group.',
         options: [
           ['📍 Local Area Residents', 'local-residents'], ['🧑‍🎓 Youth & College Students', 'youth-students'],
           ['👔 Corporate Professionals & B2B Clients', 'corporate-b2b'], ['👨‍👩‍👧 Families & Home Owners', 'families'],
@@ -554,7 +595,7 @@
       },
       {
         id: 'brandVibe', section: 'Step 2 · Branding, Design & Vibe',
-        question: 'Website ka overall mood kaisa dikhna chahiye?', help: 'AI will apply this personality across the complete website.',
+        question: 'What overall mood should your website have?', help: 'AI will apply this personality across the complete website.',
         options: [
           ['✨ Modern & Premium (Sleek, Clean, High-End)', 'modern-premium'],
           ['🔥 Bold & Energetic (Vibrant colors, High contrast)', 'bold-energetic'],
@@ -565,7 +606,7 @@
       },
       {
         id: 'colorTheme', section: 'Step 2 · Branding, Design & Vibe',
-        question: 'Aapko apni website pe kaunse colors chahiye?', help: 'Select one color system for a consistent brand.',
+        question: 'Which colors do you want on your website?', help: 'Select one color system for a consistent brand.',
         options: [
           ['🟦 Royal Blue & White', 'royal-blue-white'], ['⬛ Dark Gold & Black', 'dark-gold-black'],
           ['🟩 Emerald Green & White', 'emerald-green-white'], ['🟥 Fiery Red & Orange', 'red-orange'],
@@ -575,17 +616,17 @@
       },
       {
         id: 'primaryAction', section: 'Step 3 · Products, Services & Features',
-        question: 'Website par aakar customer sabse pehle kya kare?', help: 'This becomes the primary call-to-action.',
+        question: 'What should customers do first on your website?', help: 'This becomes the primary call-to-action.',
         options: [
-          ['💬 Directly WhatsApp par Message kare', 'whatsapp'], ['📲 Call Kare (Direct Phone Dial)', 'call'],
-          ['💳 Instant Online Payment / Order Kare (UPI QR)', 'upi-payment'],
-          ['📅 Appointment / Table Book Kare', 'booking'], ['📍 Google Maps Location dekhe', 'maps'],
+          ['💬 Message Directly on WhatsApp', 'whatsapp'], ['📲 Call (Direct Phone Dial)', 'call'],
+          ['💳 Instant Online Payment / Order (UPI QR)', 'upi-payment'],
+          ['📅 Book Appointment / Table', 'booking'], ['📍 View Google Maps Location', 'maps'],
           ['✍️ Custom Action Goal', 'custom', 'text', 'Describe your main conversion goal']
         ]
       },
       {
         id: 'offeringCount', section: 'Step 3 · Products, Services & Features',
-        question: 'Kitni services/products display karna chahte ho?', help: 'AI will create the matching content layout.',
+        question: 'How many services/products do you want to display?', help: 'AI will create the matching content layout.',
         options: [
           ['🎯 Single Hero Product / Service', 'single'], ['📦 3 to 5 Featured Products/Services', '3-5'],
           ['📚 6 to 10 Detailed Services List', '6-10'], ['📋 Full Catalog / Digital Menu', 'catalog'],
@@ -594,7 +635,7 @@
       },
       {
         id: 'trustProof', section: 'Step 3 · Products, Services & Features',
-        question: 'Customer ka bharosa jeetne ke liye kya dikhana hai?', help: 'You can select multiple trust signals.', multi: true,
+        question: 'What should we show to win customer trust?', help: 'You can select multiple trust signals.', multi: true,
         options: [
           ['⭐ Customer Reviews & Ratings', 'reviews'], ['🏆 Achievements & Years of Experience', 'achievements'],
           ['📜 Govt/Official Certificates & Badges', 'certificates'], ['🖼️ Before & After / Portfolio Gallery', 'portfolio'],
@@ -603,7 +644,7 @@
       },
       {
         id: 'contactInfo', section: 'Step 4 · Contact, Location & Payments',
-        question: 'Header/Footer me kaunsi contact details dikhani hain?', help: 'Select all that apply and enter exact details.', multi: true,
+        question: 'Which contact details should appear in the header/footer?', help: 'Select all that apply and enter exact details.', multi: true,
         options: [
           ['📱 WhatsApp Number', 'whatsapp', 'tel', 'e.g. +91 98765 43210'],
           ['📞 Calling Phone Number', 'phone', 'tel', 'e.g. +91 98765 43210'],
@@ -614,7 +655,7 @@
       },
       {
         id: 'paymentSetup', section: 'Step 4 · Contact, Location & Payments',
-        question: 'Kya aapko instant Payment option chahiye?', help: 'WebsConnect never stores banking passwords or card details.',
+        question: 'Do you want an instant payment option?', help: 'WebsConnect never stores banking passwords or card details.',
         options: [
           ['💳 Yes, Enable Native UPI QR Code', 'upi', 'text', 'Enter UPI ID e.g. 9876543210@paytm'],
           ['💬 No, Direct WhatsApp Billing Only', 'whatsapp-billing'],
@@ -623,7 +664,7 @@
       },
       {
         id: 'workingHours', section: 'Step 4 · Contact, Location & Payments',
-        question: 'Aapka business kab khula rehta hai?', help: 'These hours will appear in your contact section.',
+        question: 'When is your business open?', help: 'These hours will appear in your contact section.',
         options: [
           ['⏰ Open 24/7 (Online Business)', '24-7'], ['🗓️ Mon to Sat: 9:00 AM - 9:00 PM', 'mon-sat-9-9'],
           ['🗓️ Everyday: 10:00 AM - 10:00 PM', 'everyday-10-10'],
@@ -634,41 +675,51 @@
 
     const DYNAMIC_QUESTIONS = {
       food: [
-        { id: 'foodOrdering', question: 'Aap orders kaise accept karte hain?', options: [['Table Booking Only','table-booking'],['Takeaway / Pickup','pickup'],['Home Delivery via WhatsApp','whatsapp-delivery'],['Custom Food Service','custom','text','Describe your ordering mechanism']] },
-        { id: 'dietaryHighlight', question: 'Aapka dietary highlight kya hai?', options: [['100% Pure Veg','pure-veg'],['Veg & Non-Veg Both','veg-nonveg'],['Vegan / Organic Options Available','vegan-organic'],['Custom Food Tag','custom','text','Enter your dietary highlight']] }
+        { id: 'foodOrdering', question: 'How do you accept orders?', options: [['Table Booking Only','table-booking'],['Takeaway / Pickup','pickup'],['Home Delivery via WhatsApp','whatsapp-delivery'],['Custom Food Service','custom','text','Describe your ordering mechanism']] },
+        { id: 'dietaryHighlight', question: 'What is your dietary highlight?', options: [['100% Pure Veg','pure-veg'],['Veg & Non-Veg Both','veg-nonveg'],['Vegan / Organic Options Available','vegan-organic'],['Custom Food Tag','custom','text','Enter your dietary highlight']] }
       ],
       salon: 'booking', gym: 'booking', clinic: 'booking', auto: 'booking', legal: 'booking',
       interior: 'booking', petcare: 'booking', tailor: 'booking', coworking: 'booking', driving: 'booking',
+      cleaning: 'booking', tutor: 'booking',
+      mobileshop: [
+        { id: 'shopServices', question: 'What do you offer besides accessories?', options: [['SIM Cards & Porting', 'sim'], ['DTH & Recharge Services', 'dth'], ['Repairs & Screen Replacement', 'repairs'], ['Accessories Only', 'accessories-only'], ['Custom Services', 'custom', 'text', 'Describe your services']] }
+      ],
+      solar: [
+        { id: 'solarType', question: 'Which solar systems do you install?', options: [['On-Grid (Residential Rooftop)', 'on-grid'], ['Off-Grid (With Battery Backup)', 'off-grid'], ['Both On-Grid & Off-Grid', 'both'], ['Custom Systems', 'custom', 'text', 'Describe your systems']] }
+      ],
+      gifts: [
+        { id: 'giftFocus', question: 'What is your main product focus?', options: [['Personalized Photo Gifts', 'photo-gifts'], ['Corporate Trophies & Awards', 'trophies'], ['Hampers, Flowers & Combos', 'hampers'], ['Everything (Complete Gift Store)', 'all'], ['Custom Focus', 'custom', 'text', 'Describe your main products']] }
+      ],
       hardware: [
-        { id: 'hardwareCustomers', question: 'Aapke main customers kaun hain?', options: [['Retail (Ghar ke customers)','retail'],['Contractors & Builders (Wholesale)','wholesale'],['Dono (Retail + Wholesale)','both'],['Custom Customer Base','custom','text','Describe your customers']] }
+        { id: 'hardwareCustomers', question: 'Who are your main customers?', options: [['Retail (Home customers)','retail'],['Contractors & Builders (Wholesale)','wholesale'],['Both (Retail + Wholesale)','both'],['Custom Customer Base','custom','text','Describe your customers']] }
       ],
       printing: [
-        { id: 'printTurnaround', question: 'Aapki delivery speed kya hai?', options: [['Same-Day Printing Available','same-day'],['1-2 Din ka Standard Turnaround','1-2-days'],['Bulk Orders (3-7 Din)','bulk'],['Custom Turnaround','custom','text','Describe your delivery timeline']] }
+        { id: 'printTurnaround', question: 'What is your delivery speed?', options: [['Same-Day Printing Available','same-day'],['Standard 1-2 Day Turnaround','1-2-days'],['Bulk Orders (3-7 Days)','bulk'],['Custom Turnaround','custom','text','Describe your delivery timeline']] }
       ],
       gadgets: [
-        { id: 'repairMode', question: 'Aap repair service kaise dete hain?', options: [['Doorstep Repair (Ghar pe aake)','doorstep'],['Shop Par Le Aao','in-shop'],['Dono Options','both'],['Custom Service Mode','custom','text','Describe your repair service']] }
+        { id: 'repairMode', question: 'How do you provide repair service?', options: [['Doorstep Repair (We come to you)','doorstep'],['Bring to Shop','in-shop'],['Both Options','both'],['Custom Service Mode','custom','text','Describe your repair service']] }
       ],
       venue: [
-        { id: 'venueEvents', question: 'Aapke venue par kaunse events hote hain?', options: [['Weddings & Receptions','weddings'],['Corporate Events & Conferences','corporate'],['Sab Types (Weddings + Corporate + Parties)','all-events'],['Custom Event Types','custom','text','List your event types']] },
-        { id: 'venueCatering', question: 'Catering ka arrangement kya hai?', options: [['In-House Catering Only','in-house'],['Outside Caterers Allowed','outside-allowed'],['Dono Options Available','both'],['Custom Catering Rule','custom','text','Describe your catering policy']] }
+        { id: 'venueEvents', question: 'Which events happen at your venue?', options: [['Weddings & Receptions','weddings'],['Corporate Events & Conferences','corporate'],['All Types (Weddings + Corporate + Parties)','all-events'],['Custom Event Types','custom','text','List your event types']] },
+        { id: 'venueCatering', question: 'What is your catering arrangement?', options: [['In-House Catering Only','in-house'],['Outside Caterers Allowed','outside-allowed'],['Both Options Available','both'],['Custom Catering Rule','custom','text','Describe your catering policy']] }
       ],
       agri: [
-        { id: 'agriFocus', question: 'Aapka main product focus kya hai?', options: [['Seeds & Fertilizers','seeds-fertilizers'],['Plants & Nursery','nursery'],['Farm Equipment & Tools','equipment'],['Sab Kuch (Complete Agri Store)','all'],['Custom Focus','custom','text','Describe your main products']] }
+        { id: 'agriFocus', question: 'What is your main product focus?', options: [['Seeds & Fertilizers','seeds-fertilizers'],['Plants & Nursery','nursery'],['Farm Equipment & Tools','equipment'],['Everything (Complete Agri Store)','all'],['Custom Focus','custom','text','Describe your main products']] }
       ],
       movers: [
-        { id: 'moveScope', question: 'Aap kaunsi shifting services dete hain?', options: [['Local (Same City) Shifting','local'],['Intercity / All India','intercity'],['Local + Intercity Both','both'],['Custom Coverage','custom','text','Describe your coverage area']] }
+        { id: 'moveScope', question: 'Which shifting services do you provide?', options: [['Local (Same City) Shifting','local'],['Intercity / All India','intercity'],['Local + Intercity Both','both'],['Custom Coverage','custom','text','Describe your coverage area']] }
       ],
       education: [
-        { id: 'targetExams', question: 'Aap kaunse courses/exams cover karte hain?', options: [['JEE / NEET Coaching','jee-neet'],['School Syllabus (Class 5-12)','school'],['Skill / Language Courses','skills'],['Custom Courses','custom','text','List your courses or exams']] }
+        { id: 'targetExams', question: 'Which courses/exams do you cover?', options: [['JEE / NEET Coaching','jee-neet'],['School Syllabus (Class 5-12)','school'],['Skill / Language Courses','skills'],['Custom Courses','custom','text','List your courses or exams']] }
       ],
       creative: [
-        { id: 'workSamples', question: 'Kaunse primary work samples dikhane hain?', options: [['Photo & Video Gallery Grid','gallery'],['Case Studies & Client Results','case-studies'],['Video Embeds (YouTube / Instagram Reels)','video-embeds'],['Custom Media Requirement','custom','text','Describe your portfolio media']] }
+        { id: 'workSamples', question: 'Which primary work samples should we show?', options: [['Photo & Video Gallery Grid','gallery'],['Case Studies & Client Results','case-studies'],['Video Embeds (YouTube / Instagram Reels)','video-embeds'],['Custom Media Requirement','custom','text','Describe your portfolio media']] }
       ]
     };
 
     const BOOKING_QUESTIONS = [
-      { id: 'bookingPreference', question: 'Aapki booking preference kya hai?', options: [['Prior Appointment Mandatory','appointment'],['Walk-ins Welcome','walk-ins'],['Both Options','both'],['Custom Booking Rule','custom','text','Describe your booking rule']] },
-      { id: 'pricingDisplay', question: 'Website par prices kaise dikhane hain?', options: [['Show Exact Price List','exact-prices'],['Show “Starting From ₹XX”','starting-from'],['Hide Prices (Quote on Request)','quote-request'],['Custom Price Format','custom','text','Describe your price format']] }
+      { id: 'bookingPreference', question: 'What is your booking preference?', options: [['Prior Appointment Mandatory','appointment'],['Walk-ins Welcome','walk-ins'],['Both Options','both'],['Custom Booking Rule','custom','text','Describe your booking rule']] },
+      { id: 'pricingDisplay', question: 'How should prices appear on the website?', options: [['Show Exact Price List','exact-prices'],['Show “Starting From ₹XX”','starting-from'],['Hide Prices (Quote on Request)','quote-request'],['Custom Price Format','custom','text','Describe your price format']] }
     ];
 
     // ── Photography templates ──────────────────────────────────
@@ -676,70 +727,70 @@
       {
         id: 'noir-studio', name: 'Noir Studio', emoji: '🖤',
         tags: ['Dark & Moody', 'Luxury', 'Wedding'],
-        desc: 'Cinematic black & gold luxury portfolio — high-end wedding and editorial photographers ke liye.',
+        desc: 'Cinematic black & gold luxury portfolio — for high-end wedding and editorial photographers.',
         colors: { bg: '#0a0a0a', card: '#1a1a1a', accent: '#d4af37', text: '#ffffff' },
         spec: 'Ultra-dark monochrome luxury photography portfolio. Near-black #0A0A0A background, white typography, warm gold #D4AF37 accents on buttons and section titles. Elegant serif display headings (Playfair Display), light sans-serif body. Full-screen dark hero with studio name in large serif type, sticky transparent header, masonry portfolio grid with hover zoom, services in dark cards with thin gold borders, testimonials with oversized quote marks, WhatsApp CTA. Mood: cinematic, editorial, high-end wedding and portrait studio.'
       },
       {
         id: 'golden-hour', name: 'Golden Hour', emoji: '🌅',
         tags: ['Warm', 'Romantic', 'Pre-wedding'],
-        desc: 'Soft cream aur amber tones — romantic pre-wedding aur couple shoots ke liye perfect.',
+        desc: 'Soft cream and amber tones — perfect for romantic pre-wedding and couple shoots.',
         colors: { bg: '#fdf6ec', card: '#f7e8d0', accent: '#c98a2d', text: '#3d2c17' },
         spec: 'Warm romantic photography website. Cream #FDF6EC background, deep amber #C98A2D accents, dark brown text. Serif headings with italic romantic sub-taglines. Soft rounded cards, hero with warm gradient overlay on a golden-hour couple photo, love-story style about section, horizontal scrolling gallery, package cards with soft shadows, Instagram feed strip, WhatsApp booking button. Mood: golden hour, dreamy, romantic pre-wedding specialist.'
       },
       {
         id: 'minimal-frame', name: 'Minimal Frame', emoji: '⬜',
         tags: ['Minimal', 'Clean', 'Portfolio'],
-        desc: 'Pure white gallery-style minimal design — photos hi hero hain, koi distraction nahi.',
+        desc: 'Pure white gallery-style minimal design — your photos are the hero, zero distractions.',
         colors: { bg: '#ffffff', card: '#f4f4f4', accent: '#111111', text: '#111111' },
         spec: 'Ultra-minimal white photography portfolio like an art gallery. Pure white background, black text, generous whitespace, thin sans-serif typography (Inter/Helvetica), no decorative colors. Small understated header, large edge-to-edge photo grid (2-column masonry), photo captions on hover, simple about line, minimal contact footer with email and phone as plain text links. Mood: sophisticated fine-art photographer, let the photos speak.'
       },
       {
         id: 'bold-lens', name: 'Bold Lens', emoji: '💜',
         tags: ['Fashion', 'Vibrant', 'Editorial'],
-        desc: 'Neon purple-pink gradients — fashion, model portfolio aur creative shoots ke liye.',
+        desc: 'Neon purple-pink gradients — for fashion, model portfolios and creative shoots.',
         colors: { bg: '#12002b', card: '#26094a', accent: '#ff2d78', text: '#ffffff' },
         spec: 'Bold fashion photography website. Deep purple #12002B background with neon pink #FF2D78 and violet gradient accents, glassmorphism cards, oversized display typography with gradient text effects, diagonal section dividers, full-bleed fashion hero image, animated hover effects on portfolio tiles, bold stats strip (shoots done, brands worked with), Instagram reel embeds section, neon CTA buttons. Mood: edgy, high-fashion, editorial magazine energy.'
       },
       {
         id: 'urban-street', name: 'Urban Street', emoji: '🏙️',
         tags: ['Street', 'Gritty', 'Documentary'],
-        desc: 'Dark urban texture with orange pop — street aur documentary photographers ke liye.',
+        desc: 'Dark urban texture with orange pop — for street and documentary photographers.',
         colors: { bg: '#101418', card: '#1c232b', accent: '#ff6b35', text: '#e8e8e8' },
         spec: 'Urban street photography portfolio. Charcoal #101418 background, burnt orange #FF6B35 accents, condensed bold uppercase headings, monospace detail text, grain/noise texture feel, full-width city hero shot with bold overlay title, filmstrip-style horizontal gallery, photo-journal blog section, about section with photographer portrait, simple contact strip. Mood: raw, documentary, street culture.'
       },
       {
         id: 'wedding-bliss', name: 'Wedding Bliss', emoji: '💍',
         tags: ['Wedding', 'Pastel', 'Elegant'],
-        desc: 'Ivory-rose pastel elegance — traditional Indian wedding photography studios ke liye.',
+        desc: 'Ivory-rose pastel elegance — for traditional Indian wedding photography studios.',
         colors: { bg: '#fff7f8', card: '#fce9ee', accent: '#d96c82', text: '#4a2c33' },
         spec: 'Elegant Indian wedding photography website. Ivory #FFF7F8 background, rose #D96C82 accents, soft pastel florals feel, script font for romantic taglines with serif headings, hero with soft-focus wedding photo and overlay, services (Wedding, Pre-wedding, Engagement, Haldi/Mehendi coverage) in soft rounded cards, real wedding stories gallery section, testimonials from couples, packages section, prominent WhatsApp and call booking buttons. Mood: romantic, traditional-modern Indian weddings.'
       },
       {
         id: 'nature-focus', name: 'Nature Focus', emoji: '🌿',
         tags: ['Wildlife', 'Landscape', 'Earthy'],
-        desc: 'Earthy green natural tones — wildlife aur landscape photographers ke liye.',
+        desc: 'Earthy green natural tones — for wildlife and landscape photographers.',
         colors: { bg: '#f3f7f2', card: '#e2ede0', accent: '#2e6b3f', text: '#1d3324' },
         spec: 'Nature and wildlife photography portfolio. Soft sage #F3F7F2 background, forest green #2E6B3F accents, organic rounded shapes, hero with breathtaking landscape photo and centered title, category tabs (Wildlife, Landscape, Macro, Birds), large immersive photo grid, expedition/behind-the-scenes story section, print shop teaser section, contact form. Mood: calm, natural, National Geographic inspired.'
       },
       {
         id: 'studio-pro', name: 'Studio Pro', emoji: '💼',
         tags: ['Commercial', 'Product', 'Corporate'],
-        desc: 'Clean corporate blue — product, e-commerce aur brand photography studios ke liye.',
+        desc: 'Clean corporate blue — for product, e-commerce and brand photography studios.',
         colors: { bg: '#f5f8ff', card: '#e4ecff', accent: '#1d4ed8', text: '#101a33' },
         spec: 'Professional commercial photography studio website. Light #F5F8FF background, corporate blue #1D4ED8 accents, crisp modern sans-serif, structured grid layout, hero with studio product shot and clear value proposition, client logo strip, services (Product, E-commerce, Corporate headshots, Brand campaigns) with pricing-from labels, process timeline (Brief → Shoot → Edit → Deliver), portfolio case-study cards, strong quote-request CTA form. Mood: reliable, B2B, agency-grade professional.'
       },
       {
         id: 'little-moments', name: 'Little Moments', emoji: '👶',
         tags: ['Baby', 'Family', 'Soft'],
-        desc: 'Warm soft peach tones — newborn, baby aur family photographers ke liye.',
+        desc: 'Warm soft peach tones — for newborn, baby and family photographers.',
         colors: { bg: '#fffdf5', card: '#fdeedd', accent: '#f4a259', text: '#54402c' },
         spec: 'Newborn and family photography website. Warm cream #FFFDF5 background, soft peach #F4A259 accents, rounded friendly typography, gentle pastel illustrations/dots, hero with adorable baby photo and soft headline, sessions offered (Newborn, Baby milestones, Maternity, Family) as cute rounded cards with icons, safety-first trust section, gallery with rounded corners, parent testimonials, easy WhatsApp booking. Mood: warm, safe, family-friendly.'
       },
       {
         id: 'cinematic-reel', name: 'Cinematic Reel', emoji: '🎬',
         tags: ['Videography', 'Films', 'Dramatic'],
-        desc: 'Netflix-style dark red drama — wedding films aur cinematography ke liye.',
+        desc: 'Netflix-style dark red drama — for wedding films and cinematography.',
         colors: { bg: '#0d0d0f', card: '#1b1b20', accent: '#e50914', text: '#f5f5f5' },
         spec: 'Cinematic wedding films and videography website. Near-black #0D0D0F background, cinematic red #E50914 accents, widescreen 16:9 video-frame styled sections, bold condensed headings, hero styled like a movie poster with film title treatment of the studio name, showreel section with embedded video placeholders, film categories (Wedding films, Pre-wedding teasers, Corporate films), letterboxed gallery, awards/features strip, dramatic CTA. Mood: blockbuster movie, dramatic storytelling.'
       }
@@ -831,7 +882,7 @@
 
       if (!state.googleAuthEnabled || !state.googleClientId) {
         hint.classList.remove('hidden');
-        hint.innerHTML = 'Google login setup pending.<br/>Admin ko Google Cloud OAuth Client ID set karna hoga (<code>GOOGLE_CLIENT_ID</code>).';
+        hint.innerHTML = 'Google login setup pending.<br/>The admin needs to set a Google Cloud OAuth Client ID (<code>GOOGLE_CLIENT_ID</code>).';
         return;
       }
 
@@ -1124,10 +1175,20 @@
       return '<div class="tpl-mock" style="background:' + c.bg + '">' + inner + '</div>';
     }
 
-    function renderTemplates() {
+    function templateMatches(t, query) {
+      if (!query) return true;
+      const haystack = (t.name + ' ' + t.tags.join(' ') + ' ' + t.desc + ' ' + t.spec + ' photography photo camera studio website template').toLowerCase();
+      return query.toLowerCase().trim().split(/\s+/).every(function (word) {
+        return haystack.indexOf(word) !== -1;
+      });
+    }
+
+    function renderTemplates(query) {
       const list = $('templates-list');
       list.innerHTML = '';
-      TEMPLATES.forEach(function (t) {
+      const visible = TEMPLATES.filter(function (t) { return templateMatches(t, query); });
+      $('template-search-empty').classList.toggle('hidden', visible.length > 0);
+      visible.forEach(function (t) {
         const card = document.createElement('div');
         card.className = 'rounded-2xl bg-card border border-white/10 p-3.5';
         card.innerHTML =
@@ -1208,19 +1269,19 @@
       if (!t) return;
       const studio = $('tf-studio').value.trim();
       if (!studio) {
-        $('template-error').textContent = 'Studio / Business name zaroori hai.';
+        $('template-error').textContent = 'Studio / Business name is required.';
         $('template-error').classList.remove('hidden');
         $('tf-studio').focus();
         return;
       }
       if (state.slugInput) {
         if (state.slugStatus === 'taken') {
-          $('template-error').textContent = 'Chosen domain taken hai — doosra try karo ya khali chhodo.';
+          $('template-error').textContent = 'That domain is taken — try another or leave it empty.';
           $('template-error').classList.remove('hidden');
           return;
         }
         if (state.slugStatus !== 'available') {
-          $('template-error').textContent = 'Domain availability check hone do, ek second ruko.';
+          $('template-error').textContent = 'Please wait a second while we check domain availability.';
           $('template-error').classList.remove('hidden');
           return;
         }
@@ -1293,8 +1354,8 @@
       }));
       all.push({
         id: 'domain', type: 'domain', section: 'Step 6 · Your Free Domain',
-        question: '🌐 Apna website domain choose karo',
-        help: 'Agar available hoga toh website isi naam pe live hogi. Khali chhodo toh hum auto bana denge.',
+        question: '🌐 Choose your website domain',
+        help: 'If available, your website goes live on this exact name. Leave empty and we\'ll auto-create one.',
         options: [],
       });
       return all;
@@ -1315,7 +1376,7 @@
           return;
         }
         if (cleaned.length < 3) {
-          statusEl.textContent = 'Kam se kam 3 characters chahiye';
+          statusEl.textContent = 'At least 3 characters required';
           statusEl.className = statusEl.className.replace(/text-(emerald|red)-400/g, '') + ' text-muted';
           return;
         }
@@ -1333,7 +1394,7 @@
               statusEl.style.color = '#34d399';
             } else {
               state.slugStatus = 'taken';
-              statusEl.textContent = '✗ ' + (data.reason || 'Yeh domain available nahi hai');
+              statusEl.textContent = '✗ ' + (data.reason || 'This domain is not available');
               statusEl.style.color = '#f87171';
             }
           } catch (e) {
@@ -1460,9 +1521,9 @@
     function validateWizardQuestion(q) {
       if (q.type === 'domain') {
         if (!state.slugInput) return '';
-        if (state.slugInput.length < 3) return 'Domain kam se kam 3 characters ka hona chahiye.';
-        if (state.slugStatus === 'taken') return 'Yeh domain taken hai — doosra naam try karo ya khali chhodo.';
-        if (state.slugStatus !== 'available') return 'Availability check hone do, ek second ruko.';
+        if (state.slugInput.length < 3) return 'Domain must be at least 3 characters.';
+        if (state.slugStatus === 'taken') return 'This domain is taken — try another name or leave it empty.';
+        if (state.slugStatus !== 'available') return 'Please wait a second while we check availability.';
         return '';
       }
       const saved = state.choices.requirements[q.id];
@@ -1472,7 +1533,7 @@
         const raw = q.options.find(function (opt) { return opt[1] === item.value; });
         return raw?.[2] && !String(item.input || '').trim();
       });
-      return missing ? 'Selected detail ka input fill karna zaroori hai.' : '';
+      return missing ? 'Please fill in the details for your selected option.' : '';
     }
 
     function wizardNext() {
@@ -1650,6 +1711,17 @@
       $('wizard-back').addEventListener('click', wizardBack);
       $('wizard-next').addEventListener('click', wizardNext);
       $('btn-templates-back').addEventListener('click', showHome);
+      $('template-search').addEventListener('input', function () {
+        const q = this.value;
+        $('template-search-clear').classList.toggle('hidden', !q);
+        renderTemplates(q);
+      });
+      $('template-search-clear').addEventListener('click', function () {
+        $('template-search').value = '';
+        this.classList.add('hidden');
+        renderTemplates();
+        $('template-search').focus();
+      });
       $('btn-template-close').addEventListener('click', function () {
         $('template-modal').classList.add('hidden');
       });
@@ -2152,7 +2224,7 @@
       '<div class="text-center pt-16">' +
       '<div class="text-4xl mb-4">🚧</div>' +
       '<p class="font-semibold text-white">Coming soon</p>' +
-      '<p class="text-xs text-muted mt-2">Yeh page jald hi ready hoga.</p>' +
+      '<p class="text-xs text-muted mt-2">This page will be ready soon.</p>' +
       '</div>';
 
     function openMenu() {
