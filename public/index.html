@@ -986,7 +986,118 @@
       payments:   { title: 'Payments', html: '' },
       support:    { title: 'Support', html: '' },
       contact:    { title: 'Contact Us', html: '' },
-      privacy:    { title: 'Privacy Policy', html: '' },
+      privacy:    { title: 'Privacy Policy', html:
+        '<div class="space-y-5">' +
+          '<div class="text-center">' +
+            '<h1 class="text-lg font-extrabold text-white leading-tight">Privacy Policy</h1>' +
+            '<p class="text-xs text-muted mt-2">Effective Date: <span class="text-white">July 2026</span></p>' +
+            '<p class="text-xs text-muted mt-0.5">Platform: <span class="text-white">WebsConnect (websconnect.in)</span></p>' +
+            '<p class="text-xs text-muted mt-0.5">Parent Entity: <span class="text-white">Connect Ecosystem</span> (Founded by Atharva Darshanwar)</p>' +
+          '</div>' +
+
+          '<section>' +
+            '<h2 class="text-sm font-bold text-sky-300 mb-1.5">1. Introduction &amp; Overview</h2>' +
+            '<p>Welcome to WebsConnect (accessible via websconnect.in). Your privacy and data security are fundamental priorities for us. This Privacy Policy outlines how WebsConnect—operating as a mobile-first AI web creation SaaS under its parent entity Connect—collects, uses, processes, and protects your personal and business information.</p>' +
+            '<p class="mt-2.5">By accessing our platform, utilizing our conversational chat interface, or deploying micro-websites through our subdomains (username.websconnect.in), you consent to the data collection and processing practices described in this policy.</p>' +
+          '</section>' +
+
+          '<section>' +
+            '<h2 class="text-sm font-bold text-sky-300 mb-1.5">2. Information We Collect</h2>' +
+            '<p>To provide seamless, tap-based website generation and multi-tenant hosting, we collect minimal and specific data points:</p>' +
+            '<div class="mt-3 space-y-2.5">' +
+              '<div class="rounded-xl bg-card border border-white/10 p-3">' +
+                '<p class="text-white font-semibold">A. Session &amp; Conversational Inputs (User-Provided)</p>' +
+                '<ul class="mt-2 space-y-1.5 list-disc pl-4">' +
+                  '<li><span class="text-white">Chat Inputs &amp; MCQ Selections:</span> Business type, design preferences, selected color themes, business name, WhatsApp contact numbers, and UPI payment IDs provided during the onboarding session.</li>' +
+                  '<li><span class="text-white">Account/Identifier Details:</span> Mobile phone number or IP address used to track and store your ongoing generation session state.</li>' +
+                '</ul>' +
+              '</div>' +
+              '<div class="rounded-xl bg-card border border-white/10 p-3">' +
+                '<p class="text-white font-semibold">B. Technical &amp; Device Telemetry (Automatically Collected)</p>' +
+                '<ul class="mt-2 space-y-1.5 list-disc pl-4">' +
+                  '<li><span class="text-white">Device Characteristics:</span> Operating system, browser type, screen resolution, and mobile device parameters to ensure optimal responsive layout generation.</li>' +
+                  '<li><span class="text-white">Server Logs &amp; IP Addresses:</span> Standard web server logs capturing request timestamps, IP addresses, and routing parameters for security, performance monitoring, and anti-fraud checks.</li>' +
+                '</ul>' +
+              '</div>' +
+            '</div>' +
+          '</section>' +
+
+          '<section>' +
+            '<h2 class="text-sm font-bold text-sky-300 mb-1.5">3. How We Use Your Information</h2>' +
+            '<p>We use the collected data strictly for operational, technical, and service-delivery purposes:</p>' +
+            '<ul class="mt-2.5 space-y-1.5 list-disc pl-5">' +
+              '<li><span class="text-white font-semibold">AI Code Compilation:</span> Your business preferences and text inputs are formatted into structured system prompts to generate custom semantic source code (HTML/CSS/JS) via AI models.</li>' +
+              '<li><span class="text-white font-semibold">Instant Cloud Deployment:</span> Generated code is deployed automatically through cloud infrastructure APIs to assign dynamic subdomains (e.g., yourbusiness.websconnect.in).</li>' +
+              '<li><span class="text-white font-semibold">Session Restoration:</span> Storing your progress in our DigitalOcean database so you can resume your onboarding session without losing data.</li>' +
+              '<li><span class="text-white font-semibold">Platform Security:</span> Monitoring IP traffic to enforce daily generation limits, prevent spam/bot activity, and protect our servers from abuse.</li>' +
+            '</ul>' +
+          '</section>' +
+
+          '<section>' +
+            '<h2 class="text-sm font-bold text-sky-300 mb-1.5">4. Data Sharing &amp; Third-Party Processors</h2>' +
+            '<p>WebsConnect <span class="text-white font-semibold">does not sell, rent, or trade</span> your personal or business information to third-party marketers. However, to execute automated AI generation and cloud hosting, we share necessary operational data with verified cloud infrastructure providers:</p>' +
+            '<ul class="mt-3 space-y-2.5">' +
+              '<li class="rounded-xl bg-card border border-white/10 p-3"><span class="text-white font-semibold">Large Language Model (LLM) Partners (e.g., OpenRouter API):</span> Your text inputs and design choices are transmitted securely via API to process and return code. Third-party AI providers do not use your proprietary business inputs to train public models under our commercial API tier.</li>' +
+              '<li class="rounded-xl bg-card border border-white/10 p-3"><span class="text-white font-semibold">Edge Deployment Networks (e.g., Vercel / Cloudflare APIs):</span> Compiled source code is sent via API endpoints to provision SSL certificates and serve your live website globally.</li>' +
+              '<li class="rounded-xl bg-card border border-white/10 p-3"><span class="text-white font-semibold">Database &amp; Hosting (DigitalOcean):</span> User session state and deployment logs are encrypted and stored in secure cloud database clusters.</li>' +
+            '</ul>' +
+          '</section>' +
+
+          '<section>' +
+            '<h2 class="text-sm font-bold text-sky-300 mb-1.5">5. Cookies &amp; Local Tracking</h2>' +
+            '<p>WebsConnect uses minimal, essential functional cookies and browser local storage mechanisms:</p>' +
+            '<ul class="mt-2.5 space-y-1.5 list-disc pl-5">' +
+              '<li><span class="text-white font-semibold">Session Cookies:</span> Used exclusively to remember your active chat progress across page refreshes.</li>' +
+              '<li><span class="text-white font-semibold">Analytics &amp; Performance:</span> We may utilize lightweight, privacy-focused analytics tools to measure platform speed, button click rates, and drop-off points without tracking personal browsing history outside our domain.</li>' +
+            '</ul>' +
+          '</section>' +
+
+          '<section>' +
+            '<h2 class="text-sm font-bold text-sky-300 mb-1.5">6. Data Security &amp; Storage Measures</h2>' +
+            '<p>We enforce robust administrative and technological safeguards to protect your information:</p>' +
+            '<ul class="mt-2.5 space-y-1.5 list-disc pl-5">' +
+              '<li><span class="text-white font-semibold">Encryption in Transit:</span> All interactions between your mobile browser, our servers, and third-party APIs are encrypted using industry-standard Transport Layer Security (TLS/SSL).</li>' +
+              '<li><span class="text-white font-semibold">Restricted Access:</span> Access to backend databases and server environments is restricted exclusively to authorized core engineering personnel.</li>' +
+              '<li><span class="text-white font-semibold">No Unnecessary Storage:</span> We do not collect or store sensitive payment credentials (such as credit card numbers or banking passwords). Any UPI QR code integrated into your website routes payments directly between you and your customer without passing through our bank accounts.</li>' +
+            '</ul>' +
+          '</section>' +
+
+          '<section>' +
+            '<h2 class="text-sm font-bold text-sky-300 mb-1.5">7. User Rights &amp; Data Requests</h2>' +
+            '<p>As a user of WebsConnect, you maintain control over your digital footprint:</p>' +
+            '<ul class="mt-2.5 space-y-1.5 list-disc pl-5">' +
+              '<li><span class="text-white font-semibold">Correction &amp; Modification:</span> You can update or modify your business information at any time before finalizing your live subdomain activation.</li>' +
+              '<li><span class="text-white font-semibold">Deletion Requests:</span> If you wish to permanently remove a generated micro-website, delete your subdomain allocation, or clear your session logs from our database, you may submit a formal request to our compliance desk.</li>' +
+            '</ul>' +
+          '</section>' +
+
+          '<section>' +
+            '<h2 class="text-sm font-bold text-sky-300 mb-1.5">8. Third-Party Links &amp; User Websites</h2>' +
+            '<p>WebsConnect hosts multi-tenant micro-websites generated by our users. While we enforce strict terms of service against illegal or deceptive content, WebsConnect is not responsible for the privacy practices, content, or data collection policies of independent third-party websites created by users on .websconnect.in subdomains. End users visiting client sites are encouraged to review those specific businesses\' policies.</p>' +
+          '</section>' +
+
+          '<section>' +
+            '<h2 class="text-sm font-bold text-sky-300 mb-1.5">9. Policy Updates &amp; Modifications</h2>' +
+            '<p>WebsConnect reserves the right to update or modify this Privacy Policy periodically to reflect technological upgrades, legal compliance changes, or operational enhancements. Significant updates will be reflected on this page with a revised "Effective Date."</p>' +
+          '</section>' +
+
+          '<section class="rounded-xl bg-card border border-white/10 p-4">' +
+            '<h2 class="text-sm font-bold text-white mb-2">10. Official Contact &amp; Data Governance Desk</h2>' +
+            '<p>For any questions, privacy concerns, or data deletion requests regarding WebsConnect or the overarching Connect ecosystem, please contact our official compliance team:</p>' +
+            '<div class="mt-3 space-y-1">' +
+              '<p><span class="text-muted">Entity Name:</span> <span class="text-white font-semibold">WebsConnect</span> (A Venture of Connect)</p>' +
+              '<p><span class="text-muted">Founder &amp; CEO:</span> <span class="text-white font-semibold">Atharva Darshanwar</span></p>' +
+              '<p><span class="text-muted">Headquarters:</span> <span class="text-white">Nagpur, Maharashtra, India</span></p>' +
+            '</div>' +
+            '<p class="mt-3 text-muted text-xs font-semibold uppercase tracking-wide">Official Websites</p>' +
+            '<div class="mt-1.5 space-y-1.5">' +
+              '<a href="https://websconnect.in" target="_blank" rel="noopener" class="block text-sky-400 font-medium">WebsConnect → websconnect.in</a>' +
+              '<a href="https://stadiumconnect.in" target="_blank" rel="noopener" class="block text-sky-400 font-medium">StadiumConnect → stadiumconnect.in</a>' +
+              '<a href="https://theatharvacapital.com" target="_blank" rel="noopener" class="block text-sky-400 font-medium">AuronX Trade → theatharvacapital.com</a>' +
+            '</div>' +
+          '</section>' +
+        '</div>'
+      },
       disclaimer: { title: 'Disclaimer', html:
         '<div class="space-y-5">' +
           '<div class="text-center">' +
