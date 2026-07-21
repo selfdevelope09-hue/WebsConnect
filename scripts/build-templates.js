@@ -2,7 +2,8 @@
 
 const fs = require('fs');
 const path = require('path');
-const TEMPLATES = require('./template-gallery-data');
+const { ALL_TEMPLATES } = require('./all-templates');
+const TEMPLATES = ALL_TEMPLATES;
 
 const OUT_DIR = path.join(__dirname, '..', 'public', 'templates');
 const PHONE = '+91 98765 43210';
@@ -84,9 +85,14 @@ const CONTENT = {
   tyre: ['Grip, balance and confidence for every drive', ['Tyre Replacement', 'Wheel Alignment', 'Battery Care'], ['Precision Equipment', 'Multi-Brand Options', 'Fast Fitment'], ['Tyres', 'Alignment', 'Battery'], ['Wheel Alignment|₹599', 'Wheel Balancing|₹399', 'Battery Check & Fitment|Free with purchase']],
 };
 
-function image(niche, index, width) {
-  const ids = IMAGE_IDS[niche] || IMAGE_IDS.services;
-  return `https://images.unsplash.com/${ids[index % ids.length]}?auto=format&fit=crop&q=82&w=${width || 1000}`;
+function image(t, index, width) {
+  const ids = IMAGE_IDS[t.niche];
+  if (ids) {
+    return `https://images.unsplash.com/${ids[index % ids.length]}?auto=format&fit=crop&q=82&w=${width || 1000}`;
+  }
+  // Spec-based templates: themed photos via loremflickr keywords
+  const theme = (t.imgTheme || t.keywords || 'business').split(/\s+/).slice(0, 3).join(',');
+  return `https://loremflickr.com/${width || 1000}/${Math.round((width || 1000) * 0.7)}/${encodeURIComponent(theme)}?lock=${(index + 1) * 7}`;
 }
 
 function esc(value) {
@@ -97,13 +103,24 @@ function waText(text) {
   return `${WA}?text=${encodeURIComponent(text)}`;
 }
 
+/** Build CONTENT-shaped data for spec-based templates (31-400). */
+function specContent(t) {
+  const tabs = (t.tabs && t.tabs.length >= 2) ? t.tabs.slice(0, 3) : ['Popular', 'Premium', 'Custom'];
+  const usps = (t.usps && t.usps.length) ? t.usps.slice(0, 3) : ['Trusted Service', 'Fair Pricing', 'Quick Support'];
+  while (usps.length < 3) usps.push('Quick Support');
+  const cards = tabs.slice(0, 3);
+  while (cards.length < 3) cards.push('Custom Requests');
+  const items = cards.map((c) => `${c} Option|Quote on request`);
+  return [t.desc.replace(/\.$/, ''), cards, usps, tabs, items];
+}
+
 function theme(t, index) {
   const fonts = FONT_PAIRS[index % FONT_PAIRS.length];
   return {
     ...t,
     head: fonts[0],
     body: fonts[1],
-    content: CONTENT[t.niche],
+    content: CONTENT[t.niche] || specContent(t),
     images: IMAGE_IDS[t.niche],
     radius: index % 3 === 0 ? '0' : index % 3 === 1 ? '1.25rem' : '.6rem',
   };
@@ -119,7 +136,7 @@ function ecosystem(t) {
 }
 
 function shell(t, title, active, body) {
-  const secondLabel = t.page2 === 'ratecard' ? 'Rate Card' : t.page2[0].toUpperCase() + t.page2.slice(1);
+  const secondLabel = t.page2Label || (t.page2 === 'ratecard' ? 'Rate Card' : t.page2[0].toUpperCase() + t.page2.slice(1));
   const links = [['index.html', 'Home', 'home'], [`${t.page2}.html`, secondLabel, 'second'], ['contact.html', 'Contact', 'contact']];
   const nav = links.map(([href, label, key]) => `<a href="${href}" class="text-xs sm:text-sm font-bold ${active === key ? 'border-b-2 pb-1' : 'opacity-70 hover:opacity-100'}" style="${active === key ? `border-color:${t.colors.accent};color:${t.colors.accent}` : ''}">${label}</a>`).join('');
   return `<!DOCTYPE html>
@@ -145,17 +162,18 @@ function shell(t, title, active, body) {
 
 function homePage(t) {
   const [headline, cards, trust] = t.content;
-  const cardsHtml = cards.map((name, i) => `<article class="card overflow-hidden"><img src="${image(t.niche, i + 1, 650)}" alt="${esc(name)}" class="h-44 w-full object-cover"><div class="p-5"><p class="text-xs font-bold uppercase tracking-widest" style="color:${t.colors.accent}">0${i + 1}</p><h3 class="mt-2 text-xl font-bold">${esc(name)}</h3><p class="mt-2 text-sm opacity-70">Thoughtfully designed service with clear guidance and easy WhatsApp assistance.</p></div></article>`).join('');
+  const secondLabel = t.page2Label || (t.page2 === 'ratecard' ? 'Rate Card' : t.page2[0].toUpperCase() + t.page2.slice(1));
+  const cardsHtml = cards.map((name, i) => `<article class="card overflow-hidden"><img src="${image(t, i + 1, 650)}" alt="${esc(name)}" class="h-44 w-full object-cover"><div class="p-5"><p class="text-xs font-bold uppercase tracking-widest" style="color:${t.colors.accent}">0${i + 1}</p><h3 class="mt-2 text-xl font-bold">${esc(name)}</h3><p class="mt-2 text-sm opacity-70">Thoughtfully designed service with clear guidance and easy WhatsApp assistance.</p></div></article>`).join('');
   return shell(t, 'Home', 'home', `
     <main>
       <section class="relative min-h-[76vh] overflow-hidden px-5 py-20 flex items-center">
-        <img src="${image(t.niche, 0, 1600)}" alt="${esc(t.category)}" class="absolute inset-0 h-full w-full object-cover">
+        <img src="${image(t, 0, 1600)}" alt="${esc(t.category)}" class="absolute inset-0 h-full w-full object-cover">
         <div class="absolute inset-0 bg-black/55"></div>
-        <div class="relative mx-auto w-full max-w-6xl text-white"><p class="text-xs font-bold uppercase tracking-[.3em]">${esc(t.category)} · Nagpur</p><h1 class="mt-4 max-w-3xl text-5xl font-bold leading-tight md:text-7xl">${esc(headline)}</h1><p class="mt-5 max-w-xl text-base text-white/80 md:text-lg">${esc(t.desc)}</p><div class="mt-8 flex flex-wrap gap-3">${button(t, `${t.page2}.html`, `Explore ${t.page2 === 'ratecard' ? 'Rate Card' : t.page2}`, false)}${button(t, 'contact.html', 'Book / Enquire', true)}</div></div>
+        <div class="relative mx-auto w-full max-w-6xl text-white"><p class="text-xs font-bold uppercase tracking-[.3em]">${esc(t.category)} · Nagpur</p><h1 class="mt-4 max-w-3xl text-5xl font-bold leading-tight md:text-7xl">${esc(headline)}</h1><p class="mt-5 max-w-xl text-base text-white/80 md:text-lg">${esc(t.desc)}</p><div class="mt-8 flex flex-wrap gap-3">${button(t, `${t.page2}.html`, `Explore ${secondLabel}`, false)}${button(t, 'contact.html', 'Book / Enquire', true)}</div></div>
       </section>
       ${ecosystem(t)}
       <section class="px-5 py-8"><div class="mx-auto grid max-w-6xl grid-cols-1 gap-3 sm:grid-cols-3">${trust.map(x => `<div class="card p-4 text-center text-sm font-bold">✓ ${esc(x)}</div>`).join('')}</div></section>
-      <section class="px-5 py-14"><div class="mx-auto max-w-6xl"><div class="max-w-2xl"><p class="text-xs font-bold uppercase tracking-widest" style="color:${t.colors.accent}">What we offer</p><h2 class="mt-2 text-4xl font-bold">Made around what customers need most</h2></div><div class="mt-8 grid gap-5 md:grid-cols-3">${cardsHtml}</div><div class="mt-8">${button(t, `${t.page2}.html`, `View full ${t.page2}`, false)}</div></div></section>
+      <section class="px-5 py-14"><div class="mx-auto max-w-6xl"><div class="max-w-2xl"><p class="text-xs font-bold uppercase tracking-widest" style="color:${t.colors.accent}">What we offer</p><h2 class="mt-2 text-4xl font-bold">Made around what customers need most</h2></div><div class="mt-8 grid gap-5 md:grid-cols-3">${cardsHtml}</div><div class="mt-8">${button(t, `${t.page2}.html`, `View ${secondLabel}`, false)}</div></div></section>
       <section class="px-5 pb-16"><div class="card mx-auto max-w-5xl p-8 text-center md:p-12"><p class="text-sm font-bold" style="color:${t.colors.accent}">QUICK CONTACT</p><h2 class="mt-2 text-3xl font-bold">Ready when you are</h2><p class="mt-3 opacity-70">Call ${PHONE} · Open Monday–Saturday, 9:00 AM–7:00 PM · Nagpur, Maharashtra</p><div class="mt-6 flex flex-wrap justify-center gap-3">${button(t, TEL, 'Call Now', false)}${button(t, waText(`Hi ${t.name}, I would like to enquire.`), 'WhatsApp Us', true)}</div></div></section>
     </main>`);
 }
@@ -167,15 +185,17 @@ function secondPage(t) {
     return { name, price, category: categories[i % categories.length] };
   });
   const filters = ['All', ...categories].map((cat, i) => `<button type="button" data-filter="${esc(cat)}" class="filter px-4 py-2 text-sm font-bold ${i ? 'opacity-70' : ''}" style="border-radius:999px;${i ? `background:${t.colors.card}` : `background:${t.colors.accent};color:${t.colors.bg}`}">${esc(cat)}</button>`).join('');
-  const itemCards = items.concat(items.map((x, i) => ({ ...x, name: `${x.name} ${i % 2 ? 'Plus' : 'Classic'}` }))).map((item, i) => `<article class="product card overflow-hidden" data-category="${esc(item.category)}"><img src="${image(t.niche, i + 1, 700)}" alt="${esc(item.name)}" class="h-52 w-full object-cover"><div class="p-5"><p class="text-xs font-bold uppercase tracking-wider" style="color:${t.colors.accent}">${esc(item.category)}</p><h3 class="mt-2 text-xl font-bold">${esc(item.name)}</h3><p class="mt-2 text-sm opacity-65">Quality options, practical guidance and transparent assistance.</p><div class="mt-5 flex items-center justify-between gap-3"><strong>${esc(item.price)}</strong><a href="${waText(`Hi ${t.name}, I am interested in ${item.name}.`)}" target="_blank" rel="noopener" class="rounded-full px-4 py-2 text-xs font-bold" style="background:${t.colors.accent};color:${t.colors.bg}">Ask on WhatsApp</a></div></div></article>`).join('');
+  const itemCards = items.concat(items.map((x, i) => ({ ...x, name: `${x.name} ${i % 2 ? 'Plus' : 'Classic'}` }))).map((item, i) => `<article class="product card overflow-hidden" data-category="${esc(item.category)}"><img src="${image(t, i + 1, 700)}" alt="${esc(item.name)}" class="h-52 w-full object-cover"><div class="p-5"><p class="text-xs font-bold uppercase tracking-wider" style="color:${t.colors.accent}">${esc(item.category)}</p><h3 class="mt-2 text-xl font-bold">${esc(item.name)}</h3><p class="mt-2 text-sm opacity-65">Quality options, practical guidance and transparent assistance.</p><div class="mt-5 flex items-center justify-between gap-3"><strong>${esc(item.price)}</strong><a href="${waText(`Hi ${t.name}, I am interested in ${item.name}.`)}" target="_blank" rel="noopener" class="rounded-full px-4 py-2 text-xs font-bold" style="background:${t.colors.accent};color:${t.colors.bg}">Ask on WhatsApp</a></div></div></article>`).join('');
   const special = {
     photography: ['Package pricing', 'Choose Essential, Signature or Premium coverage, then request availability.', 'Open any image to discuss a similar shoot.'],
     interior: ['Instant cost estimator', 'Select your home size for a planning range.', '1BHK: ₹4–7L · 2BHK: ₹7–12L · 3BHK: ₹11–18L (estimates)'],
     solar: ['Savings estimator', 'A site survey confirms system size and payback.', '₹2,000–₹5,000 bill: consider 3kW · ₹5,000+: consider 5kW (estimates)'],
     movers: ['How shifting works', 'Packing → Loading → Safe Transit → Unpacking', 'Final rates depend on distance, floor access and volume.'],
   }[t.niche] || ['How it works', 'Choose an option → Send your requirement → Confirm on WhatsApp', 'Every quote is confirmed before work begins.'];
-  return shell(t, t.page2, 'second', `
-    <main class="px-5 py-14"><section class="mx-auto max-w-6xl"><p class="text-xs font-bold uppercase tracking-[.25em]" style="color:${t.colors.accent}">${esc(t.category)}</p><h1 class="mt-2 text-5xl font-bold">${esc(t.page2 === 'ratecard' ? 'Rate Card' : t.page2[0].toUpperCase() + t.page2.slice(1))}</h1><p class="mt-4 max-w-2xl opacity-70">Explore detailed options, transparent sample pricing and direct assistance from ${esc(t.name)}.</p><div class="mt-7 flex flex-wrap gap-2">${filters}</div></section>
+  const secondTitle = t.page2Label || (t.page2 === 'ratecard' ? 'Rate Card' : t.page2[0].toUpperCase() + t.page2.slice(1));
+  const secondIntro = t.p2 || `Explore detailed options, transparent sample pricing and direct assistance from ${t.name}.`;
+  return shell(t, secondTitle, 'second', `
+    <main class="px-5 py-14"><section class="mx-auto max-w-6xl"><p class="text-xs font-bold uppercase tracking-[.25em]" style="color:${t.colors.accent}">${esc(t.category)}</p><h1 class="mt-2 text-5xl font-bold">${esc(secondTitle)}</h1><p class="mt-4 max-w-2xl opacity-70">${esc(secondIntro)}</p><div class="mt-7 flex flex-wrap gap-2">${filters}</div></section>
       <section class="mx-auto mt-9 grid max-w-6xl gap-5 sm:grid-cols-2 lg:grid-cols-3" id="products">${itemCards}</section>
       <section class="card mx-auto mt-14 max-w-6xl p-7 md:p-10"><h2 class="text-3xl font-bold">${special[0]}</h2><p class="mt-3 opacity-70">${special[1]}</p><p class="mt-4 font-bold" style="color:${t.colors.accent}">${special[2]}</p><div class="mt-6">${button(t, 'contact.html', 'Continue to booking', false)}</div></section>
     </main>
@@ -231,7 +251,58 @@ TEMPLATES.forEach((raw, index) => {
   fs.writeFileSync(path.join(dir, `${t.page2}.html`), secondPage(t));
   fs.writeFileSync(path.join(dir, 'contact.html'), contactPage(t));
   pages += 3;
-  console.log(`✓ ${t.id}: index.html, ${t.page2}.html, contact.html`);
 });
 
-console.log(`\nDone: ${TEMPLATES.length} templates × 3 pages = ${pages} pages written to public/templates/`);
+console.log(`Done: ${TEMPLATES.length} templates × 3 pages = ${pages} pages written to public/templates/`);
+
+// ── Frontend gallery data (window.WC_TEMPLATES / WC_CATEGORIES) ──
+const galleryData = TEMPLATES.map((t) => ({
+  id: t.id,
+  name: t.name,
+  emoji: t.emoji,
+  niche: t.niche,
+  category: t.category,
+  page2: t.page2,
+  page2Label: t.page2Label || null,
+  tags: t.tags,
+  desc: t.desc,
+  colors: t.colors,
+  keywords: t.keywords,
+  spec: t.spec,
+}));
+
+const seenNiches = new Set();
+const categoryOptions = TEMPLATES.filter((t) => {
+  if (seenNiches.has(t.niche)) return false;
+  seenNiches.add(t.niche);
+  return true;
+}).map((t) => ({ value: t.niche, label: `${t.emoji} ${t.title || t.category}`, group: t.category }));
+
+fs.writeFileSync(
+  path.join(__dirname, '..', 'public', 'templates-data.js'),
+  '// Generated by scripts/build-templates.js — do not edit by hand\n' +
+  'window.WC_TEMPLATES = ' + JSON.stringify(galleryData) + ';\n' +
+  'window.WC_CATEGORIES = ' + JSON.stringify(categoryOptions) + ';\n'
+);
+console.log(`Wrote public/templates-data.js (${galleryData.length} templates, ${categoryOptions.length} categories)`);
+
+// ── AI blueprints for the generator (server/data/blueprints.json) ──
+const blueprints = {};
+TEMPLATES.forEach((t) => {
+  if (!t.p1) return; // hand-written blueprints already exist for the base 30
+  const label = (t.page2Label || t.page2).toUpperCase();
+  blueprints[t.niche] = {
+    name: t.title || t.category,
+    second: t.page2,
+    text:
+      `PAGE 1 — HOME (===PAGE:index===):\n- ${t.p1}\n` +
+      `PAGE 2 — ${label} (===PAGE:${t.page2}===):\n- ${t.p2}\n` +
+      `PAGE 3 — CONTACT (===PAGE:contact===):\n- ${t.p3}`,
+  };
+});
+fs.mkdirSync(path.join(__dirname, '..', 'server', 'data'), { recursive: true });
+fs.writeFileSync(
+  path.join(__dirname, '..', 'server', 'data', 'blueprints.json'),
+  JSON.stringify(blueprints, null, 1)
+);
+console.log(`Wrote server/data/blueprints.json (${Object.keys(blueprints).length} niches)`);

@@ -32,6 +32,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="/templates-data.js?v=1"></script>
   <style>
     html, body { background: #070b16; }
     .hide-scrollbar::-webkit-scrollbar { display: none; }
@@ -1026,38 +1027,8 @@
     ];
 
     // ── Category templates ─────────────────────────────────────
-    const TEMPLATES = [
-      {id:'sweetcraft',name:'SweetCraft',emoji:'🍩',niche:'food',category:'Food & Bakery',page2:'menu',tags:['Food','Bakery','Menu'],desc:'A warm bakery storefront with bestsellers, a filterable menu, custom orders and direct WhatsApp ordering.',colors:{bg:'#fff8ed',card:'#ffffff',accent:'#e85d2a',text:'#3b2118'},keywords:'food bakery cafe restaurant cake menu sweets pastry custom order',spec:'Warm artisanal bakery; hero and bestsellers, trust badges, filterable menu with prices, custom cake CTA, story, reviews, map, booking and payment.'},
-      {id:'glamourcut',name:'GlamourCut',emoji:'💈',niche:'salon',category:'Salon & Beauty',page2:'services',tags:['Salon','Beauty','Booking'],desc:'A polished beauty studio site with packages, transformation gallery and appointment booking.',colors:{bg:'#fff5f8',card:'#ffffff',accent:'#c0266d',text:'#43152b'},keywords:'salon spa hair beauty nails bridal makeover appointment services',spec:'Editorial beauty studio; premium hero, popular packages, trust strip, service rate tabs, transformations, experts, reviews and appointment form.'},
-      {id:'voguevibe',name:'VogueVibe',emoji:'👗',niche:'fashion',category:'Fashion & Boutique',page2:'collection',tags:['Fashion','Boutique','Collection'],desc:'A bold boutique lookbook with new arrivals, filters, size guidance and WhatsApp purchases.',colors:{bg:'#f7f3ee',card:'#ffffff',accent:'#7c2d45',text:'#25171c'},keywords:'fashion clothing boutique saree lehenga dress collection lookbook',spec:'Magazine-style boutique; lookbook hero, collection cards, arrivals, filterable product showcase, fitting guide, designer story and store booking.'},
-      {id:'quickfix',name:'QuickFix',emoji:'🛠️',niche:'services',category:'Home Services',page2:'services',tags:['Repairs','Home Service','Rates'],desc:'A high-conversion local repair site with instant estimates, transparent rates and technician booking.',colors:{bg:'#f3f7fb',card:'#ffffff',accent:'#0b6e99',text:'#102f3d'},keywords:'plumber electrician ac repair technician local home services rates',spec:'Clean utility design; urgent call hero, core services, trust badges, estimator, rate card, process, completed work and address-based booking.'},
-      {id:'lensstory',name:'LensStory',emoji:'📸',niche:'photography',category:'Photography',page2:'portfolio',tags:['Photography','Portfolio','Weddings'],desc:'A rich cinematic photography portfolio with curated work, packages and availability enquiries.',colors:{bg:'#101010',card:'#1c1c1c',accent:'#d6ad60',text:'#faf7f0'},keywords:'photography photographer wedding portrait camera portfolio gallery studio',spec:'Flagship cinematic photo template; immersive hero, masonry selected work, portfolio lightbox and filters, packages, artist story, testimonials and inquiry.'},
-      {id:'carepulse',name:'CarePulse',emoji:'🩺',niche:'clinic',category:'Clinic & Healthcare',page2:'treatments',tags:['Clinic','Doctor','Treatments'],desc:'A reassuring clinic website with specialties, treatment details, doctor profile and slot booking.',colors:{bg:'#effaf8',card:'#ffffff',accent:'#087f73',text:'#153b38'},keywords:'clinic doctor healthcare dental medical pharmacy treatment appointment',spec:'Calm clinical style; trust-led hero, specialties and timings, treatment grid, hygiene guidance, doctor profile, patient reviews and slot booking.'},
-      {id:'edupro',name:'EduPro',emoji:'🎓',niche:'education',category:'Education & Coaching',page2:'courses',tags:['Education','Courses','Admissions'],desc:'A focused coaching website with course filters, teaching promise, faculty and free demo registration.',colors:{bg:'#f2f6ff',card:'#ffffff',accent:'#3157c8',text:'#172554'},keywords:'education coaching school classes courses admission students tutor exam',spec:'Results-focused academic design; student hero, teaching promise, batch banner, course filters and fees, faculty, campus, reviews and demo form.'},
-      {id:'autoshine',name:'AutoShine',emoji:'🚘',niche:'auto',category:'Auto Care',page2:'packages',tags:['Auto','Detailing','Packages'],desc:'A dark glossy auto detailing site with package comparison, transformations and pickup booking.',colors:{bg:'#101722',card:'#1b2635',accent:'#38bdf8',text:'#f1f5f9'},keywords:'auto car garage wash detailing ceramic coating repair packages',spec:'Glossy performance aesthetic; car hero, service badges, top packages, comparison table, before-after gallery, add-ons, reviews and pickup form.'},
-      {id:'shiftease',name:'ShiftEase',emoji:'🚚',niche:'movers',category:'Movers & Logistics',page2:'rates',tags:['Movers','Logistics','Rates'],desc:'A dependable relocation website with estimated rates, process, safety guidance and quote requests.',colors:{bg:'#fff8e8',card:'#ffffff',accent:'#d97706',text:'#422006'},keywords:'packers movers relocation transport logistics shifting storage rates',spec:'Reliable logistics design; relocation hero, services and trust, estimated rates, four-step process, safety, testimonials and detailed moving quote.'},
-      {id:'taxpro',name:'TaxPro',emoji:'⚖️',niche:'legal',category:'Legal & Tax',page2:'services',tags:['Legal','Tax','Consulting'],desc:'A professional compliance site with service pricing, required documents and consultation booking.',colors:{bg:'#f5f4ef',card:'#ffffff',accent:'#8a6a2f',text:'#27231c'},keywords:'legal lawyer ca tax gst itr compliance registration consultancy services',spec:'Authoritative professional style; consultation hero, trust and services, service accordions, document checklists, partner profile, reviews and consultation form.'},
-      {id:'designspace',name:'DesignSpace',emoji:'🏠',niche:'interior',category:'Interior Design',page2:'portfolio',tags:['Interiors','Design','Portfolio'],desc:'An architectural portfolio with style filters, project gallery, cost estimator and consultation booking.',colors:{bg:'#f4f0e9',card:'#ffffff',accent:'#8b5e3c',text:'#33251d'},keywords:'interior architecture home design modular kitchen portfolio contractor',spec:'Refined architectural minimalism; room hero, design services, style-filtered portfolio, budget estimator, designer story, reviews and consultation.'},
-      {id:'royalpavilion',name:'RoyalPavilion',emoji:'🏰',niche:'venue',category:'Venue & Events',page2:'packages',tags:['Venue','Wedding','Packages'],desc:'An elegant venue showcase with decor, catering packages, date enquiry and StadiumConnect integration.',colors:{bg:'#fff9ed',card:'#ffffff',accent:'#9b6b16',text:'#3b2a11'},keywords:'venue banquet wedding hall lawn catering decor event packages stadiumconnect',spec:'Regal event style; venue hero, StadiumConnect strip, capacity highlights, decor and catering packages, tour, policies, reviews and date enquiry.'},
-      {id:'pawsnclaws',name:'PawsNClaws',emoji:'🐾',niche:'petcare',category:'Pet Care',page2:'services',tags:['Pets','Grooming','Vet'],desc:'A friendly pet care site with grooming packages, vaccination information and pet slot booking.',colors:{bg:'#f4fbf5',card:'#ffffff',accent:'#2f855a',text:'#193c2a'},keywords:'pet dog cat grooming vet clinic boarding vaccination services',spec:'Playful pet-friendly design; pet hero, care services and trust, grooming packages, OPD chart, hostel facilities, happy pets and booking.'},
-      {id:'masterstitch',name:'MasterStitch',emoji:'🧵',niche:'tailor',category:'Tailoring',page2:'ratecard',tags:['Tailor','Bespoke','Rate Card'],desc:'A bespoke tailoring site with transparent rates, measurement guide and doorstep fitting requests.',colors:{bg:'#faf5ef',card:'#ffffff',accent:'#8f3f2f',text:'#3f241e'},keywords:'tailor tailoring stitch bespoke suit blouse sherwani ratecard boutique',spec:'Heritage bespoke style; fabric hero, tailoring services, stitching rates, home measurement guide, fabric showcase, master story and pickup form.'},
-      {id:'kisanseva',name:'KisanSeva',emoji:'🌾',niche:'agri',category:'Agriculture',page2:'catalog',tags:['Agriculture','Seeds','Catalog'],desc:'A practical agriculture storefront with seasonal products, catalog filters, rentals and bulk enquiries.',colors:{bg:'#f4f8e9',card:'#ffffff',accent:'#4d7c0f',text:'#26360e'},keywords:'agriculture farming seeds fertilizer nursery equipment catalog kisan',spec:'Earthy farm utility design; crop hero, trust and seasonal highlights, filtered catalog, dosage and rentals, advisory, farmer reviews and bulk order.'},
-      {id:'buildpro',name:'BuildPro',emoji:'🔩',niche:'hardware',category:'Hardware & Building',page2:'catalog',tags:['Hardware','Building','Catalog'],desc:'A contractor-ready hardware catalog with product filters, bulk-rate enquiries and material-list quotes.',colors:{bg:'#f3f4f6',card:'#ffffff',accent:'#dc5a1f',text:'#292524'},keywords:'hardware electrical sanitaryware plumbing building material catalog contractor',spec:'Industrial retail design; product-range hero, partner strip, categories, filtered catalog and bulk rates, contractor banner, showroom and material quote.'},
-      {id:'workhub',name:'WorkHub',emoji:'💻',niche:'coworking',category:'Co-working',page2:'plans',tags:['Coworking','Office','Plans'],desc:'A contemporary workspace site with amenity highlights, membership plans, photo tour and seat booking.',colors:{bg:'#f3f7ff',card:'#ffffff',accent:'#4f46e5',text:'#20204a'},keywords:'coworking shared office workspace study room desk cabin plans wifi',spec:'Bright startup workspace; day-pass hero, amenities and pricing snapshot, detailed plans, workspace tour, community, member reviews and reservation.'},
-      {id:'printexpress',name:'PrintExpress',emoji:'🖨️',niche:'printing',category:'Printing & Signage',page2:'rates',tags:['Printing','Signage','Rates'],desc:'A vibrant print-shop site with product rates, artwork guidance, work showcase and quick ordering.',colors:{bg:'#fff6fb',card:'#ffffff',accent:'#d61f69',text:'#40152a'},keywords:'printing signage packaging business cards banners custom print rates',spec:'Vibrant CMYK-inspired style; press hero, popular offerings and USPs, rate cards, file guidelines, printed portfolio, reviews and print order.'},
-      {id:'gadgetcare',name:'GadgetCare',emoji:'🔧',niche:'gadgets',category:'Gadget Repair',page2:'rates',tags:['Electronics','Repair','Rates'],desc:'A technical gadget repair site with estimate cards, refurbished devices and doorstep pickup.',colors:{bg:'#101827',card:'#1e293b',accent:'#22d3ee',text:'#e6faff'},keywords:'gadget electronics mobile laptop repair refurbished screen battery rates',spec:'Modern tech lab; repair hero, trust and brand expertise, estimated rates, refurbished showcase, process, lab gallery, reviews and pickup booking.'},
-      {id:'drivesafe',name:'DriveSafe',emoji:'🚗',niche:'driving',category:'Driving School',page2:'courses',tags:['Driving','Courses','RTO'],desc:'A clear driving school site with course comparisons, RTO support and admission slot booking.',colors:{bg:'#f0f8ff',card:'#ffffff',accent:'#1476b8',text:'#12354c'},keywords:'driving school car instructor license rto courses learner',spec:'Road-ready educational style; instructor hero, USPs, course comparisons and RTO services, credentials, success stories and admission form.'},
-      {id:'cleanshield',name:'CleanShield',emoji:'✨',niche:'cleaning',category:'Cleaning & Pest Control',page2:'packages',tags:['Cleaning','Pest Control','Packages'],desc:'A fresh service site with home-size packages, safety practices, verified staff and booking.',colors:{bg:'#effcfb',card:'#ffffff',accent:'#0f9f91',text:'#12433e'},keywords:'cleaning housekeeping pest control deep clean sofa bathroom packages',spec:'Fresh hygienic design; clean-home hero, trust and services, BHK packages, pest treatments, equipment safety, verification, reviews and slot booking.'},
-      {id:'cellworld',name:'CellWorld',emoji:'📱',niche:'mobileshop',category:'Mobile Shop',page2:'catalog',tags:['Mobile','Accessories','Catalog'],desc:'A lively mobile accessories store with hot deals, filterable catalog and quick order form.',colors:{bg:'#f6f3ff',card:'#ffffff',accent:'#7138d0',text:'#2e1a52'},keywords:'mobile shop phone accessories sim dth covers earbuds catalog',spec:'Energetic gadget retail; deals hero, quick utility actions, filtered accessories catalog, service rates, store gallery, reviews and phone-specific order.'},
-      {id:'sunpower',name:'SunPower',emoji:'☀️',niche:'solar',category:'Solar Energy',page2:'systems',tags:['Solar','Energy','Systems'],desc:'A clean-energy site with solar system options, savings estimator and free site survey.',colors:{bg:'#fffbea',card:'#ffffff',accent:'#e59b10',text:'#443211'},keywords:'solar panel renewable energy rooftop subsidy system savings survey',spec:'Optimistic clean-energy style; rooftop hero, system highlights, on-grid/off-grid cards, savings calculator, ROI timeline, approvals, reviews and survey.'},
-      {id:'giftcraft',name:'GiftCraft',emoji:'🎁',niche:'gifts',category:'Custom Gifts',page2:'catalog',tags:['Gifts','Personalized','Catalog'],desc:'A cheerful personalized gift store with occasion links, catalog filters and custom order requests.',colors:{bg:'#fff4f3',card:'#ffffff',accent:'#ef476f',text:'#542032'},keywords:'gift custom personalized mug trophy frame hamper catalog birthday',spec:'Cheerful celebration style; gift hero, occasion links, filtered personalized catalog, customization guide, finished gallery, testimonials and custom order.'},
-      {id:'lingualearn',name:'LinguaLearn',emoji:'🗣️',niche:'tutor',category:'Tutor & Languages',page2:'courses',tags:['Languages','Tutor','Courses'],desc:'A friendly language academy with course levels, batch schedule and free demo registration.',colors:{bg:'#f0f7ff',card:'#ffffff',accent:'#2563b9',text:'#172d4d'},keywords:'tutor language english german french ielts classes courses',spec:'Approachable learning design; language hero, personal-attention USPs, course levels and fees, timetable, trainer profiles, success stories and demo registration.'},
-      {id:'turfnation',name:'TurfNation',emoji:'🏋️',niche:'sports',category:'Sports & Turf',page2:'packages',tags:['Sports','Academy','Turf'],desc:'An energetic sports academy and turf booking site with coaching packages and StadiumConnect integration.',colors:{bg:'#081c15',card:'#12372a',accent:'#74c69d',text:'#f0fff7'},keywords:'sports academy turf rental cricket football coaching packages stadiumconnect',spec:'Floodlit athletic style; action hero, StadiumConnect ecosystem, facilities and coaching trust, academy and turf packages, schedule, coaches, reviews and booking.'},
-      {id:'inkcraft',name:'InkCraft',emoji:'🎨',niche:'tattoo',category:'Tattoo & Piercing',page2:'gallery',tags:['Tattoo','Piercing','Gallery'],desc:'A dramatic tattoo studio site with style filters, artist portfolios, hygiene proof and consultation booking.',colors:{bg:'#111111',card:'#202020',accent:'#ef4444',text:'#f8f8f8'},keywords:'tattoo piercing ink artist studio gallery consultation hygiene',spec:'Dark expressive studio; artwork hero, style highlights and hygiene trust, filterable gallery and pricing guidance, artists, aftercare, reviews and consultation.'},
-      {id:'tinytots',name:'TinyTots',emoji:'🍼',niche:'babystore',category:'Baby & Maternity',page2:'catalog',tags:['Baby','Toys','Maternity'],desc:'A soft baby-care shop with age filters, essentials catalog, parent trust and product enquiries.',colors:{bg:'#fffaf0',card:'#ffffff',accent:'#e58f65',text:'#594035'},keywords:'baby care toys maternity newborn kids products catalog store',spec:'Soft playful retail; baby essentials hero, age categories and trust, filterable catalog with safety notes, parent guide, store story, reviews and product enquiry.'},
-      {id:'spacelock',name:'SpaceLock',emoji:'📦',niche:'warehouse',category:'Storage & Warehousing',page2:'rates',tags:['Warehouse','Storage','Rates'],desc:'A secure warehousing site with storage rates, facility details and space requirement enquiries.',colors:{bg:'#eef3f7',card:'#ffffff',accent:'#315b74',text:'#183142'},keywords:'warehouse cold storage warehousing inventory logistics space rates',spec:'Structured industrial design; secure-storage hero, facility trust and solutions, capacity rate cards, process and safety, infrastructure, client reviews and requirement form.'},
-      {id:'tyrepoint',name:'TyrePoint',emoji:'🛞',niche:'tyre',category:'Tyres & Batteries',page2:'services',tags:['Tyres','Alignment','Battery'],desc:'A road-ready tyre shop with service rates, fitment guidance and appointment booking.',colors:{bg:'#16191d',card:'#242930',accent:'#f59e0b',text:'#f8fafc'},keywords:'tyre tire wheel alignment balancing battery puncture services shop',spec:'Rugged automotive style; roadside hero, brands and service trust, tyre and alignment rate cards, fitment guide, workshop, reviews and vehicle booking.'}
-    ];
+    // Template gallery data is generated into /templates-data.js (400 templates)
+    const TEMPLATES = window.WC_TEMPLATES || [];
 
     const LOADING_MESSAGES = [
       'Analyzing requirements...',
@@ -1461,7 +1432,7 @@
 
     function templateMockHtml(t) {
       const c = t.colors;
-      const pageLabel = t.page2 === 'ratecard' ? 'RATE CARD' : t.page2.toUpperCase();
+      const pageLabel = (t.page2Label || (t.page2 === 'ratecard' ? 'Rate Card' : t.page2)).toUpperCase();
       const cards = t.tags.slice(0, 3).map(function (tag, index) {
         return '<div style="flex:1;min-width:0;padding:8px 5px;border-radius:7px;background:' + c.card + ';border:1px solid ' + c.accent + '35;text-align:center">' +
           '<div style="width:18px;height:18px;margin:0 auto 5px;border-radius:6px;background:' + c.accent + (index === 1 ? '55' : '25') + '"></div>' +
@@ -1489,10 +1460,16 @@
       });
     }
 
+    const TPL_PAGE_SIZE = 24;
     function renderTemplates(query) {
       const list = $('templates-list');
       list.innerHTML = '';
       const chip = state.templateChip;
+      const key = (query || '') + '|' + chip;
+      if (state.lastTplKey !== key) {
+        state.templateLimit = TPL_PAGE_SIZE;
+        state.lastTplKey = key;
+      }
       const visible = TEMPLATES.filter(function (t) {
         if (chip && chip !== 'all' && t.niche !== chip) return false;
         return templateMatches(t, query);
@@ -1503,7 +1480,9 @@
       const searching = Boolean((query || '').trim()) || (chip && chip !== 'all');
       $('templates-trending-wrap').classList.toggle('hidden', searching);
       $('templates-categories-wrap').classList.toggle('hidden', searching);
-      visible.forEach(function (t) {
+      const limit = state.templateLimit || TPL_PAGE_SIZE;
+      const shown = visible.slice(0, limit);
+      shown.forEach(function (t) {
         const card = document.createElement('div');
         card.className = 'rounded-2xl bg-card border border-white/10 p-3.5';
         card.innerHTML =
@@ -1534,6 +1513,17 @@
         card.appendChild(row);
         list.appendChild(card);
       });
+
+      if (visible.length > limit) {
+        const more = document.createElement('button');
+        more.className = 'w-full py-3.5 rounded-xl font-bold text-xs bg-white/5 border border-white/15 text-sky-300 active:scale-[.98] transition';
+        more.textContent = 'Load more templates (' + (visible.length - limit) + ' remaining)';
+        more.addEventListener('click', function () {
+          state.templateLimit = limit + TPL_PAGE_SIZE;
+          renderTemplates(query);
+        });
+        list.appendChild(more);
+      }
     }
 
     function showTemplates() {
@@ -1742,7 +1732,8 @@
       let mapped = categoryMap[opts.niche];
       if (!mapped && opts.niche) {
         // Allow direct category values (used by Rebuild from Projects screen)
-        const validCategory = CORE_QUESTIONS[0].options.some(function (o) { return o[1] === opts.niche; });
+        const validCategory = CORE_QUESTIONS[0].options.some(function (o) { return o[1] === opts.niche; }) ||
+          (window.WC_CATEGORIES || []).some(function (c) { return c.value === opts.niche; });
         if (validCategory) mapped = opts.niche;
       }
       if (mapped) {
@@ -1830,6 +1821,11 @@
       $('wizard-next').textContent = state.step === questions.length - 1 ? 'Build My Website ✨' : 'Next →';
       wizardOptions.innerHTML = '';
 
+      if (q.id === 'category' && (window.WC_CATEGORIES || []).length > 40) {
+        renderCategoryPicker(q, saved);
+        return;
+      }
+
       if (q.type === 'domain') {
         const wrap = document.createElement('div');
         wrap.className = 'rounded-xl border border-brand/25 bg-brand/5 p-3';
@@ -1878,6 +1874,83 @@
         }
         wizardOptions.appendChild(wrap);
       });
+    }
+
+    // Searchable category picker (400 business types)
+    function renderCategoryPicker(q, saved) {
+      const wrap = document.createElement('div');
+      wrap.innerHTML =
+        '<div class="flex items-center gap-2 bg-card border border-white/10 rounded-xl px-3.5 py-1 focus-within:border-accent/40 transition">' +
+          '<svg class="w-4 h-4 text-slate-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path stroke-linecap="round" d="M20 20l-3.5-3.5"/></svg>' +
+          '<input id="cat-search" type="text" placeholder="Search 400 business types — bakery, gym, solar..." class="flex-1 bg-transparent text-sm outline-none placeholder:text-slate-500 py-2.5" autocomplete="off" />' +
+        '</div>' +
+        '<p id="cat-selected" class="mt-2 text-xs text-sky-300 font-semibold min-h-[16px]"></p>' +
+        '<div id="cat-options" class="mt-2 max-h-[46vh] overflow-y-auto space-y-2 pr-1"></div>';
+      wizardOptions.appendChild(wrap);
+
+      const searchInput = document.getElementById('cat-search');
+      const optionsWrap = document.getElementById('cat-options');
+      const selectedLabel = document.getElementById('cat-selected');
+      if (saved?.value && saved.value !== 'custom') {
+        selectedLabel.textContent = 'Selected: ' + (saved.label || saved.value);
+      }
+
+      function drawOptions(filter) {
+        const f = (filter || '').toLowerCase().trim();
+        const cats = window.WC_CATEGORIES || [];
+        const matched = f
+          ? cats.filter(function (c) { return (c.label + ' ' + c.group + ' ' + c.value).toLowerCase().indexOf(f) !== -1; })
+          : cats;
+        optionsWrap.innerHTML = '';
+        matched.slice(0, 40).forEach(function (c) {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          const selected = saved?.value === c.value;
+          btn.className = 'w-full text-left px-4 py-3 rounded-xl bg-card border text-sm font-medium active:scale-[0.99] transition ' +
+            (selected ? 'border-sky-400/70 bg-brand/15 ring-1 ring-sky-400/30' : 'border-white/10 hover:border-accent/40');
+          btn.innerHTML = c.label + ' <span class="block text-[10px] text-muted mt-0.5">' + c.group + '</span>';
+          btn.addEventListener('click', function () {
+            selectWizardOption(q, { label: c.label, value: c.value });
+          });
+          optionsWrap.appendChild(btn);
+        });
+        if (matched.length > 40) {
+          const more = document.createElement('p');
+          more.className = 'text-[10px] text-muted text-center py-2';
+          more.textContent = matched.length + ' matches — keep typing to narrow down';
+          optionsWrap.appendChild(more);
+        }
+        if (!matched.length) {
+          optionsWrap.innerHTML = '<p class="text-xs text-muted text-center py-4">No match found — use the custom option below.</p>';
+        }
+        // Custom category option always available
+        const customBtn = document.createElement('button');
+        customBtn.type = 'button';
+        const customSelected = saved?.value === 'custom';
+        customBtn.className = 'w-full text-left px-4 py-3 rounded-xl bg-card border text-sm font-medium transition ' +
+          (customSelected ? 'border-sky-400/70 bg-brand/15 ring-1 ring-sky-400/30' : 'border-dashed border-white/20');
+        customBtn.textContent = '✍️ Write Custom Category';
+        customBtn.addEventListener('click', function () {
+          selectWizardOption(q, { label: '✍️ Write Custom Category', value: 'custom' });
+        });
+        optionsWrap.appendChild(customBtn);
+        if (customSelected) {
+          const input = document.createElement('input');
+          input.type = 'text';
+          input.placeholder = 'Enter your business category';
+          input.value = saved?.input || '';
+          input.className = 'mt-2 w-full rounded-xl bg-base border border-white/10 px-4 py-3 text-sm text-white outline-none focus:border-sky-400/60';
+          input.addEventListener('input', function () {
+            const s = state.choices.requirements[q.id];
+            if (s) s.input = input.value;
+          });
+          optionsWrap.appendChild(input);
+          setTimeout(function () { if (!input.value) input.focus(); }, 0);
+        }
+      }
+
+      drawOptions('');
+      searchInput.addEventListener('input', function () { drawOptions(searchInput.value); });
     }
 
     function getSavedInput(saved, value) {
